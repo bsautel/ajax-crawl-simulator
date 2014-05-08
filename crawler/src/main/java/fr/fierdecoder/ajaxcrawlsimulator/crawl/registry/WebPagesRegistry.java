@@ -11,7 +11,7 @@ public interface WebPagesRegistry {
 
     WebPage getByUrl(String url);
 
-    int getPagesCount();
+    long getPagesCount();
 
     Collection<WebPage> getWebPages();
 }

@@ -12,6 +12,7 @@
     <modules>
         <module>web</module>
         <module>crawler</module>
+        <module>mongodb-connector</module>
     </modules>
 
     <properties>

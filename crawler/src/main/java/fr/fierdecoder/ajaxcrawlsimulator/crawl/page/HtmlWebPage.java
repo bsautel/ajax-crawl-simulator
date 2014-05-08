@@ -1,5 +1,6 @@
 package fr.fierdecoder.ajaxcrawlsimulator.crawl.page;
 
+import java.util.Objects;
 import java.util.Set;
 
 public final class HtmlWebPage extends WebPage {
@@ -24,5 +25,32 @@ public final class HtmlWebPage extends WebPage {
 
     public Set<String> getLinks() {
         return links;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HtmlWebPage that = (HtmlWebPage) o;
+        return Objects.equals(getUrl(), that.getUrl())
+                && Objects.equals(title, that.getTitle())
+                && Objects.equals(contents, that.getContents())
+                && Objects.equals(links, that.getLinks());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUrl(), title, contents, links);
+    }
+
+    @Override
+    public String toString() {
+        return "HtmlWebPage{" +
+                "url='" + getUrl() + '\'' +
+                "title='" + title + '\'' +
+                ", contents='" + contents + '\'' +
+                ", links=" + links +
+                '}';
     }
 }

@@ -8,29 +8,30 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>web</artifactId>
-    <name>Web Application</name>
+    <artifactId>mongodb-connector</artifactId>
+    <name>MongoDB Connector</name>
 
     <dependencies>
-        <dependency>
-            <groupId>net.code-story</groupId>
-            <artifactId>http</artifactId>
-            <version>1.45</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>3.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>angularjs</artifactId>
-            <version>1.2.16</version>
-        </dependency>
         <dependency>
             <groupId>${groupId}</groupId>
             <artifactId>crawler</artifactId>
             <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>2.11.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jongo</groupId>
+            <artifactId>jongo</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.fakemongo</groupId>
+            <artifactId>fongo</artifactId>
+            <version>1.4.5</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

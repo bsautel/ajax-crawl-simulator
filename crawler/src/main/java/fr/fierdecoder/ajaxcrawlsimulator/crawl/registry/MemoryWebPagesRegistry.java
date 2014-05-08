@@ -25,7 +25,7 @@ public class MemoryWebPagesRegistry implements WebPagesRegistry {
     }
 
     @Override
-    public int getPagesCount() {
+    public long getPagesCount() {
         return pagesByUrl.size();
     }
 
