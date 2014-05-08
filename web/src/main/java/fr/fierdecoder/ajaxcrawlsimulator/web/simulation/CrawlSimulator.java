@@ -3,14 +3,14 @@ package fr.fierdecoder.ajaxcrawlsimulator.web.simulation;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.Crawler;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.WebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.MemoryWebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.SimpleCrawlPerimeter;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Optional.empty;
@@ -34,7 +34,8 @@ public class CrawlSimulator {
 
     private SimulationResult launchCrawl(Simulation simulation) {
         CrawlPerimeter perimeter = new SimpleCrawlPerimeter(simulation.getEntryUrl(), simulation.getUrlPrefix());
-        WebPagesRegistry webPagesRegistry = crawler.crawl(perimeter);
+        MemoryWebPagesRegistry webPagesRegistry = new MemoryWebPagesRegistry();
+        crawler.crawl(perimeter, webPagesRegistry);
         return new SimulationResult(simulation, webPagesRegistry);
     }
 

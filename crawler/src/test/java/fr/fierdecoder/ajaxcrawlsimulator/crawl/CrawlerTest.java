@@ -5,6 +5,8 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.MemoryWebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,9 +30,11 @@ public class CrawlerTest {
     private PageReader pageReader;
     @Mock
     private CrawlPerimeter crawlPerimeter;
+    private WebPagesRegistry registry;
 
     @Before
     public void setUp() {
+        registry = new MemoryWebPagesRegistry();
         when(crawlPerimeter.getEntryUrl()).thenReturn(INDEX_URL);
         when(crawlPerimeter.contains(anyString())).thenReturn(true);
     }
@@ -40,10 +44,10 @@ public class CrawlerTest {
         HtmlWebPage indexPage = registerWebPage(new HtmlWebPage(INDEX_URL, PAGE_TITLE, HTML_CONTENTS, newHashSet()));
         Crawler crawler = new Crawler(pageReader);
 
-        WebPagesRegistry result = crawler.crawl(crawlPerimeter);
+        crawler.crawl(crawlPerimeter, registry);
 
-        assertEquals(1, result.getPagesCount());
-        assertEquals(indexPage, result.getByUrl(INDEX_URL));
+        assertEquals(1, registry.getPagesCount());
+        assertEquals(indexPage, registry.getByUrl(INDEX_URL));
     }
 
     private HtmlWebPage buildHtmlWebPage(String url, String... links) {
@@ -62,11 +66,11 @@ public class CrawlerTest {
         HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL));
         Crawler crawler = new Crawler(pageReader);
 
-        WebPagesRegistry result = crawler.crawl(crawlPerimeter);
+        crawler.crawl(crawlPerimeter, registry);
 
-        assertEquals(2, result.getPagesCount());
-        assertEquals(indexPage, result.getByUrl(INDEX_URL));
-        assertEquals(contactPage, result.getByUrl(CONTACT_URL));
+        assertEquals(2, registry.getPagesCount());
+        assertEquals(indexPage, registry.getByUrl(INDEX_URL));
+        assertEquals(contactPage, registry.getByUrl(CONTACT_URL));
     }
 
     @Test
@@ -75,11 +79,11 @@ public class CrawlerTest {
         HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL, INDEX_URL));
         Crawler crawler = new Crawler(pageReader);
 
-        WebPagesRegistry result = crawler.crawl(crawlPerimeter);
+        crawler.crawl(crawlPerimeter, registry);
 
-        assertEquals(2, result.getPagesCount());
-        assertEquals(indexPage, result.getByUrl(INDEX_URL));
-        assertEquals(contactPage, result.getByUrl(CONTACT_URL));
+        assertEquals(2, registry.getPagesCount());
+        assertEquals(indexPage, registry.getByUrl(INDEX_URL));
+        assertEquals(contactPage, registry.getByUrl(CONTACT_URL));
     }
 
     @Test
@@ -88,10 +92,10 @@ public class CrawlerTest {
         when(crawlPerimeter.contains(CONTACT_URL)).thenReturn(false);
         Crawler crawler = new Crawler(pageReader);
 
-        WebPagesRegistry result = crawler.crawl(crawlPerimeter);
+        crawler.crawl(crawlPerimeter, registry);
 
-        assertEquals(1, result.getPagesCount());
-        assertEquals(indexPage, result.getByUrl(INDEX_URL));
+        assertEquals(1, registry.getPagesCount());
+        assertEquals(indexPage, registry.getByUrl(INDEX_URL));
     }
 
     @Test
@@ -100,10 +104,10 @@ public class CrawlerTest {
         HtmlWebPage homePage = registerWebPage(buildHtmlWebPage(HOME_URL));
         Crawler crawler = new Crawler(pageReader);
 
-        WebPagesRegistry result = crawler.crawl(crawlPerimeter);
+        crawler.crawl(crawlPerimeter, registry);
 
-        assertEquals(2, result.getPagesCount());
-        assertEquals(indexPage, result.getByUrl(INDEX_URL));
-        assertEquals(homePage, result.getByUrl(HOME_URL));
+        assertEquals(2, registry.getPagesCount());
+        assertEquals(indexPage, registry.getByUrl(INDEX_URL));
+        assertEquals(homePage, registry.getByUrl(HOME_URL));
     }
 }

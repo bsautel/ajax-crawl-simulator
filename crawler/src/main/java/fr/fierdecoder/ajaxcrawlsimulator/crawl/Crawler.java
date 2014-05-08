@@ -6,6 +6,7 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
 import org.slf4j.Logger;
 
 import java.util.LinkedList;
@@ -22,17 +23,15 @@ public class Crawler {
         this.pageReader = pageReader;
     }
 
-    public WebPagesRegistry crawl(CrawlPerimeter crawlPerimeter) {
+    public void crawl(CrawlPerimeter crawlPerimeter, WebPagesRegistry registry) {
         Queue<String> urlQueue = new LinkedList<>();
-        WebPagesRegistry registry = new WebPagesRegistry();
         urlQueue.add(crawlPerimeter.getEntryUrl());
         while (!urlQueue.isEmpty()) {
-            registry = crawlNextUrl(urlQueue, registry, crawlPerimeter);
+            crawlNextUrl(urlQueue, registry, crawlPerimeter);
         }
-        return registry;
     }
 
-    private WebPagesRegistry crawlNextUrl(Queue<String> urlQueue, WebPagesRegistry registry, CrawlPerimeter crawlPerimeter) {
+    private void crawlNextUrl(Queue<String> urlQueue, WebPagesRegistry registry, CrawlPerimeter crawlPerimeter) {
         String url = urlQueue.poll();
         LOGGER.info("Crawling {}", url);
         if (mustBeCrawled(url, registry, crawlPerimeter)) {
@@ -48,10 +47,10 @@ public class Crawler {
             } else if (page.isUnreachableWebPage()) {
                 LOGGER.info("Url {} is unreachable", url);
             }
-            return registry.register(page);
+            registry.register(page);
+        }else {
+            LOGGER.info("Url {} ignored since it is not in the crawl perimeter", url);
         }
-        LOGGER.info("Url {} ignored since it is not in the crawl perimeter", url);
-        return registry;
     }
 
     private boolean mustBeCrawled(String url, WebPagesRegistry registry, CrawlPerimeter crawlPerimeter) {

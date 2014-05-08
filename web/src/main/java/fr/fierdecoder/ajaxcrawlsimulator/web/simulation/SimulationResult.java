@@ -1,6 +1,6 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.simulation;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.WebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
 
 public class SimulationResult {
     private final Simulation simulation;

@@ -1,7 +1,7 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.resource;
 
 import com.google.inject.Inject;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.WebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.web.simulation.CrawlSimulator;
 import fr.fierdecoder.ajaxcrawlsimulator.web.simulation.Simulation;
