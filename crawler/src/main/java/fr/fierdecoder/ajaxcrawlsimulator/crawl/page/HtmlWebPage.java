@@ -6,7 +6,7 @@ public final class HtmlWebPage extends WebPage {
     private final String contents;
     private final Set<String> links;
 
-    public HtmlWebPage(String contents, String url, Set<String> links) {
+    public HtmlWebPage(String url, String contents, Set<String> links) {
         super(url);
         this.contents = contents;
         this.links = links;

@@ -6,19 +6,19 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-public class PagesRegistry {
+public class WebPagesRegistry {
     private final Map<String, WebPage> pagesByUrl;
 
-    private PagesRegistry(PagesRegistry other) {
+    private WebPagesRegistry(WebPagesRegistry other) {
         this.pagesByUrl = newHashMap(other.pagesByUrl);
     }
 
-    public PagesRegistry() {
+    public WebPagesRegistry() {
         pagesByUrl = newHashMap();
     }
 
-    public PagesRegistry register(WebPage page) {
-        PagesRegistry copy = new PagesRegistry(this);
+    public WebPagesRegistry register(WebPage page) {
+        WebPagesRegistry copy = new WebPagesRegistry(this);
         copy.pagesByUrl.put(page.getUrl(), page);
         return copy;
     }
@@ -29,5 +29,9 @@ public class PagesRegistry {
 
     public WebPage getByUrl(String url) {
         return pagesByUrl.get(url);
+    }
+
+    public Object getPagesCount() {
+        return pagesByUrl.size();
     }
 }

@@ -4,21 +4,21 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class Crawler {
-    private final PageReader pageCrawler = new PageReader();
+    private final PageReader pageReader;
     private final CrawlPerimeter crawlPerimeter;
     private final Queue<String> urlQueue = new LinkedList<>();
-    private PagesRegistry registry = new PagesRegistry();
+    private WebPagesRegistry registry = new WebPagesRegistry();
 
-    public Crawler(CrawlPerimeter crawlPerimeter) {
+    public Crawler(CrawlPerimeter crawlPerimeter, PageReader pageReader) {
         this.crawlPerimeter = crawlPerimeter;
+        this.pageReader = pageReader;
     }
 
-    public PagesRegistry crawl() throws IOException {
+    public WebPagesRegistry crawl() {
         urlQueue.add(crawlPerimeter.getEntryUrl());
         while (!urlQueue.isEmpty()) {
             crawlNextUrl();
@@ -26,10 +26,10 @@ public class Crawler {
         return registry;
     }
 
-    private void crawlNextUrl() throws IOException {
+    private void crawlNextUrl() {
         String url = urlQueue.poll();
         if (mustBeCrawled(url)) {
-            WebPage page = pageCrawler.readPage(url);
+            WebPage page = pageReader.readPage(url);
             if (page.isHtmlWebPage()) {
                 HtmlWebPage htmlPage = (HtmlWebPage) page;
                 urlQueue.addAll(htmlPage.getLinks());
