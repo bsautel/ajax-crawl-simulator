@@ -1,6 +1,48 @@
-<p>Simulation {{simulation.name}}</p>
-<p>Url: {{simulation.entryUrl}}</p>
+<h1>{{simulation.name}}</h1>
 
-<ul ng-repeat="page in pages">
-    <li>{{page.url}}</li>
-</ul>
+<div class="container">
+    <div class="panel panel-info">
+        <div class="panel-heading">Properties</div>
+        <div class="panel-body">
+            <ul class="list-group">
+                <li class="list-group-item" title="Entry URL">
+                    <span class="glyphicon glyphicon-flag"></span>
+                    <a ng-href="{{simulation.entryUrl}}">{{simulation.entryUrl}}</a>
+                </li>
+                <li class="list-group-item" title="URL count">
+                    <span class="glyphicon glyphicon-th-list"></span>
+                    {{pages.length}} pages
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-search"></span>
+                </span>
+                <input type="search" ng-model="url_search" placeholder="Filter URL" class="form-control"/>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>URL</th>
+                <th>Page Title</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="page in (pages | filter:{url: url_search} )">
+                <td>{{page.url}}</td>
+                <td>Unknown Title</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

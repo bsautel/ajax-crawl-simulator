@@ -1,3 +1,12 @@
-<ul ng-repeat="simulation in simulations">
-    <li><a ng-href="{{view_simulation_link(simulation)}}">{{simulation.name}}</a></li>
-</ul>
+<h1>List of Simulations</h1>
+
+<div class="container">
+    <ul ng-repeat="simulation in simulations" class="list-group">
+        <li>
+            <a ng-href="{{view_simulation_link(simulation)}}" class="list-group-item">
+                {{simulation.name}}
+                <span class="badge">{{simulation.entryUrl}}</span>
+            </a>
+        </li>
+    </ul>
+</div>
