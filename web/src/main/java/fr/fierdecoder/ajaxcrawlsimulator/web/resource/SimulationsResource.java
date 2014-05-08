@@ -1,8 +1,8 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.resource;
 
 import com.google.inject.Inject;
-import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.CrawlSimulator;
+import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Post;
 

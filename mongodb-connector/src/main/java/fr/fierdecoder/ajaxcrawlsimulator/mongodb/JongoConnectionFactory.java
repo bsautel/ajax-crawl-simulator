@@ -1,5 +1,6 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb;
 
+import com.google.inject.Inject;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import org.jongo.Jongo;
@@ -9,6 +10,7 @@ import java.net.UnknownHostException;
 public class JongoConnectionFactory {
     private final MongoDbConfiguration configuration;
 
+    @Inject
     public JongoConnectionFactory(MongoDbConfiguration configuration) {
         this.configuration = configuration;
     }

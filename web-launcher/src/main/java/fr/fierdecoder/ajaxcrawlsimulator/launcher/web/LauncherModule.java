@@ -34,7 +34,6 @@ public class LauncherModule extends AbstractModule {
     private void bindJongoFactory() {
         MongoDbConfiguration mongoDbConfiguration = new MongoDbConfiguration(options.getMongoDbHost(),
                 options.getMongoDbPort(), options.getDatabaseName());
-        JongoFactory jongoFactory = new JongoFactory(mongoDbConfiguration);
-        bind(JongoFactory.class).toInstance(jongoFactory);
+        bind(MongoDbConfiguration.class).toInstance(mongoDbConfiguration);
     }
 }
