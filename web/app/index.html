@@ -5,14 +5,23 @@ styles: [/webjars/bootstrap/3.1.1/css/bootstrap.css]
 ng-app: ajax-crawl-simulator
 ---
 
-<div class="container" ng-controller="AjaxCrawlSimulatorController">
-    <div class="jumbotron">
-        <h1>Ajax Crawl Simulator</h1>
-        <p>
-            Welcome on this tool.
-        </p>
-    </div>
-</div>
+<header>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <div class="navbar-brand">Ajax Crawl Simulator</div>
+            </div>
+            <a href="#/simulations" class="btn btn-default navbar-btn">
+                <span class="glyphicon glyphicon-home"></span>
+                Home
+            </a>
+        </div>
+    </nav>
+</header>
+<main>
+    <div ng-view></div>
+</main>
 
-<script src="/webjars/angularjs/1.2.16/angular.js"></script>
+<script src="/webjars/angularjs/1.2.16/angular.min.js"></script>
+<script src="/webjars/angularjs/1.2.16/angular-route.min.js"></script>
 <script src="ajax-crawl-simulator.js"></script>
