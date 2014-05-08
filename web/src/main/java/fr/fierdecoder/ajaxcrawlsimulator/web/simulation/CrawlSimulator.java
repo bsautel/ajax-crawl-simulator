@@ -3,10 +3,10 @@ package fr.fierdecoder.ajaxcrawlsimulator.web.simulation;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.Crawler;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.MemoryWebPagesRegistry;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.SimpleCrawlPerimeter;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistryFactory;
 
 import java.util.Map;
 import java.util.Optional;
@@ -20,11 +20,13 @@ import static java.util.stream.Collectors.toSet;
 @Singleton
 public class CrawlSimulator {
     private final Crawler crawler;
+    private final WebPagesRegistryFactory webPagesRegistryFactory;
     private final Map<String, SimulationResult> simulations = newHashMap();
 
     @Inject
-    public CrawlSimulator(Crawler crawler) {
+    public CrawlSimulator(Crawler crawler, WebPagesRegistryFactory webPagesRegistryFactory) {
         this.crawler = crawler;
+        this.webPagesRegistryFactory = webPagesRegistryFactory;
     }
 
     public synchronized void start(Simulation simulation) {
@@ -34,7 +36,7 @@ public class CrawlSimulator {
 
     private SimulationResult launchCrawl(Simulation simulation) {
         CrawlPerimeter perimeter = new SimpleCrawlPerimeter(simulation.getEntryUrl(), simulation.getUrlPrefix());
-        MemoryWebPagesRegistry webPagesRegistry = new MemoryWebPagesRegistry();
+        WebPagesRegistry webPagesRegistry = webPagesRegistryFactory.create(simulation.getName());
         crawler.crawl(perimeter, webPagesRegistry);
         return new SimulationResult(simulation, webPagesRegistry);
     }

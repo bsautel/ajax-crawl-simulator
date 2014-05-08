@@ -22,13 +22,14 @@ public class MongoWebPagesRegistryTest {
     private static final String ANOTHER_URL_3 = AN_URL + "home";
     public static final String PAGE_TITLE = "title";
     public static final String PAGE_CONTENTS = "contents";
-    private MongoWebPagesRegistry mongoRegistry;
+    private MongoWebPagesRegistry mongoRegistry, anotherRegistry;
 
     @Before
     public void setUp() throws Exception {
         DB db = new Fongo("Test").getDB("Test");
         Jongo jongo = new Jongo(db);
-        mongoRegistry = new MongoWebPagesRegistry(jongo);
+        mongoRegistry = new MongoWebPagesRegistry("Default", jongo);
+        anotherRegistry = new MongoWebPagesRegistry("Another", jongo);
     }
 
     @Test
@@ -43,6 +44,7 @@ public class MongoWebPagesRegistryTest {
         mongoRegistry.register(htmlWebPage);
 
         assertTrue(mongoRegistry.containsUrl(AN_URL));
+        assertFalse(anotherRegistry.containsUrl(AN_URL));
         WebPage result = mongoRegistry.getByUrl(AN_URL);
         assertThat(result, instanceOf(HtmlWebPage.class));
         HtmlWebPage htmlResult = result.asHtmlWebPage();
@@ -61,5 +63,7 @@ public class MongoWebPagesRegistryTest {
 
         assertThat(mongoRegistry.getPagesCount(), is(3l));
         assertThat(mongoRegistry.getWebPages(), containsInAnyOrder(htmlWebPage, redirectionWebPage, unreachableWebPage));
+        assertThat(anotherRegistry.getPagesCount(), is(0l));
+        assertThat(anotherRegistry.getWebPages().size(), is(0));
     }
 }

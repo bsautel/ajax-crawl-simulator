@@ -8,9 +8,10 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import static fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.MongoWebPage.Type.*;
 
 public class MongoWebPageConverter {
-    public MongoWebPage convertToMongo(WebPage webPage) {
+    public MongoWebPage convertToMongo(WebPage webPage, String simulatioName) {
         MongoWebPage result = new MongoWebPage();
         result.setUrl(webPage.getUrl());
+        result.setSimulationName(simulatioName);
         if (webPage.isHtmlWebPage()) {
             result.setType(HTML);
             HtmlWebPage htmlWebPage  = webPage.asHtmlWebPage();

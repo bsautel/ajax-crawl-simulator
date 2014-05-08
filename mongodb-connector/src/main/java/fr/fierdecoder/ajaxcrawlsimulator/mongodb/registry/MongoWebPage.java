@@ -1,14 +1,12 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry;
 
-import org.jongo.marshall.jackson.oid.Id;
-
 import java.util.Set;
 
 public class MongoWebPage {
     public enum Type {HTML, REDIRECTION, UNREACHABLE}
 
-    @Id
     private String url;
+    private String simulationName;
     private Type type;
     private String targetUrl;
     private Integer httpStatus;
@@ -22,6 +20,14 @@ public class MongoWebPage {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public void setSimulationName(String simulationName) {
+        this.simulationName = simulationName;
+    }
+
+    public String getSimulationName() {
+        return simulationName;
     }
 
     public Type getType() {
