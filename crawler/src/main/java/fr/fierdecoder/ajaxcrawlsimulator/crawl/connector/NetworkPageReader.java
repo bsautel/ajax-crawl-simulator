@@ -39,6 +39,7 @@ public class NetworkPageReader implements PageReader {
         }*/
 
         Set<String> links = documentReader.readLinks(document);
-        return new HtmlWebPage(url, document.html(), links);
+        String title = documentReader.readTitle(document);
+        return new HtmlWebPage(url, title, document.html(), links);
     }
 }

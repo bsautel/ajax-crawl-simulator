@@ -21,7 +21,8 @@ public class CrawlerTest {
     private static final String INDEX_URL = "http://mydomain.com/";
     private static final String HOME_URL = INDEX_URL + "home";
     private static final String CONTACT_URL = INDEX_URL + "contact";
-    public static final String HTML_CONTENTS = "This is HTML contents";
+    private static final String PAGE_TITLE = "This is the page title";
+    private static final String HTML_CONTENTS = "This is HTML contents";
 
     @Mock
     private PageReader pageReader;
@@ -36,13 +37,17 @@ public class CrawlerTest {
 
     @Test
     public void singlePageCrawl() {
-        HtmlWebPage indexPage = registerWebPage(new HtmlWebPage(INDEX_URL, HTML_CONTENTS, newHashSet()));
+        HtmlWebPage indexPage = registerWebPage(new HtmlWebPage(INDEX_URL, PAGE_TITLE, HTML_CONTENTS, newHashSet()));
         Crawler crawler = new Crawler(pageReader);
 
         WebPagesRegistry result = crawler.crawl(crawlPerimeter);
 
         assertEquals(1, result.getPagesCount());
         assertEquals(indexPage, result.getByUrl(INDEX_URL));
+    }
+
+    private HtmlWebPage buildHtmlWebPage(String url, String... links) {
+        return new HtmlWebPage(url, PAGE_TITLE, HTML_CONTENTS, newHashSet(links));
     }
 
     private <PageType extends WebPage> PageType registerWebPage(PageType webPage) {
@@ -53,8 +58,8 @@ public class CrawlerTest {
 
     @Test
     public void twoPagesCrawl() {
-        HtmlWebPage indexPage = registerWebPage(new HtmlWebPage(INDEX_URL, HTML_CONTENTS, newHashSet(CONTACT_URL)));
-        HtmlWebPage contactPage = registerWebPage(new HtmlWebPage(CONTACT_URL, HTML_CONTENTS, newHashSet()));
+        HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
+        HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL));
         Crawler crawler = new Crawler(pageReader);
 
         WebPagesRegistry result = crawler.crawl(crawlPerimeter);
@@ -66,8 +71,8 @@ public class CrawlerTest {
 
     @Test
     public void twoCyclingPagesCrawl() {
-        HtmlWebPage indexPage = registerWebPage(new HtmlWebPage(INDEX_URL, HTML_CONTENTS, newHashSet(CONTACT_URL)));
-        HtmlWebPage contactPage = registerWebPage(new HtmlWebPage(CONTACT_URL, HTML_CONTENTS, newHashSet(INDEX_URL)));
+        HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
+        HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL, INDEX_URL));
         Crawler crawler = new Crawler(pageReader);
 
         WebPagesRegistry result = crawler.crawl(crawlPerimeter);
@@ -79,7 +84,7 @@ public class CrawlerTest {
 
     @Test
     public void twoPagesIncludingOneIgnored() {
-        HtmlWebPage indexPage = registerWebPage(new HtmlWebPage(INDEX_URL, HTML_CONTENTS, newHashSet(CONTACT_URL)));
+        HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
         when(crawlPerimeter.contains(CONTACT_URL)).thenReturn(false);
         Crawler crawler = new Crawler(pageReader);
 
@@ -92,7 +97,7 @@ public class CrawlerTest {
     @Test
     public void redirectionPage() {
         RedirectionWebPage indexPage = registerWebPage(new RedirectionWebPage(INDEX_URL, HOME_URL));
-        HtmlWebPage homePage = registerWebPage(new HtmlWebPage(HOME_URL, HTML_CONTENTS, newHashSet()));
+        HtmlWebPage homePage = registerWebPage(buildHtmlWebPage(HOME_URL));
         Crawler crawler = new Crawler(pageReader);
 
         WebPagesRegistry result = crawler.crawl(crawlPerimeter);

@@ -15,4 +15,8 @@ public class DocumentReader {
                 .filter(url -> !url.isEmpty())
                 .collect(toSet());
     }
+
+    public String readTitle(Document document) {
+        return document.title();
+    }
 }
