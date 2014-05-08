@@ -2,9 +2,11 @@ package fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter;
 
 public class SimpleCrawlPerimeter implements CrawlPerimeter {
     private final String entryUrl;
+    private final String prefix;
 
-    public SimpleCrawlPerimeter(String entryUrl) {
+    public SimpleCrawlPerimeter(String entryUrl, String prefix) {
         this.entryUrl = entryUrl;
+        this.prefix = prefix;
     }
 
     @Override
@@ -14,6 +16,6 @@ public class SimpleCrawlPerimeter implements CrawlPerimeter {
 
     @Override
     public boolean contains(String url) {
-        return true;
+        return url.startsWith(prefix);
     }
 }
