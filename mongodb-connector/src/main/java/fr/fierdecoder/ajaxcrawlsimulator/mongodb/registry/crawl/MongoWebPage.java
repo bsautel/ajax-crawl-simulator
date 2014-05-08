@@ -1,4 +1,4 @@
-package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry;
+package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl;
 
 import java.util.Set;
 

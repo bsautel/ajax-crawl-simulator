@@ -1,11 +1,11 @@
-package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry;
+package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.UnreachableWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 
-import static fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.MongoWebPage.Type.*;
+import static fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl.MongoWebPage.Type.*;
 
 public class MongoWebPageConverter {
     public MongoWebPage convertToMongo(WebPage webPage, String simulatioName) {

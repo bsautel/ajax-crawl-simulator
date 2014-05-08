@@ -8,6 +8,7 @@ public class Launcher {
         LauncherOptions options = new LauncherOptions();
         new JCommander(options, args);
         LauncherModule launcherModule = new LauncherModule(options);
-        new WebApplication(launcherModule).start();
+        WebApplication webApplication = new WebApplication(launcherModule);
+        webApplication.start();
     }
 }

@@ -1,28 +1,24 @@
-package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry;
+package fr.fierdecoder.ajaxcrawlsimulator.launcher.web;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistryFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.mongodb.MongoDbConfiguration;
 import org.jongo.Jongo;
 
 import java.net.UnknownHostException;
 
-public class MongoDbWebPagesRegistryFactory implements WebPagesRegistryFactory {
+public class JongoFactory {
     private final MongoDbConfiguration configuration;
 
-    public MongoDbWebPagesRegistryFactory(MongoDbConfiguration configuration) {
+    public JongoFactory(MongoDbConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    @Override
-    public WebPagesRegistry create(String name) {
+    public Jongo createJongoConnection() {
         try {
             MongoClient mongoClient = new MongoClient(configuration.getHost(), configuration.getPort());
             DB database = mongoClient.getDB(configuration.getDatabaseName());
-            Jongo jongo = new Jongo(database);
-            return new MongoWebPagesRegistry(name, jongo);
+            return new Jongo(database);
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }

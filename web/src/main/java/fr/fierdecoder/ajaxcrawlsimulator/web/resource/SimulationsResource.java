@@ -1,8 +1,8 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.resource;
 
 import com.google.inject.Inject;
-import fr.fierdecoder.ajaxcrawlsimulator.web.simulation.Simulation;
-import fr.fierdecoder.ajaxcrawlsimulator.web.simulation.CrawlSimulator;
+import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
+import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.CrawlSimulator;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Post;
 
@@ -17,14 +17,14 @@ public class SimulationsResource {
     }
 
     @Get("/simulations")
-    public Collection<Simulation> getSimulations() {
+    public Collection<SimulationDescriptor> getSimulations() {
         return crawlSimulator.getSimulations();
     }
 
     @Post("/simulations")
-    public Simulation createSimulation(Simulation simulation) {
+    public SimulationDescriptor createSimulation(SimulationDescriptor simulationDescriptor) {
         // TODO should not accept to create a simulation that already exists
-        crawlSimulator.start(simulation);
-        return simulation;
+        crawlSimulator.start(simulationDescriptor);
+        return simulationDescriptor;
     }
 }

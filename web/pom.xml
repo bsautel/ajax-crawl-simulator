@@ -11,6 +11,14 @@
     <artifactId>web</artifactId>
     <name>Web Application</name>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>app</directory>
+            </resource>
+        </resources>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>net.code-story</groupId>
@@ -29,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>crawler</artifactId>
+            <artifactId>simulator</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
