@@ -1,22 +1,34 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.resource;
 
 import com.google.inject.Inject;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.WebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.web.simulation.CrawlSimulator;
 import fr.fierdecoder.ajaxcrawlsimulator.web.simulation.Simulation;
-import fr.fierdecoder.ajaxcrawlsimulator.web.simulation.SimulationsRegistry;
 import net.codestory.http.annotations.Get;
 
+import java.util.Collection;
 import java.util.Optional;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 public class SimulationResource {
-    private final SimulationsRegistry simulationsRegistry;
+    private final CrawlSimulator crawlSimulator;
 
     @Inject
-    public SimulationResource(SimulationsRegistry simulationsRegistry) {
-        this.simulationsRegistry = simulationsRegistry;
+    public SimulationResource(CrawlSimulator crawlSimulator) {
+        this.crawlSimulator = crawlSimulator;
     }
 
     @Get("/simulations/:name")
     public Optional<Simulation> getSimulation(String name) {
-        return simulationsRegistry.getByName(name);
+        return crawlSimulator.getSimulationByName(name);
+    }
+
+    @Get("/simulations/:name/result")
+    public Collection<WebPage> getSimulationResult(String name) {
+        return crawlSimulator.getSimulationStatusByName(name)
+                .map(WebPagesRegistry::getWebPages)
+                .orElse(newArrayList());
     }
 }

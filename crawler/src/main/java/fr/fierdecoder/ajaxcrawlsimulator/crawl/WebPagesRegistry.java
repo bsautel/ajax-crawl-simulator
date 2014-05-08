@@ -2,6 +2,7 @@ package fr.fierdecoder.ajaxcrawlsimulator.crawl;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 
+import java.util.Collection;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
@@ -31,7 +32,11 @@ public class WebPagesRegistry {
         return pagesByUrl.get(url);
     }
 
-    public Object getPagesCount() {
+    public int getPagesCount() {
         return pagesByUrl.size();
+    }
+
+    public Collection<WebPage> getWebPages() {
+        return pagesByUrl.values();
     }
 }
