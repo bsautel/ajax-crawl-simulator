@@ -1,16 +1,18 @@
-package fr.fierdecoder.ajaxcrawlsimulator.crawl;
+package fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter;
 
-public class CrawlPerimeter {
+public class SimpleCrawlPerimeter implements CrawlPerimeter {
     private final String entryUrl;
 
-    public CrawlPerimeter(String entryUrl) {
+    public SimpleCrawlPerimeter(String entryUrl) {
         this.entryUrl = entryUrl;
     }
 
+    @Override
     public String getEntryUrl() {
         return entryUrl;
     }
 
+    @Override
     public boolean contains(String url) {
         return true;
     }
