@@ -1,10 +1,10 @@
 package fr.fierdecoder.ajaxcrawlsimulator.crawl;
 
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.PageReader;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.SimpleCrawlPerimeter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,9 +37,9 @@ public class CrawlerTest {
     @Test
     public void singlePageCrawl() {
         HtmlWebPage indexPage = registerWebPage(new HtmlWebPage(INDEX_URL, HTML_CONTENTS, newHashSet()));
-        Crawler crawler = new Crawler(crawlPerimeter, pageReader);
+        Crawler crawler = new Crawler(pageReader);
 
-        WebPagesRegistry result = crawler.crawl();
+        WebPagesRegistry result = crawler.crawl(crawlPerimeter);
 
         assertEquals(1, result.getPagesCount());
         assertEquals(indexPage, result.getByUrl(INDEX_URL));
@@ -55,9 +55,9 @@ public class CrawlerTest {
     public void twoPagesCrawl() {
         HtmlWebPage indexPage = registerWebPage(new HtmlWebPage(INDEX_URL, HTML_CONTENTS, newHashSet(CONTACT_URL)));
         HtmlWebPage contactPage = registerWebPage(new HtmlWebPage(CONTACT_URL, HTML_CONTENTS, newHashSet()));
-        Crawler crawler = new Crawler(crawlPerimeter, pageReader);
+        Crawler crawler = new Crawler(pageReader);
 
-        WebPagesRegistry result = crawler.crawl();
+        WebPagesRegistry result = crawler.crawl(crawlPerimeter);
 
         assertEquals(2, result.getPagesCount());
         assertEquals(indexPage, result.getByUrl(INDEX_URL));
@@ -68,9 +68,9 @@ public class CrawlerTest {
     public void twoCyclingPagesCrawl() {
         HtmlWebPage indexPage = registerWebPage(new HtmlWebPage(INDEX_URL, HTML_CONTENTS, newHashSet(CONTACT_URL)));
         HtmlWebPage contactPage = registerWebPage(new HtmlWebPage(CONTACT_URL, HTML_CONTENTS, newHashSet(INDEX_URL)));
-        Crawler crawler = new Crawler(crawlPerimeter, pageReader);
+        Crawler crawler = new Crawler(pageReader);
 
-        WebPagesRegistry result = crawler.crawl();
+        WebPagesRegistry result = crawler.crawl(crawlPerimeter);
 
         assertEquals(2, result.getPagesCount());
         assertEquals(indexPage, result.getByUrl(INDEX_URL));
@@ -81,9 +81,9 @@ public class CrawlerTest {
     public void twoPagesIncludingOneIgnored() {
         HtmlWebPage indexPage = registerWebPage(new HtmlWebPage(INDEX_URL, HTML_CONTENTS, newHashSet(CONTACT_URL)));
         when(crawlPerimeter.contains(CONTACT_URL)).thenReturn(false);
-        Crawler crawler = new Crawler(crawlPerimeter, pageReader);
+        Crawler crawler = new Crawler(pageReader);
 
-        WebPagesRegistry result = crawler.crawl();
+        WebPagesRegistry result = crawler.crawl(crawlPerimeter);
 
         assertEquals(1, result.getPagesCount());
         assertEquals(indexPage, result.getByUrl(INDEX_URL));
@@ -93,9 +93,9 @@ public class CrawlerTest {
     public void redirectionPage() {
         RedirectionWebPage indexPage = registerWebPage(new RedirectionWebPage(INDEX_URL, HOME_URL));
         HtmlWebPage homePage = registerWebPage(new HtmlWebPage(HOME_URL, HTML_CONTENTS, newHashSet()));
-        Crawler crawler = new Crawler(crawlPerimeter, pageReader);
+        Crawler crawler = new Crawler(pageReader);
 
-        WebPagesRegistry result = crawler.crawl();
+        WebPagesRegistry result = crawler.crawl(crawlPerimeter);
 
         assertEquals(2, result.getPagesCount());
         assertEquals(indexPage, result.getByUrl(INDEX_URL));

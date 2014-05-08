@@ -1,20 +1,26 @@
-package fr.fierdecoder.ajaxcrawlsimulator.crawl;
+package fr.fierdecoder.ajaxcrawlsimulator.crawl.connector;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.UnreachableWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toSet;
-
 @Singleton
-public class PageReader {
+public class NetworkPageReader implements PageReader {
+    private final DocumentReader documentReader;
+
+    @Inject
+    public NetworkPageReader(DocumentReader documentReader) {
+        this.documentReader = documentReader;
+    }
+
+    @Override
     public WebPage readPage(String url) {
         try {
             return fetchPage(url);
@@ -32,15 +38,7 @@ public class PageReader {
             return readPage(url.replace("#", "?_escaped_fragment_="));
         }*/
 
-        Set<String> links = readLinks(document);
+        Set<String> links = documentReader.readLinks(document);
         return new HtmlWebPage(url, document.html(), links);
-    }
-
-    private Set<String> readLinks(Document document) {
-        Elements pageLinksElements = document.select("a");
-        return pageLinksElements.stream()
-                .map(linkElement -> linkElement.attr("abs:href"))
-                .filter(url -> !url.isEmpty())
-                .collect(toSet());
     }
 }
