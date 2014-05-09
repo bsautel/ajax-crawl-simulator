@@ -8,6 +8,7 @@ import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescript
 import fr.fierdecoder.ajaxcrawlsimulator.web.value.JsonPage;
 import fr.fierdecoder.ajaxcrawlsimulator.web.value.JsonPageConverter;
 import fr.fierdecoder.ajaxcrawlsimulator.web.value.JsonPagePreview;
+import net.codestory.http.annotations.Delete;
 import net.codestory.http.annotations.Get;
 
 import java.util.Collection;
@@ -31,6 +32,11 @@ public class SimulationResource {
     @Get("/simulations/:name")
     public Optional<SimulationDescriptor> getSimulation(String name) {
         return crawlSimulator.getSimulationDescriptorByName(name);
+    }
+
+    @Delete("/simulations/:name")
+    public void deleteSimulation(String name) {
+        crawlSimulator.deleteByName(name);
     }
 
     @Get("/simulations/:name/pages")

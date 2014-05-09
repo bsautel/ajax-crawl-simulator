@@ -11,7 +11,7 @@ function SimulationsContoller($scope, $http) {
     };
 }
 
-function SimulationController($routeParams, $scope, $http) {
+function SimulationController($routeParams, $scope, $http, $location) {
     var name = $routeParams.name;
     var simulation_url = '/simulations/' + encodeURIComponent(name);
     $http.get(simulation_url).success(function (simulation) {
@@ -26,6 +26,15 @@ function SimulationController($routeParams, $scope, $http) {
             return page.title;
         }
         return 'Unknown title';
+    };
+
+    $scope.delete = function () {
+        if (confirm('Do you want to delete this simulation?')) {
+            $http.delete(simulation_url).success(function () {
+                $location.path(simulationsRoute);
+            });
+        }
+
     };
 }
 

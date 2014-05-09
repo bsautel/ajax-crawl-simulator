@@ -66,4 +66,20 @@ public class MongoWebPagesRegistryTest {
         assertThat(anotherRegistry.getPagesCount(), is(0l));
         assertThat(anotherRegistry.getWebPages().size(), is(0));
     }
+
+    @Test
+    public void shouldDropAllPages() {
+        HtmlWebPage htmlWebPage = new HtmlWebPage(AN_URL, PAGE_TITLE, PAGE_CONTENTS, newHashSet());
+        RedirectionWebPage redirectionWebPage = new RedirectionWebPage(ANOTHER_URL, ANOTHER_URL_2);
+        UnreachableWebPage unreachableWebPage = new UnreachableWebPage(ANOTHER_URL_3, 404);
+
+        mongoRegistry.register(htmlWebPage);
+        anotherRegistry.register(redirectionWebPage);
+        mongoRegistry.register(unreachableWebPage);
+
+        mongoRegistry.drop();
+
+        assertThat(mongoRegistry.getPagesCount(), is(0l));
+        assertThat(anotherRegistry.getPagesCount(), is(1l));
+    }
 }

@@ -54,4 +54,8 @@ public class MongoWebPagesRegistry implements WebPagesRegistry {
         mongoWebPages.forEach(mongoWebPage -> result.add(mongoWebPageConverter.convertFromMongo(mongoWebPage)));
         return result;
     }
+
+    public void drop() {
+        collection.remove(SIMULATION_NAME_FILTER, simulationName);
+    }
 }

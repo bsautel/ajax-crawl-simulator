@@ -34,4 +34,9 @@ public class MemorySimulationsRegistry implements SimulationRegistry {
                 .map(Simulation::getDescriptor)
                 .collect(toSet());
     }
+
+    @Override
+    public void deleteByName(String name) {
+        simulations.remove(name);
+    }
 }

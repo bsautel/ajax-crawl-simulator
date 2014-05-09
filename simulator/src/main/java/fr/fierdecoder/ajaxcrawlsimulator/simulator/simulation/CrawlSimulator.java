@@ -56,4 +56,8 @@ public class CrawlSimulator {
     public Set<SimulationDescriptor> getSimulations() {
         return simulationRegistry.getDescriptors();
     }
+
+    public void deleteByName(String name) {
+        simulationRegistry.deleteByName(name);
+    }
 }

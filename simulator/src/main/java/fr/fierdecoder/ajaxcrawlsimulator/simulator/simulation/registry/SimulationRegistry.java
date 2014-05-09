@@ -12,4 +12,6 @@ public interface SimulationRegistry {
     Optional<Simulation> get(String name);
 
     Set<SimulationDescriptor> getDescriptors();
+
+    void deleteByName(String name);
 }
