@@ -8,7 +8,7 @@ function SimulationsContoller($scope, $http) {
 
     $scope.view_simulation_link = function view_simulation_link(simulation) {
         return '#' + simulationsRoute + "/" + simulation.name;
-    }
+    };
 }
 
 function SimulationController($routeParams, $scope, $http) {
@@ -20,6 +20,13 @@ function SimulationController($routeParams, $scope, $http) {
     $http.get(simulation_url + '/pages').success(function (pages) {
         $scope.pages = pages;
     });
+
+    $scope.get_page_title = function (page) {
+        if (page.type == 'HTML') {
+            return page.title;
+        }
+        return 'Unknown title';
+    };
 }
 
 var simulationsRoute = '/simulations';

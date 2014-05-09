@@ -38,9 +38,10 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="page in (pages | filter:{url: url_search} )">
+            <tr ng-repeat="page in (pages | filter:{url: url_search} )"
+                ng-class="{info: page.type == 'REDIRECTION', warning: page.type == 'UNREACHABLE'}">
                 <td>{{page.url}}</td>
-                <td>Unknown Title</td>
+                <td>{{get_page_title(page)}}</td>
             </tr>
             </tbody>
         </table>
