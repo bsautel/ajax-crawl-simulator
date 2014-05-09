@@ -2,13 +2,41 @@
 
 
 function SimulationsContoller($scope, $http) {
-    $http.get('/simulations').success(function (simulations) {
-        $scope.simulations = simulations;
-    });
+    $scope.refresh = function () {
+        $http.get('/simulations').success(function (simulations) {
+            $scope.simulations = simulations;
+        });
+    };
+    $scope.refresh();
 
     $scope.view_simulation_link = function view_simulation_link(simulation) {
         return '#' + simulationsRoute + "/" + simulation.name;
     };
+
+    $scope.createSimulation = function () {
+        $scope.newSimulation = {};
+    };
+
+    $scope.cancelSimulationCreation = function () {
+        delete $scope.newSimulation;
+    };
+
+    $scope.addNewSimulation = function () {
+        $http.post('/simulations', $scope.newSimulation).success(function (simulation) {
+            $scope.cancelSimulationCreation();
+            $scope.refresh();
+        });
+    };
+
+    $scope.isNewSimulationValid = function() {
+        if ($scope.newSimulation) {
+            var newSimulation = $scope.newSimulation;
+            return newSimulation.name.trim().length > 0
+                && newSimulation.entryUrl.trim().length > 0
+                && newSimulation.urlPrefix.trim().length > 0
+        }
+        return false;
+    }
 }
 
 function SimulationController($routeParams, $scope, $http, $location) {
