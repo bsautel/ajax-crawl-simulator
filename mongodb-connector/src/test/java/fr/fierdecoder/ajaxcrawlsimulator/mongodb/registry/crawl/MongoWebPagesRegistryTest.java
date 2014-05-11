@@ -10,6 +10,8 @@ import org.jongo.Jongo;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -45,9 +47,11 @@ public class MongoWebPagesRegistryTest {
 
         assertTrue(mongoRegistry.containsUrl(AN_URL));
         assertFalse(anotherRegistry.containsUrl(AN_URL));
-        WebPage result = mongoRegistry.getByUrl(AN_URL);
-        assertThat(result, instanceOf(HtmlWebPage.class));
-        HtmlWebPage htmlResult = result.asHtmlWebPage();
+        Optional<WebPage> result = mongoRegistry.getByUrl(AN_URL);
+        assertThat(result.isPresent(), is(true));
+        WebPage webPage = result.get();
+        assertThat(webPage, instanceOf(HtmlWebPage.class));
+        HtmlWebPage htmlResult = webPage.asHtmlWebPage();
         assertThat(htmlResult, is(htmlWebPage));
     }
 

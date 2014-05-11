@@ -4,6 +4,7 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryWebPagesRegistry implements WebPagesRegistry {
@@ -20,8 +21,8 @@ public class MemoryWebPagesRegistry implements WebPagesRegistry {
     }
 
     @Override
-    public WebPage getByUrl(String url) {
-        return pagesByUrl.get(url);
+    public Optional<WebPage> getByUrl(String url) {
+        return Optional.of(pagesByUrl.get(url));
     }
 
     @Override

@@ -7,7 +7,10 @@ import org.jongo.MongoCollection;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+
+import static java.util.Optional.empty;
 
 public class MongoWebPagesRegistry implements WebPagesRegistry {
     public static final String NAME_AND_URL_FILTER = "{'url': '#', 'simulationName': '#'}";
@@ -35,9 +38,12 @@ public class MongoWebPagesRegistry implements WebPagesRegistry {
     }
 
     @Override
-    public WebPage getByUrl(String url) {
+    public Optional<WebPage> getByUrl(String url) {
         MongoWebPage mongoPage = collection.findOne(NAME_AND_URL_FILTER, url, simulationName).as(MongoWebPage.class);
-        return mongoWebPageConverter.convertFromMongo(mongoPage);
+        if (mongoPage != null) {
+            return Optional.of(mongoWebPageConverter.convertFromMongo(mongoPage));
+        }
+        return empty();
     }
 
     @Override

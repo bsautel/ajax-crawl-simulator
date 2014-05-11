@@ -11,6 +11,8 @@ import fr.fierdecoder.ajaxcrawlsimulator.web.value.JsonPagePreview;
 import net.codestory.http.annotations.Delete;
 import net.codestory.http.annotations.Get;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -53,11 +55,10 @@ public class SimulationResource {
     }
 
     @Get("/simulations/:name/pages/:url")
-    public Optional<JsonPage> getSimulationPage(String name, String url) {
-        System.out.println(url);
+    public Optional<JsonPage> getSimulationPage(String name, String url) throws UnsupportedEncodingException {
+        String decodedUrl = URLDecoder.decode(url, "UTF-8");
         Optional<WebPagesRegistry> optionalWebPagesRegistry = crawlSimulator.getSimulationWebPagesRegistryByName(name);
-        // TODO make getByUrl return an optional in order to avoid requiring call contains
-        Optional<WebPage> optionalPage = optionalWebPagesRegistry.map(registry -> registry.getByUrl(url));
+        Optional<WebPage> optionalPage = optionalWebPagesRegistry.flatMap(registry -> registry.getByUrl(decodedUrl));
         return optionalPage.map(jsonPageConverter::createJsonPage);
     }
 }
