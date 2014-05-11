@@ -10,8 +10,8 @@ public class JsonPageConverter {
     public JsonPage createJsonPage(WebPage webPage) {
         JsonPage jsonPage = new JsonPage(webPage.getType(), webPage.getUrl(),
                 webPage.getHttpStatus(), webPage.getBody());
-        if (webPage.isHtmlWebPage()) {
-            HtmlWebPage htmlPage = webPage.asHtmlWebPage();
+        if (webPage.isHtml()) {
+            HtmlWebPage htmlPage = webPage.asHtml();
             jsonPage.setTitle(htmlPage.getTitle());
             jsonPage.setLinks(htmlPage.getLinks());
         } else if (webPage.isRedirection()) {
@@ -23,8 +23,8 @@ public class JsonPageConverter {
 
     public JsonPagePreview createJsonPagePreview(WebPage webPage) {
         JsonPagePreview jsonPage = new JsonPagePreview(webPage.getType(), webPage.getUrl());
-        if (webPage.isHtmlWebPage()) {
-            HtmlWebPage htmlPage = webPage.asHtmlWebPage();
+        if (webPage.isHtml()) {
+            HtmlWebPage htmlPage = webPage.asHtml();
             jsonPage.setTitle(htmlPage.getTitle());
         }
         return jsonPage;

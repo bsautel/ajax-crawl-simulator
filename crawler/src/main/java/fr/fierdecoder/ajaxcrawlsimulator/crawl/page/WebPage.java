@@ -29,11 +29,11 @@ public class WebPage {
         return body;
     }
 
-    public boolean isHtmlWebPage() {
+    public boolean isHtml() {
         return type == HTML;
     }
 
-    public HtmlWebPage asHtmlWebPage() {
+    public HtmlWebPage asHtml() {
         return (HtmlWebPage) this;
     }
 
@@ -45,8 +45,16 @@ public class WebPage {
         return (RedirectionWebPage) this;
     }
 
-    public boolean isUnreachableWebPage() {
+    public boolean isUnreachable() {
         return type == UNREACHABLE;
+    }
+
+    public boolean isText() {
+        return type == TEXT;
+    }
+
+    public boolean isBinary() {
+        return type == BINARY;
     }
 
     public WebPageType getType() {

@@ -36,15 +36,15 @@ public class Crawler {
         LOGGER.info("Crawling {}", url);
         if (mustBeCrawled(url, registry, crawlPerimeter)) {
             WebPage page = pageReader.readPage(url);
-            if (page.isHtmlWebPage()) {
-                HtmlWebPage htmlPage = page.asHtmlWebPage();
+            if (page.isHtml()) {
+                HtmlWebPage htmlPage = page.asHtml();
                 urlQueue.addAll(htmlPage.getLinks());
                 LOGGER.info("Url {} returned a HTML page with title {}", url, htmlPage.getTitle());
             } else if (page.isRedirection()) {
                 RedirectionWebPage redirection = page.asRedirection();
                 urlQueue.add(redirection.getTargetUrl());
                 LOGGER.info("Url {} returned a redirection to {}", url, redirection.getTargetUrl());
-            } else if (page.isUnreachableWebPage()) {
+            } else if (page.isUnreachable()) {
                 LOGGER.info("Url {} is unreachable", url);
             }
             registry.register(page);

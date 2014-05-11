@@ -17,8 +17,8 @@ public class MongoWebPageConverter {
     public MongoWebPage convertToMongo(WebPage webPage, String simulationName) {
         MongoWebPage result = new MongoWebPage(simulationName, webPage.getType(),
                 webPage.getUrl(), webPage.getHttpStatus(), webPage.getBody());
-        if (webPage.isHtmlWebPage()) {
-            HtmlWebPage htmlWebPage = webPage.asHtmlWebPage();
+        if (webPage.isHtml()) {
+            HtmlWebPage htmlWebPage = webPage.asHtml();
             result.setTitle(htmlWebPage.getTitle());
             result.setLinks(htmlWebPage.getLinks());
         } else if (webPage.isRedirection()) {
@@ -39,6 +39,11 @@ public class MongoWebPageConverter {
             case UNREACHABLE:
                 return webPageFactory.buildUnreachableWebPage(mongoPage.getUrl(), mongoPage.getHttpStatus(),
                         mongoPage.getBody());
+            case TEXT:
+                return webPageFactory.buildTextWebPage(mongoPage.getUrl(), mongoPage.getHttpStatus(),
+                        mongoPage.getBody());
+            case BINARY:
+                return webPageFactory.buildBinaryWebPage(mongoPage.getUrl(), mongoPage.getHttpStatus());
         }
         throw new IllegalArgumentException();
     }

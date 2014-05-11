@@ -57,7 +57,7 @@ public class MongoWebPagesRegistryTest {
         assertThat(result.isPresent(), is(true));
         WebPage webPage = result.get();
         assertThat(webPage, instanceOf(HtmlWebPage.class));
-        HtmlWebPage htmlResult = webPage.asHtmlWebPage();
+        HtmlWebPage htmlResult = webPage.asHtml();
         assertThat(htmlResult, is(aHtmlWebPage));
     }
 

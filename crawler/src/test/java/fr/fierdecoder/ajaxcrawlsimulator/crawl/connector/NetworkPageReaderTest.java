@@ -50,10 +50,10 @@ public class NetworkPageReaderTest {
     private void assertHtmlDocument(String responseBody) {
         WebPage result = networkPageReader.readPage(HTTP_DOMAIN + HOME_PATH);
 
-        assertThat(result.isHtmlWebPage(), is(true));
+        assertThat(result.isHtml(), is(true));
         assertThat(result.getHttpStatus(), is(200));
         assertThat(result.getBody(), is(responseBody));
-        HtmlWebPage htmlWebPage = result.asHtmlWebPage();
+        HtmlWebPage htmlWebPage = result.asHtml();
         assertThat(htmlWebPage.getTitle(), is("My page"));
         assertThat(htmlWebPage.getLinks(),
                 containsInAnyOrder(HTTP_DOMAIN + ABOUT_PAGE, CONTACT_URL, GOOGLE_URL));
@@ -109,8 +109,34 @@ public class NetworkPageReaderTest {
 
         WebPage result = networkPageReader.readPage(HTTP_DOMAIN + HOME_PATH);
 
-        assertThat(result.isUnreachableWebPage(), is(true));
+        assertThat(result.isUnreachable(), is(true));
         assertThat(result.getBody(), is(""));
         assertThat(result.getHttpStatus(), is(404));
+    }
+
+    @Test
+    public void textPage() throws IOException {
+        ResponseDefinitionBuilder response = aResponse().withStatus(200)
+                .withBody("foo").withHeader("Content-Type", "text/plain");
+        stubFor(get(urlEqualTo(HOME_PATH)).willReturn(response));
+
+        WebPage result = networkPageReader.readPage(HTTP_DOMAIN + HOME_PATH);
+
+        assertThat(result.isText(), is(true));
+        assertThat(result.getBody(), is("foo"));
+        assertThat(result.getHttpStatus(), is(200));
+    }
+
+    @Test
+    public void binaryPage() throws IOException {
+        ResponseDefinitionBuilder response = aResponse().withStatus(200)
+                .withBody("foo").withHeader("Content-Type", "image/png");
+        stubFor(get(urlEqualTo(HOME_PATH)).willReturn(response));
+
+        WebPage result = networkPageReader.readPage(HTTP_DOMAIN + HOME_PATH);
+
+        assertThat(result.isBinary(), is(true));
+        assertThat(result.getBody(), is(""));
+        assertThat(result.getHttpStatus(), is(200));
     }
 }

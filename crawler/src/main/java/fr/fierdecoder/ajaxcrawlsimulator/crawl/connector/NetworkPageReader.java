@@ -67,8 +67,10 @@ public class NetworkPageReader implements PageReader {
             if (isHtmlPage(contentType)) {
                 return processHtmlWebPage(url, status, bodyString);
             }
-            // TODO return not HTML contents
-            throw new IllegalStateException("State not handled");
+            else if (isTextPage(contentType)) {
+                return webPageFactory.buildTextWebPage(url, status, bodyString);
+            }
+            return webPageFactory.buildBinaryWebPage(url, status);
         } finally {
             response.close();
         }
@@ -94,6 +96,10 @@ public class NetworkPageReader implements PageReader {
 
     private boolean isHtmlPage(ContentType contentType) {
         return contentType.getMimeType().equals("text/html");
+    }
+
+    private boolean isTextPage(ContentType contentType) {
+        return contentType.getMimeType().startsWith("text/");
     }
 
     private WebPage processHtmlWebPage(String url, int status, String body) {

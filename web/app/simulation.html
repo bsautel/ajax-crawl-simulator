@@ -43,7 +43,15 @@
             <tbody>
             <tr ng-repeat="page in (pages | filter:{url: url_search} )"
                 ng-class="{info: page.type == 'REDIRECTION', warning: page.type == 'UNREACHABLE'}">
-                <td>{{page.url}}</td>
+                <td>
+                    <span class="glyphicon" ng-class="{'glyphicon-globe': page.type == 'HTML',
+                                                       'glyphicon-file': page.type == 'TEXT',
+                                                       'glyphicon-picture': page.type == 'BINARY',
+                                                       'glyphicon-share': page.type == 'REDIRECTION',
+                                                       'glyphicon-warning-sign': page.type == 'UNREACHABLE'}">
+                    </span>
+                    {{page.url}}
+                </td>
                 <td>{{get_page_title(page)}}</td>
             </tr>
             </tbody>
