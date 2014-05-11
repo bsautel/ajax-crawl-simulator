@@ -1,11 +1,14 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.value;
 
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType;
+
 public class JsonPagePreview {
+    private final WebPageType type;
     private final String url;
-    private PageType type;
     private String title;
 
-    public JsonPagePreview(String url) {
+    public JsonPagePreview(WebPageType type, String url) {
+        this.type = type;
         this.url = url;
     }
 
@@ -21,11 +24,7 @@ public class JsonPagePreview {
         this.title = title;
     }
 
-    public PageType getType() {
+    public WebPageType getType() {
         return type;
-    }
-
-    public void setType(PageType type) {
-        this.type = type;
     }
 }

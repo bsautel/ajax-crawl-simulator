@@ -1,41 +1,40 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl;
 
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType;
+
 import java.util.Set;
 
 public class MongoWebPage {
-    public enum Type {HTML, REDIRECTION, UNREACHABLE}
-
-    private String url;
     private String simulationName;
-    private Type type;
+    private WebPageType type;
+    private String url;
+    private int httpStatus;
+    private String body;
     private String targetUrl;
-    private Integer httpStatus;
     private String title;
-    private String contents;
     private Set<String> links;
+
+    public MongoWebPage(String simulationName, WebPageType type, String url, int httpStatus, String body) {
+        this.simulationName = simulationName;
+        this.type = type;
+        this.url = url;
+        this.httpStatus = httpStatus;
+        this.body = body;
+    }
+
+    public MongoWebPage() {
+    }
 
     public String getUrl() {
         return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public void setSimulationName(String simulationName) {
-        this.simulationName = simulationName;
     }
 
     public String getSimulationName() {
         return simulationName;
     }
 
-    public Type getType() {
+    public WebPageType getType() {
         return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
     }
 
     public String getTargetUrl() {
@@ -50,10 +49,6 @@ public class MongoWebPage {
         return httpStatus;
     }
 
-    public void setHttpStatus(Integer httpStatus) {
-        this.httpStatus = httpStatus;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -62,12 +57,8 @@ public class MongoWebPage {
         this.title = title;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
+    public String getBody() {
+        return body;
     }
 
     public Set<String> getLinks() {

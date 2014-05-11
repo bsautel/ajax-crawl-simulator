@@ -1,6 +1,7 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
@@ -15,7 +16,7 @@ import static java.util.Optional.empty;
 public class MongoWebPagesRegistry implements WebPagesRegistry {
     public static final String NAME_AND_URL_FILTER = "{'url': '#', 'simulationName': '#'}";
     public static final String SIMULATION_NAME_FILTER = "{'simulationName': '#'}";
-    private final MongoWebPageConverter mongoWebPageConverter = new MongoWebPageConverter();
+    private final MongoWebPageConverter mongoWebPageConverter = new MongoWebPageConverter(new WebPageFactory());
     private final MongoCollection collection;
     private final String simulationName;
 

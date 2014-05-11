@@ -2,9 +2,8 @@ package fr.fierdecoder.ajaxcrawlsimulator.crawl.connector;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.UnreachableWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -14,10 +13,12 @@ import java.util.Set;
 @Singleton
 public class NetworkPageReader implements PageReader {
     private final DocumentReader documentReader;
+    private final WebPageFactory webPageFactory;
 
     @Inject
-    public NetworkPageReader(DocumentReader documentReader) {
+    public NetworkPageReader(DocumentReader documentReader, WebPageFactory webPageFactory) {
         this.documentReader = documentReader;
+        this.webPageFactory = webPageFactory;
     }
 
     @Override
@@ -25,7 +26,8 @@ public class NetworkPageReader implements PageReader {
         try {
             return fetchPage(url);
         } catch (IOException e) {
-            return new UnreachableWebPage(url, 0);
+            // TODO provide HTTP Status and Body
+            return webPageFactory.buildUnreachableWebPage(url, 0, "");
         }
     }
 
@@ -40,6 +42,7 @@ public class NetworkPageReader implements PageReader {
 
         Set<String> links = documentReader.readLinks(document);
         String title = documentReader.readTitle(document);
-        return new HtmlWebPage(url, title, document.html(), links);
+        // TODO provide HTTP Status
+        return webPageFactory.buildHtmlWebPage(url, 200, title, document.html(), links);
     }
 }
