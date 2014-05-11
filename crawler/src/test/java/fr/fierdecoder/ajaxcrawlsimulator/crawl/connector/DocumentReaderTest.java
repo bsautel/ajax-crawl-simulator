@@ -34,7 +34,7 @@ public class DocumentReaderTest {
     public void readLinks() throws IOException {
         Set<String> links = documentReader.readLinks(sampleDocument);
 
-        assertThat(links, containsInAnyOrder(ROOT_URL + "contact", ROOT_URL + "about", "https://www.google.com"));
+        assertThat(links, containsInAnyOrder(ROOT_URL + "contact", ROOT_URL + "about", "https://www.google.com/"));
     }
 
     @Test
