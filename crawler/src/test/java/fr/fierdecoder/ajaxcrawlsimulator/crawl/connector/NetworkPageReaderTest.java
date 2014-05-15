@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.NetworkPageReader.ESCAPED_FRAGMENT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
@@ -32,20 +33,26 @@ public class NetworkPageReaderTest {
     private NetworkPageReader networkPageReader;
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(PORT);
+    private String simpleHtmlDocument, fragmentHtmlDocument;
 
     @Before
     public void setUp() throws Exception {
+        simpleHtmlDocument = readHtmlDocument("document.html");
+        fragmentHtmlDocument = readHtmlDocument("document_with_fragment.html");
         networkPageReader = new NetworkPageReader(new DocumentReader(), new WebPageFactory());
+    }
+
+    private String readHtmlDocument(String fileName) throws IOException {
+        return CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream(fileName), "utf-8"));
     }
 
     @Test
     public void htmlPageWithoutEncoding() throws IOException {
-        String responseBody = readHtmlDocument();
         ResponseDefinitionBuilder response = aResponse().withStatus(200)
-                .withHeader("Content-Type", "text/html").withBody(responseBody);
+                .withHeader("Content-Type", "text/html").withBody(simpleHtmlDocument);
         stubFor(get(urlEqualTo(HOME_PATH)).willReturn(response));
 
-        assertHtmlDocument(responseBody);
+        assertHtmlDocument(simpleHtmlDocument);
     }
 
     private void assertHtmlDocument(String responseBody) {
@@ -62,16 +69,11 @@ public class NetworkPageReaderTest {
 
     @Test
     public void htmlPageWithEncoding() throws IOException {
-        String responseBody = readHtmlDocument();
         ResponseDefinitionBuilder response = aResponse().withStatus(200)
-                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(responseBody);
+                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(simpleHtmlDocument);
         stubFor(get(urlEqualTo(HOME_PATH)).willReturn(response));
 
-        assertHtmlDocument(responseBody);
-    }
-
-    private String readHtmlDocument() throws IOException {
-        return CharStreams.toString(new InputStreamReader(getClass().getResourceAsStream("document.html"), "utf-8"));
+        assertHtmlDocument(simpleHtmlDocument);
     }
 
     @Test
@@ -143,9 +145,8 @@ public class NetworkPageReaderTest {
 
     @Test
     public void duplicatePage() throws IOException {
-        String responseBody = readHtmlDocument();
         ResponseDefinitionBuilder response = aResponse().withStatus(200)
-                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(responseBody);
+                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(simpleHtmlDocument);
         stubFor(get(urlEqualTo(HOME_PATH)).willReturn(response));
 
         WebPage result = networkPageReader.readPage(HTTP_DOMAIN + HOME_PATH + ANCHOR);
@@ -155,4 +156,23 @@ public class NetworkPageReaderTest {
         assertThat(result.getHttpStatus(), is(200));
         assertThat(result.asRedirection().getTargetUrl(), is(HTTP_DOMAIN + HOME_PATH));
     }
+
+    @Test
+    public void htmlPageWithFragmentSupportAndWithoutHash() throws Exception {
+        ResponseDefinitionBuilder fragmentResponse = aResponse().withStatus(200)
+                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(fragmentHtmlDocument);
+        stubFor(get(urlEqualTo(HOME_PATH)).willReturn(fragmentResponse));
+        ResponseDefinitionBuilder simpleResponse = aResponse().withStatus(200)
+                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(simpleHtmlDocument);
+        stubFor(get(urlEqualTo(HOME_PATH + "?" + ESCAPED_FRAGMENT + "=")).willReturn(simpleResponse));
+
+        WebPage result = networkPageReader.readPage(HTTP_DOMAIN + HOME_PATH);
+
+        assertThat(result.isHtml(), is(true));
+        assertThat(result.getUrl(), is(HTTP_DOMAIN + HOME_PATH));
+        assertThat(result.getBody(), is(simpleHtmlDocument));
+        assertThat(result.getHttpStatus(), is(200));
+    }
+
+    // TODO test with an URL that contains a fragment
 }

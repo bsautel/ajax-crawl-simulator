@@ -14,6 +14,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,7 @@ import static java.util.Optional.ofNullable;
 
 @Singleton
 public class NetworkPageReader implements PageReader {
+    public static final String ESCAPED_FRAGMENT = "_escaped_fragment_";
     private final DocumentReader documentReader;
     private final WebPageFactory webPageFactory;
 
@@ -39,13 +41,13 @@ public class NetworkPageReader implements PageReader {
     @Override
     public WebPage readPage(String url) {
         try {
-            return resolveUrl(url);
+            return resolveUrl(url, url);
         } catch (IOException e) {
             return webPageFactory.buildUnreachableWebPage(url, 0, "");
         }
     }
 
-    private WebPage resolveUrl(String url) throws IOException {
+    private WebPage resolveUrl(String url, String urlToDisplay) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpClientContext context = HttpClientContext.create();
         HttpGet request = new HttpGet(url);
@@ -59,21 +61,21 @@ public class NetworkPageReader implements PageReader {
             if (isRedirection(context)) {
                 URI location = context.getRedirectLocations().get(0);
                 // TODO find a way to get the right first redirection
-                return webPageFactory.buildRedirectionWebPage(url, 301, "", location.toString());
+                return webPageFactory.buildRedirectionWebPage(urlToDisplay, 301, "", location.toString());
             }
             if (isHttpError(status)) {
-                return webPageFactory.buildUnreachableWebPage(url, status, bodyString);
+                return webPageFactory.buildUnreachableWebPage(urlToDisplay, status, bodyString);
             }
             if (isHtmlPage(contentType)) {
-                if (url.contains("#")) {
-                    String canonicalUrl = url.split("#")[0];
-                    return webPageFactory.buildRedirectionWebPage(url, 200, "", canonicalUrl);
+                if (urlToDisplay.contains("#")) {
+                    String canonicalUrl = urlToDisplay.split("#")[0];
+                    return webPageFactory.buildRedirectionWebPage(urlToDisplay, 200, "", canonicalUrl);
                 }
-                return processHtmlWebPage(url, status, bodyString);
+                return processHtmlWebPage(urlToDisplay, status, bodyString);
             } else if (isTextPage(contentType)) {
-                return webPageFactory.buildTextWebPage(url, status, bodyString);
+                return webPageFactory.buildTextWebPage(urlToDisplay, status, bodyString);
             }
-            return webPageFactory.buildBinaryWebPage(url, status);
+            return webPageFactory.buildBinaryWebPage(urlToDisplay, status);
         } finally {
             response.close();
         }
@@ -105,13 +107,18 @@ public class NetworkPageReader implements PageReader {
         return contentType.getMimeType().startsWith("text/");
     }
 
-    private WebPage processHtmlWebPage(String url, int status, String body) {
+    private WebPage processHtmlWebPage(String url, int status, String body) throws IOException {
+        // TODO can make an infinite loop whether the resolved page still contains the same fragment
         Document document = Jsoup.parse(body, url);
-        /*Elements fragmentMeta = document.select("meta[name=fragment]");
+        Elements fragmentMeta = document.select("meta[name=fragment]");
         if (fragmentMeta.size() == 1) {
-            String fragmentMetaValue = fragmentMeta.get(0).attr("content");
-            return readPage(url.replace("#", "?_escaped_fragment_="));
-        }*/
+            if (url.contains("#")) {
+                String hash = url.split("#")[1];
+                return resolveUrl(url.replace("#!.*$", "?_escaped_fragment_=" + hash), url);
+            } else {
+                return resolveUrl(url + "?" + ESCAPED_FRAGMENT + "=", url);
+            }
+        }
         Set<String> links = documentReader.readLinks(document);
         String title = documentReader.readTitle(document);
         return webPageFactory.buildHtmlWebPage(url, status, title, body, links);
