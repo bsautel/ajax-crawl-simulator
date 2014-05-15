@@ -58,4 +58,15 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>0.33</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

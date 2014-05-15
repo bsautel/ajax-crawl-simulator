@@ -17,6 +17,20 @@
                 <directory>app</directory>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <configuration>
+                    <targetClasses>
+                        <param>fr.fierdecoder.ajaxcrawlsimulator.web*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>fr.fierdecoder.ajaxcrawlsimulator.web*</param>
+                    </targetTests>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencies>

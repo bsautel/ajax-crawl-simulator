@@ -45,4 +45,20 @@
         </dependency>
         <!--End of classpath overloading-->
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <configuration>
+                    <targetClasses>
+                        <param>fr.fierdecoder.ajaxcrawlsimulator.launcher.web*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>fr.fierdecoder.ajaxcrawlsimulator.launcher.web*</param>
+                    </targetTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
