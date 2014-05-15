@@ -1,5 +1,12 @@
 'use strict';
 
+function generateSimulationLink(simulationName) {
+    return '#' + simulationsRoute + '/' + simulationName;
+}
+
+function generatePageLink(simulationName, pageUrl) {
+    return generateSimulationLink(simulationName) + '/' + encodeURIComponent(encodeURIComponent(pageUrl));
+}
 
 function SimulationsContoller($scope, $http) {
     $scope.refresh = function () {
@@ -9,7 +16,7 @@ function SimulationsContoller($scope, $http) {
     };
     $scope.refresh();
 
-    $scope.view_simulation_link = function view_simulation_link(simulation) {
+    $scope.viewSimulationLink = function viewSimulationLink(simulation) {
         return '#' + simulationsRoute + "/" + simulation.name;
     };
 
@@ -28,7 +35,7 @@ function SimulationsContoller($scope, $http) {
         });
     };
 
-    $scope.isNewSimulationValid = function() {
+    $scope.isNewSimulationValid = function () {
         if ($scope.newSimulation) {
             var newSimulation = $scope.newSimulation;
             return newSimulation.name.trim().length > 0
@@ -41,15 +48,17 @@ function SimulationsContoller($scope, $http) {
 
 function SimulationController($routeParams, $scope, $http, $location) {
     var name = $routeParams.name;
-    var simulation_url = '/simulations/' + encodeURIComponent(name);
-    $http.get(simulation_url).success(function (simulation) {
+    var simulationUrl = '/simulations/' + encodeURIComponent(name);
+
+    $http.get(simulationUrl).success(function (simulation) {
         $scope.simulation = simulation;
     });
-    $http.get(simulation_url + '/pages').success(function (pages) {
+
+    $http.get(simulationUrl + '/pages').success(function (pages) {
         $scope.pages = pages;
     });
 
-    $scope.get_page_title = function (page) {
+    $scope.getPageTitle = function (page) {
         if (page.type == 'HTML') {
             return page.title;
         }
@@ -58,16 +67,37 @@ function SimulationController($routeParams, $scope, $http, $location) {
 
     $scope.delete = function () {
         if (confirm('Do you want to delete this simulation?')) {
-            $http.delete(simulation_url).success(function () {
+            $http.delete(simulationUrl).success(function () {
                 $location.path(simulationsRoute);
             });
         }
-
     };
+
+    $scope.generatePageLink = function (page) {
+        return generatePageLink(name, page.url);
+    };
+}
+
+function PageController($routeParams, $scope, $http) {
+    var simulationName = $routeParams.name;
+    var pageUrl = $routeParams.url;
+    var pageWsUrl = '/simulations/' + simulationName + '/pages/' + encodeURIComponent(encodeURIComponent(pageUrl));
+    $http.get(pageWsUrl).success(function (page) {
+        $scope.page = page;
+    });
+
+    $scope.generatePageLink = function (link) {
+        return generatePageLink(simulationName, link);
+    };
+
+    $scope.generateSimulationLink = function () {
+        return generateSimulationLink(simulationName);
+    }
 }
 
 var simulationsRoute = '/simulations';
 var simulationRoute = simulationsRoute + '/:name';
+var pageRoute = simulationRoute + '/:url';
 
 angular.module('ajax-crawl-simulator', ['ngRoute']).config(
     [
@@ -76,6 +106,7 @@ angular.module('ajax-crawl-simulator', ['ngRoute']).config(
             $routeProvider.
                 when(simulationsRoute, {templateUrl: 'simulations.html', controller: SimulationsContoller}).
                 when(simulationRoute, {templateUrl: 'simulation.html', controller: SimulationController}).
+                when(pageRoute, {templateUrl: 'page.html', controller: PageController}).
                 otherwise({redirectTo: simulationsRoute});
         }
     ]);

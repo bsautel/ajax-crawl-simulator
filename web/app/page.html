@@ -1,0 +1,74 @@
+<div class="container-fluid">
+    <h1>
+        <span class="glyphicon" ng-class="{'glyphicon-globe': page.type == 'HTML',
+        'glyphicon-file': page.type == 'TEXT',
+        'glyphicon-picture': page.type == 'BINARY',
+        'glyphicon-share': page.type == 'REDIRECTION',
+        'glyphicon-warning-sign': page.type == 'UNREACHABLE'}"></span>
+        {{page.url}}
+        <a class="btn btn-primary" href="{{page.url}}" target="_blank">
+            <span class="glyphicon glyphicon-new-window"></span>
+            Display
+        </a>
+        <a class="btn btn-default" href="{{generateSimulationLink()}}">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+            Back
+        </a>
+    </h1>
+
+    <div class="container">
+        <div class="panel panel-info">
+            <div class="panel-heading">General Information</div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-2"><span class="glyphicon glyphicon-info-sign"></span>
+                            HTTP Status
+                        </div>
+                        <div class="col-md-10"><code>{{page.httpStatus}}</code></div>
+                    </div>
+                </li>
+                <li class="list-group-item" ng-show="page.type == 'HTML'">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <span class="glyphicon glyphicon-comment"></span>
+                            Title
+                        </div>
+                        <div class="col-md-10">{{page.title}}</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div ng-show="page.type == 'REDIRECTION'">
+        <div class="panel panel-info">
+            <div class="panel-heading">Redirects to</div>
+            <div class="panel-body">
+                {{page.targetUrl}}
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="page.type == 'HTML'">
+        <div class="panel  panel-info">
+            <div class="panel-heading">Page Contents</div>
+            <div class="panel-body">
+                <pre class="pre-scrollable" ng-bind="page.body"></pre>
+            </div>
+        </div>
+        <div class="panel  panel-info">
+            <div class="panel-heading">
+                Page Links
+                <span class="badge">{{page.links.length}}</span>
+            </div>
+            <ul class="list-group">
+                <li ng-repeat="link in page.links" class="list-group-item">
+                    <a ng-href="{{generatePageLink(link)}}">
+                        {{link}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

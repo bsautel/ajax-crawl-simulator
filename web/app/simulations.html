@@ -42,9 +42,9 @@
 
 <div class="container">
     <div class="row">
-        <ul ng-repeat="simulation in simulations" class="list-group">
-            <li>
-                <a ng-href="{{view_simulation_link(simulation)}}" class="list-group-item">
+        <ul class="list-group">
+            <li ng-repeat="simulation in simulations" class="list-group-item">
+                <a ng-href="{{viewSimulationLink(simulation)}}">
                     {{simulation.name}}
                     <span class="badge">{{simulation.entryUrl}}</span>
                 </a>

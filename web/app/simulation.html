@@ -50,9 +50,11 @@
                                                        'glyphicon-share': page.type == 'REDIRECTION',
                                                        'glyphicon-warning-sign': page.type == 'UNREACHABLE'}">
                     </span>
-                    {{page.url}}
+                    <a ng-href="{{generatePageLink(page)}}">{{page.url}}</a>
                 </td>
-                <td>{{get_page_title(page)}}</td>
+                <td>
+                    {{getPageTitle(page)}}
+                </td>
             </tr>
             </tbody>
         </table>
