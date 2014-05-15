@@ -21,7 +21,7 @@ function SimulationsContoller($scope, $http) {
     };
 
     $scope.createSimulation = function () {
-        $scope.newSimulation = {};
+        $scope.newSimulation = {name: '', entryUrl: '', urlPrefix: ''};
     };
 
     $scope.cancelSimulationCreation = function () {
@@ -35,12 +35,34 @@ function SimulationsContoller($scope, $http) {
         });
     };
 
+    function validateNewSimulation(validation_function) {
+        if ($scope.newSimulation) {
+            return validation_function($scope.newSimulation);
+        }
+        return false;
+    }
+    $scope.isNewSimulationNameValid = function () {
+        return validateNewSimulation(function (simulation) {
+            return simulation.name.trim().length > 0;
+        })
+    };
+    $scope.isNewSimulationUrlValid = function () {
+        return validateNewSimulation(function (simulation) {
+            return simulation.entryUrl.trim().length > 0;
+        })
+    };
+    $scope.isNewSimulationPrefixValid = function () {
+        return validateNewSimulation(function (simulation) {
+            return simulation.urlPrefix.trim().length > 0;
+        })
+    };
     $scope.isNewSimulationValid = function () {
         if ($scope.newSimulation) {
-            var newSimulation = $scope.newSimulation;
-            return newSimulation.name.trim().length > 0
-                && newSimulation.entryUrl.trim().length > 0
-                && newSimulation.urlPrefix.trim().length > 0
+            return validateNewSimulation(function (simulation) {
+                return $scope.isNewSimulationNameValid(simulation)
+                    && $scope.isNewSimulationUrlValid(simulation)
+                    && $scope.isNewSimulationPrefixValid();
+            });
         }
         return false;
     }
