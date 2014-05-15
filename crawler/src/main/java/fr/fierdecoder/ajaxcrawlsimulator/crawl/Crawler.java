@@ -48,7 +48,7 @@ public class Crawler {
                 LOGGER.info("Url {} is unreachable", url);
             }
             registry.register(page);
-        }else {
+        } else {
             LOGGER.info("Url {} ignored since it is not in the crawl perimeter", url);
         }
     }

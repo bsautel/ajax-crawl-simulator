@@ -4,9 +4,7 @@ import com.google.inject.Singleton;
 
 import java.util.Set;
 
-import static fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType.BINARY;
-import static fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType.TEXT;
-import static fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType.UNREACHABLE;
+import static fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType.*;
 
 @Singleton
 public class WebPageFactory {

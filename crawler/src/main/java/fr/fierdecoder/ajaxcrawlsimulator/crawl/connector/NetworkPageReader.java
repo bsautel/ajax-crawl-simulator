@@ -65,9 +65,12 @@ public class NetworkPageReader implements PageReader {
                 return webPageFactory.buildUnreachableWebPage(url, status, bodyString);
             }
             if (isHtmlPage(contentType)) {
+                if (url.contains("#")) {
+                    String canonicalUrl = url.split("#")[0];
+                    return webPageFactory.buildRedirectionWebPage(url, 200, "", canonicalUrl);
+                }
                 return processHtmlWebPage(url, status, bodyString);
-            }
-            else if (isTextPage(contentType)) {
+            } else if (isTextPage(contentType)) {
                 return webPageFactory.buildTextWebPage(url, status, bodyString);
             }
             return webPageFactory.buildBinaryWebPage(url, status);

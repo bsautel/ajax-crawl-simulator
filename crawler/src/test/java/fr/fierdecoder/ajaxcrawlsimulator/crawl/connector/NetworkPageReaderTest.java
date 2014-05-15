@@ -27,6 +27,7 @@ public class NetworkPageReaderTest {
     private static final String A_PAGE = "/a/b";
     private static final String CONTACT_URL = "http://mydomain.com/contact";
     private static final String GOOGLE_URL = "https://www.google.com/";
+    public static final String ANCHOR = "#anchor";
 
     private NetworkPageReader networkPageReader;
     @Rule
@@ -138,5 +139,20 @@ public class NetworkPageReaderTest {
         assertThat(result.isBinary(), is(true));
         assertThat(result.getBody(), is(""));
         assertThat(result.getHttpStatus(), is(200));
+    }
+
+    @Test
+    public void duplicatePage() throws IOException {
+        String responseBody = readHtmlDocument();
+        ResponseDefinitionBuilder response = aResponse().withStatus(200)
+                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(responseBody);
+        stubFor(get(urlEqualTo(HOME_PATH)).willReturn(response));
+
+        WebPage result = networkPageReader.readPage(HTTP_DOMAIN + HOME_PATH + ANCHOR);
+
+        assertThat(result.isRedirection(), is(true));
+        assertThat(result.getBody(), is(""));
+        assertThat(result.getHttpStatus(), is(200));
+        assertThat(result.asRedirection().getTargetUrl(), is(HTTP_DOMAIN + HOME_PATH));
     }
 }
