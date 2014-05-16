@@ -14,7 +14,10 @@
     <build>
         <resources>
             <resource>
-                <directory>app</directory>
+                <directory>${pom.basedir}</directory>
+                <includes>
+                    <include>app/**</include>
+                </includes>
             </resource>
         </resources>
         <plugins>
