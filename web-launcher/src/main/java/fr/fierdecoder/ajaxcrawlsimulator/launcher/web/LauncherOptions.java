@@ -7,6 +7,9 @@ public class LauncherOptions {
     public static final String DEFAULT_HOST = "localhost";
     public static final String DEFAULT_DATABASE_NAME = "ajax-crawl-simulator";
 
+    @Parameter(names = {"-h", "--help"}, help = true)
+    private boolean help;
+
     @Parameter(names = "--mongo", description = "Use MongoDB as storage engine (default is in-memory)")
     private boolean mongoDb = false;
 
@@ -18,6 +21,10 @@ public class LauncherOptions {
 
     @Parameter(names = "--mongo-db-name", description = "Name of the MongoDB database (default is " + DEFAULT_DATABASE_NAME + ")")
     private String databaseName = DEFAULT_DATABASE_NAME;
+
+    public boolean isHelp() {
+        return help;
+    }
 
     public boolean isMongoDb() {
         return mongoDb;
