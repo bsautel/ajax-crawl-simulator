@@ -11,28 +11,14 @@
             <div class="panel-heading">
                 Simulation Properties
             </div>
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <span class="glyphicon glyphicon-flag"></span> Entry URL
-                        </div>
-                        <div class="col-md-10">
-                            <a ng-href="{{simulation.entryUrl}}" target="_blank">{{simulation.entryUrl}}</a>
-                        </div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <span class="glyphicon glyphicon-th-list"></span> Discovered Pages
-                        </div>
-                        <div class="col-md-10">
-                            {{pages.length}}
-                        </div>
-                    </div>
-                </li>
-            </ul>
+            <div class="panel-body">
+                <dl class="dl-horizontal">
+                    <dt><span class="glyphicon glyphicon-flag"></span> Entry URL</dt>
+                    <dd><a ng-href="{{simulation.entryUrl}}" target="_blank">{{simulation.entryUrl}}</a></dd>
+                    <dt><span class="glyphicon glyphicon-th-list"></span> Discovered Pages</dt>
+                    <dd>{{pages.length}}</dd>
+                </dl>
+            </div>
         </div>
     </div>
 

@@ -55,8 +55,9 @@
         <ul class="list-group">
             <li ng-repeat="simulation in simulations" class="list-group-item">
                 <a ng-href="{{viewSimulationLink(simulation)}}">
-                    {{simulation.name}} ({{simulation.entryUrl}})</span>
+                    {{simulation.name}}
                 </a>
+                <span class="text-muted hidden-xs">{{simulation.entryUrl}}</span>
             </li>
         </ul>
     </div>

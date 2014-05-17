@@ -19,25 +19,14 @@
     <div class="container">
         <div class="panel panel-info">
             <div class="panel-heading">General Information</div>
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-2"><span class="glyphicon glyphicon-info-sign"></span>
-                            HTTP Status
-                        </div>
-                        <div class="col-md-10"><code>{{page.httpStatus}}</code></div>
-                    </div>
-                </li>
-                <li class="list-group-item" ng-show="page.type == 'HTML'">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <span class="glyphicon glyphicon-comment"></span>
-                            Title
-                        </div>
-                        <div class="col-md-10">{{page.title}}</div>
-                    </div>
-                </li>
-            </ul>
+            <div class="panel-body">
+                <dl class="dl-horizontal">
+                    <dt><span class="glyphicon glyphicon-info-sign"></span> HTTP Status</dt>
+                    <dd><code>{{page.httpStatus}}</code></dd>
+                    <dt><span class="glyphicon glyphicon-comment"></span> Title</dt>
+                    <dd>{{page.title}}</dd>
+                </dl>
+            </div>
         </div>
     </div>
 
