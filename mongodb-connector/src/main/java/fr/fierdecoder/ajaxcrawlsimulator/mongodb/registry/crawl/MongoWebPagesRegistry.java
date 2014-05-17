@@ -2,6 +2,8 @@ package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagePreviewConverter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
@@ -12,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Optional.empty;
+import static java.util.stream.Collectors.toSet;
 
 public class MongoWebPagesRegistry implements WebPagesRegistry {
     public static final String NAME_AND_URL_FILTER = "{'url': '#', 'simulationName': '#'}";
@@ -53,13 +56,15 @@ public class MongoWebPagesRegistry implements WebPagesRegistry {
     }
 
     @Override
-    public Collection<WebPage> getWebPages() {
+    public Collection<WebPagePreview> getWebPagesPreviews() {
         Iterable<MongoWebPage> mongoWebPages = collection.
                 find(SIMULATION_NAME_FILTER, simulationName)
                 .as(MongoWebPage.class);
         Set<WebPage> result = new HashSet<>();
         mongoWebPages.forEach(mongoWebPage -> result.add(mongoWebPageConverter.convertFromMongo(mongoWebPage)));
-        return result;
+        return result.stream()
+                .map(WebPagePreviewConverter::createWebPagePreview)
+                .collect(toSet());
     }
 
     public void drop() {

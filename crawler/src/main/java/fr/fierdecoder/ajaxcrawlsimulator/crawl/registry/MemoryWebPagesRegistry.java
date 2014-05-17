@@ -1,14 +1,18 @@
 package fr.fierdecoder.ajaxcrawlsimulator.crawl.registry;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.util.Optional.of;
+import static java.util.stream.Collectors.toSet;
+
 public class MemoryWebPagesRegistry implements WebPagesRegistry {
-    private final Map<String, WebPage> pagesByUrl= new ConcurrentHashMap<>();
+    private final Map<String, WebPage> pagesByUrl = new ConcurrentHashMap<>();
 
     @Override
     public void register(WebPage page) {
@@ -22,7 +26,7 @@ public class MemoryWebPagesRegistry implements WebPagesRegistry {
 
     @Override
     public Optional<WebPage> getByUrl(String url) {
-        return Optional.of(pagesByUrl.get(url));
+        return of(pagesByUrl.get(url));
     }
 
     @Override
@@ -31,7 +35,9 @@ public class MemoryWebPagesRegistry implements WebPagesRegistry {
     }
 
     @Override
-    public Collection<WebPage> getWebPages() {
-        return pagesByUrl.values();
+    public Collection<WebPagePreview> getWebPagesPreviews() {
+        return pagesByUrl.values().stream()
+                .map(WebPagePreviewConverter::createWebPagePreview)
+                .collect(toSet());
     }
 }

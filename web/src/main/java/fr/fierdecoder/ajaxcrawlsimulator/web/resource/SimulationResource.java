@@ -2,6 +2,7 @@ package fr.fierdecoder.ajaxcrawlsimulator.web.resource;
 
 import com.google.inject.Inject;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.CrawlSimulator;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
@@ -45,7 +46,7 @@ public class SimulationResource {
     public Optional<Collection<JsonPagePreview>> getSimulationPages(String name) {
         Optional<WebPagesRegistry> webPagesRegistry = crawlSimulator.getSimulationWebPagesRegistryByName(name);
         if (webPagesRegistry.isPresent()) {
-            Collection<WebPage> webPages = webPagesRegistry.get().getWebPages();
+            Collection<WebPagePreview> webPages = webPagesRegistry.get().getWebPagesPreviews();
             Set<JsonPagePreview> jsonPagePreviews = webPages.stream()
                     .map(jsonPageConverter::createJsonPagePreview)
                     .collect(toSet());

@@ -1,6 +1,7 @@
 package fr.fierdecoder.ajaxcrawlsimulator.crawl.registry;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -14,5 +15,5 @@ public interface WebPagesRegistry {
 
     long getPagesCount();
 
-    Collection<WebPage> getWebPages();
+    Collection<WebPagePreview> getWebPagesPreviews();
 }
