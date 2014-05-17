@@ -13,9 +13,11 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.NetworkPageReader.ESCAPED_FRAGMENT;
+import static java.net.URLEncoder.encode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
@@ -33,12 +35,13 @@ public class NetworkPageReaderTest {
     private NetworkPageReader networkPageReader;
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(PORT);
-    private String simpleHtmlDocument, fragmentHtmlDocument;
+    private String simpleHtmlDocument, fragmentHtmlDocument, anotherFragmentHtmlDocument;
 
     @Before
     public void setUp() throws Exception {
         simpleHtmlDocument = readHtmlDocument("document.html");
         fragmentHtmlDocument = readHtmlDocument("document_with_fragment.html");
+        anotherFragmentHtmlDocument = readHtmlDocument("another_document_with_fragment.html");
         networkPageReader = new NetworkPageReader(new DocumentReader(), new WebPageFactory());
     }
 
@@ -144,7 +147,7 @@ public class NetworkPageReaderTest {
     }
 
     @Test
-    public void duplicatePage() throws IOException {
+    public void duplicatePageWithHash() throws IOException {
         ResponseDefinitionBuilder response = aResponse().withStatus(200)
                 .withHeader("Content-Type", "text/html; charset=utf-8").withBody(simpleHtmlDocument);
         stubFor(get(urlEqualTo(HOME_PATH)).willReturn(response));
@@ -154,14 +157,28 @@ public class NetworkPageReaderTest {
         assertThat(result.isRedirection(), is(true));
         assertThat(result.getBody(), is(""));
         assertThat(result.getHttpStatus(), is(200));
+        assertThat(result.getUrl(), is(HTTP_DOMAIN + HOME_PATH + ANCHOR));
+        assertThat(result.asRedirection().getTargetUrl(), is(HTTP_DOMAIN + HOME_PATH));
+    }
+
+    @Test
+    public void duplicatePageWithEmptyHash() throws IOException {
+        ResponseDefinitionBuilder response = aResponse().withStatus(200)
+                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(simpleHtmlDocument);
+        stubFor(get(urlEqualTo(HOME_PATH)).willReturn(response));
+
+        WebPage result = networkPageReader.readPage(HTTP_DOMAIN + HOME_PATH + "#");
+
+        assertThat(result.isRedirection(), is(true));
+        assertThat(result.getBody(), is(""));
+        assertThat(result.getHttpStatus(), is(200));
+        assertThat(result.getUrl(), is(HTTP_DOMAIN + HOME_PATH + "#"));
         assertThat(result.asRedirection().getTargetUrl(), is(HTTP_DOMAIN + HOME_PATH));
     }
 
     @Test
     public void htmlPageWithFragmentSupportAndWithoutHash() throws Exception {
-        ResponseDefinitionBuilder fragmentResponse = aResponse().withStatus(200)
-                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(fragmentHtmlDocument);
-        stubFor(get(urlEqualTo(HOME_PATH)).willReturn(fragmentResponse));
+        configureFragmentHtmlDocument();
         ResponseDefinitionBuilder simpleResponse = aResponse().withStatus(200)
                 .withHeader("Content-Type", "text/html; charset=utf-8").withBody(simpleHtmlDocument);
         stubFor(get(urlEqualTo(HOME_PATH + "?" + ESCAPED_FRAGMENT + "=")).willReturn(simpleResponse));
@@ -174,5 +191,41 @@ public class NetworkPageReaderTest {
         assertThat(result.getHttpStatus(), is(200));
     }
 
-    // TODO test with an URL that contains a fragment
+    @Test
+    public void htmlPageWithFragmentThatIsResolvedAsAPageWithFragments() throws Exception {
+        configureFragmentHtmlDocument();
+        ResponseDefinitionBuilder anotherFragmentResponse = aResponse().withStatus(200)
+                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(anotherFragmentHtmlDocument);
+        stubFor(get(urlEqualTo(HOME_PATH + "?" + ESCAPED_FRAGMENT + "=")).willReturn(anotherFragmentResponse));
+
+        WebPage result = networkPageReader.readPage(HTTP_DOMAIN + HOME_PATH);
+
+        assertThat(result.isHtml(), is(true));
+        assertThat(result.getUrl(), is(HTTP_DOMAIN + HOME_PATH));
+        assertThat(result.getBody(), is(anotherFragmentHtmlDocument));
+        assertThat(result.getHttpStatus(), is(200));
+    }
+
+    private void configureFragmentHtmlDocument() {
+        ResponseDefinitionBuilder fragmentResponse = aResponse().withStatus(200)
+                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(fragmentHtmlDocument);
+        stubFor(get(urlEqualTo(HOME_PATH)).willReturn(fragmentResponse));
+    }
+
+    @Test
+    public void htmlPageWithFragmentSupportAndHash() throws UnsupportedEncodingException {
+        String hash = "test;a/b;a=urn:something:a/b!%34";
+        configureFragmentHtmlDocument();
+        ResponseDefinitionBuilder simpleResponse = aResponse().withStatus(200)
+                .withHeader("Content-Type", "text/html; charset=utf-8").withBody(simpleHtmlDocument);
+        stubFor(get(urlEqualTo(HOME_PATH + "?" + ESCAPED_FRAGMENT + "=" + encode(hash, "utf-8"))).willReturn(simpleResponse));
+
+        String url = HTTP_DOMAIN + HOME_PATH + "#!" + hash;
+        WebPage result = networkPageReader.readPage(url);
+
+        assertThat(result.isHtml(), is(true));
+        assertThat(result.getUrl(), is(url));
+        assertThat(result.getBody(), is(simpleHtmlDocument));
+        assertThat(result.getHttpStatus(), is(200));
+    }
 }

@@ -9,26 +9,46 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Set;
 
+import static fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.UrlWithOptionalHash.create;
 import static java.util.Optional.ofNullable;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Singleton
 public class NetworkPageReader implements PageReader {
+    private static enum ResolveFragmentStrategy {
+        RESOLVE(true), DO_NOT_RESOLVE(false);
+
+        private boolean canResolveFragment;
+
+        private ResolveFragmentStrategy(boolean canResolveFragment) {
+            this.canResolveFragment = canResolveFragment;
+        }
+
+        public boolean canResolveFragment() {
+            return canResolveFragment;
+        }
+    }
+
     public static final String ESCAPED_FRAGMENT = "_escaped_fragment_";
+    private final Logger LOGGER = getLogger(NetworkPageReader.class);
     private final DocumentReader documentReader;
     private final WebPageFactory webPageFactory;
 
@@ -41,43 +61,44 @@ public class NetworkPageReader implements PageReader {
     @Override
     public WebPage readPage(String url) {
         try {
-            return resolveUrl(url, url);
-        } catch (IOException e) {
+            return resolveUrl(url, url, ResolveFragmentStrategy.RESOLVE);
+        } catch (IOException | URISyntaxException e) {
             return webPageFactory.buildUnreachableWebPage(url, 0, "");
         }
     }
 
-    private WebPage resolveUrl(String url, String urlToDisplay) throws IOException {
+    private WebPage resolveUrl(String url, String urlToDisplay, ResolveFragmentStrategy resolveFragmentStrategy)
+            throws IOException, URISyntaxException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpClientContext context = HttpClientContext.create();
+        LOGGER.info("Fetching {}", url);
         HttpGet request = new HttpGet(url);
-        CloseableHttpResponse response = httpClient.execute(request, context);
-        try {
+        try (CloseableHttpResponse response = httpClient.execute(request, context)) {
             int status = response.getStatusLine().getStatusCode();
             HttpEntity entity = response.getEntity();
             InputStream body = entity.getContent();
             ContentType contentType = ContentType.getOrDefault(entity);
             String bodyString = stringify(body, contentType);
             if (isRedirection(context)) {
+                LOGGER.debug("{} is a redirection", url);
                 URI location = context.getRedirectLocations().get(0);
                 // TODO find a way to get the right first redirection
                 return webPageFactory.buildRedirectionWebPage(urlToDisplay, 301, "", location.toString());
             }
             if (isHttpError(status)) {
+                LOGGER.debug("{} is a redirection", url);
                 return webPageFactory.buildUnreachableWebPage(urlToDisplay, status, bodyString);
             }
             if (isHtmlPage(contentType)) {
-                if (urlToDisplay.contains("#")) {
-                    String canonicalUrl = urlToDisplay.split("#")[0];
-                    return webPageFactory.buildRedirectionWebPage(urlToDisplay, 200, "", canonicalUrl);
-                }
-                return processHtmlWebPage(urlToDisplay, status, bodyString);
-            } else if (isTextPage(contentType)) {
+                LOGGER.debug("{} is a HTML page", url);
+                return processHtmlWebPage(urlToDisplay, status, bodyString, resolveFragmentStrategy);
+            }
+            if (isTextPage(contentType)) {
+                LOGGER.debug("{} is a text page", url);
                 return webPageFactory.buildTextWebPage(urlToDisplay, status, bodyString);
             }
+            LOGGER.debug("{} is a binary file", url);
             return webPageFactory.buildBinaryWebPage(urlToDisplay, status);
-        } finally {
-            response.close();
         }
     }
 
@@ -107,20 +128,38 @@ public class NetworkPageReader implements PageReader {
         return contentType.getMimeType().startsWith("text/");
     }
 
-    private WebPage processHtmlWebPage(String url, int status, String body) throws IOException {
-        // TODO can make an infinite loop whether the resolved page still contains the same fragment
+    private WebPage processHtmlWebPage(String url, int status, String body, ResolveFragmentStrategy resolveFragmentStrategy)
+            throws IOException, URISyntaxException {
+        UrlWithOptionalHash urlWithOptionalHash = create(url);
         Document document = Jsoup.parse(body, url);
-        Elements fragmentMeta = document.select("meta[name=fragment]");
-        if (fragmentMeta.size() == 1) {
-            if (url.contains("#")) {
-                String hash = url.split("#")[1];
-                return resolveUrl(url.replace("#!.*$", "?_escaped_fragment_=" + hash), url);
+        boolean supportsFragment = supportsFragment(document);
+        if (resolveFragmentStrategy.canResolveFragment() && supportsFragment) {
+            if (urlWithOptionalHash.hasFragment()) {
+                String fragment = urlWithOptionalHash.getFragment();
+                String resolvedUrl = replaceHashByEscapedFragment(url, fragment);
+                return resolveUrl(resolvedUrl, url, ResolveFragmentStrategy.DO_NOT_RESOLVE);
             } else {
-                return resolveUrl(url + "?" + ESCAPED_FRAGMENT + "=", url);
+                String resolvedUrl = replaceHashByEscapedFragment(url, "");
+                return resolveUrl(resolvedUrl, url, ResolveFragmentStrategy.DO_NOT_RESOLVE);
             }
+        } else if (urlWithOptionalHash.hasHash() && !urlWithOptionalHash.hasFragment()) {
+            String canonicalUrl = urlWithOptionalHash.getUrlWithoutHash();
+            return webPageFactory.buildRedirectionWebPage(url, 200, "", canonicalUrl);
         }
         Set<String> links = documentReader.readLinks(document);
         String title = documentReader.readTitle(document);
         return webPageFactory.buildHtmlWebPage(url, status, title, body, links);
+    }
+
+    private String replaceHashByEscapedFragment(String url, String fragment) throws URISyntaxException {
+        URIBuilder urlBuilder = new URIBuilder(url);
+        urlBuilder.addParameter(ESCAPED_FRAGMENT, fragment);
+        urlBuilder.setFragment(null);
+        return urlBuilder.toString();
+    }
+
+    private boolean supportsFragment(Document document) {
+        Elements fragmentMeta = document.select("meta[name=fragment]");
+        return fragmentMeta.size() == 1;
     }
 }
