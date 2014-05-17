@@ -26,6 +26,12 @@ public class MongoWebPagesRegistry implements WebPagesRegistry {
     public MongoWebPagesRegistry(String simulationName, Jongo jongo) {
         this.simulationName = simulationName;
         collection = jongo.getCollection("webPages");
+        ensureIndexOnField("simulationName");
+        ensureIndexOnField("url");
+    }
+
+    private void ensureIndexOnField(String field) {
+        collection.ensureIndex("{" + field + ": 1}", "{unique: false}");
     }
 
 
@@ -57,8 +63,9 @@ public class MongoWebPagesRegistry implements WebPagesRegistry {
 
     @Override
     public Collection<WebPagePreview> getWebPagesPreviews() {
-        Iterable<MongoWebPage> mongoWebPages = collection.
-                find(SIMULATION_NAME_FILTER, simulationName)
+        Iterable<MongoWebPage> mongoWebPages = collection
+                .find(SIMULATION_NAME_FILTER, simulationName)
+                .projection("{body: 0, links: 0, targetUrl: 0}")
                 .as(MongoWebPage.class);
         Set<WebPage> result = new HashSet<>();
         mongoWebPages.forEach(mongoWebPage -> result.add(mongoWebPageConverter.convertFromMongo(mongoWebPage)));
