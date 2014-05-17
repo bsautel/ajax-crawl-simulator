@@ -33,7 +33,14 @@ public abstract class UrlWithOptionalHash {
         return getOptionalHash().get();
     }
 
-    public static UrlWithOptionalHash create(String url) {
+    public String getFullUrl() {
+        if (hasHash()) {
+            return getUrlWithoutHash() + "#" + getHash();
+        }
+        return getUrlWithoutHash();
+    }
+
+    public static UrlWithOptionalHash parse(String url) {
         if (url.contains("#")) {
             String[] splitUrl = url.split("#");
             String urlWithoutHash = splitUrl[0];

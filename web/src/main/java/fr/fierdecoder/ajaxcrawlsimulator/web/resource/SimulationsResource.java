@@ -23,7 +23,7 @@ public class SimulationsResource {
 
     @Post("/simulations")
     public SimulationDescriptor createSimulation(SimulationDescriptor simulationDescriptor) {
-        // TODO should not accept to create a simulation that already exists
+        // TODO should not accept to parse a simulation that already exists
         crawlSimulator.start(simulationDescriptor);
         return simulationDescriptor;
     }
