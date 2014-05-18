@@ -20,5 +20,17 @@ public class WebApplication {
     public void start() {
         webServer.start();
     }
+
+    public void startOnRandomPort() {
+        webServer.startOnRandomPort();
+    }
+
+    public int port() {
+        return webServer.port();
+    }
+
+    public void stop() {
+        webServer.stop();
+    }
 }
 

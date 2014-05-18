@@ -22,7 +22,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CrawlerTest {
+public class NetworkCrawlerTest {
     private static final String INDEX_URL = "http://mydomain.com/";
     private static final String HOME_URL = INDEX_URL + "home";
     private static final String CONTACT_URL = INDEX_URL + "contact";
@@ -47,7 +47,7 @@ public class CrawlerTest {
     @Test
     public void singlePageCrawl() {
         HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL));
-        Crawler crawler = new Crawler(pageReader);
+        NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
         crawler.crawl(crawlPerimeter, registry);
 
@@ -73,7 +73,7 @@ public class CrawlerTest {
     public void twoPagesCrawl() {
         HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
         HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL));
-        Crawler crawler = new Crawler(pageReader);
+        NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
         crawler.crawl(crawlPerimeter, registry);
 
@@ -86,7 +86,7 @@ public class CrawlerTest {
     public void twoCyclingPagesCrawl() {
         HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
         HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL, INDEX_URL));
-        Crawler crawler = new Crawler(pageReader);
+        NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
         crawler.crawl(crawlPerimeter, registry);
 
@@ -99,7 +99,7 @@ public class CrawlerTest {
     public void twoPagesIncludingOneIgnored() {
         HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
         when(crawlPerimeter.contains(CONTACT_URL)).thenReturn(false);
-        Crawler crawler = new Crawler(pageReader);
+        NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
         crawler.crawl(crawlPerimeter, registry);
 
@@ -111,7 +111,7 @@ public class CrawlerTest {
     public void redirectionPage() {
         RedirectionWebPage indexPage = registerWebPage(buildRedirectionWebPage(INDEX_URL, HOME_URL));
         HtmlWebPage homePage = registerWebPage(buildHtmlWebPage(HOME_URL));
-        Crawler crawler = new Crawler(pageReader);
+        NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
         crawler.crawl(crawlPerimeter, registry);
 

@@ -2,13 +2,14 @@
     <h1>
         List of Simulations
         <button type="button" class="btn btn-primary btn-sm" ng-click="createSimulation()"
-                ng-show="!newSimulation">
+                ng-show="!newSimulation" id="createSimulationButton">
             Create a New Simulation
         </button>
     </h1>
 
     <div>
-        <form role="form" class="form-horizontal" ng-show="newSimulation" ng-submit="addNewSimulation()">
+        <form role="form" class="form-horizontal" ng-show="newSimulation" ng-submit="addNewSimulation()"
+                id="newSimulationForm">
             <p class="text-muted">Create a new simulation</p>
 
             <div class="form-group"
