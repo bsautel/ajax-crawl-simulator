@@ -24,7 +24,7 @@ public class CrawlerStub implements Crawler {
         HtmlWebPage htmlWebPage = webPageFactory.buildHtmlWebPage(ABOUT_URL, 200, PAGE_TITLE, PAGE_BODY,
                 newHashSet(CONTACT_URL));
         registry.register(htmlWebPage);
-        RedirectionWebPage redirectionWebPage = webPageFactory.buildRedirectionWebPage(HOME_URL, 301, "", BASE_URL + CONTACT_URL);
+        RedirectionWebPage redirectionWebPage = webPageFactory.buildRedirectionWebPage(HOME_URL, 301, "", CONTACT_URL);
         registry.register(redirectionWebPage);
         registry.register(webPageFactory.buildUnreachableWebPage(CONTACT_URL, 404, ""));
     }

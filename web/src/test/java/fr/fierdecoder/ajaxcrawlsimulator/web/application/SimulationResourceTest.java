@@ -3,6 +3,7 @@ package fr.fierdecoder.ajaxcrawlsimulator.web.application;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import static fr.fierdecoder.ajaxcrawlsimulator.web.application.CrawlerStub.*;
 import static java.net.URLEncoder.encode;
@@ -51,10 +52,10 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
     }
 
     @Test
-    public void shouldReturnPage() throws IOException {
+    public void shouldReturnHtmlPage() throws IOException {
         createSimulation();
 
-        String aboutPagePath = SIMULATION_PAGES_PATH + "/" + encode(ABOUT_URL, "utf-8");
+        String aboutPagePath = computePagePath(ABOUT_URL);
         restClient().get(aboutPagePath).then()
                 .statusCode(200)
                 .body("url", is(ABOUT_URL))
@@ -64,6 +65,22 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
                 .body("type", is("HTML"));
     }
 
+    @Test
+    public void shouldReturnRedirectionPage() throws IOException {
+        createSimulation();
+
+        String aboutPagePath = computePagePath(HOME_URL);
+        restClient().get(aboutPagePath).then()
+                .statusCode(200)
+                .body("url", is(HOME_URL))
+                .body("targetUrl", is(CONTACT_URL))
+                .body("httpStatus", is(301))
+                .body("type", is("REDIRECTION"));
+    }
+
+    private String computePagePath(String aboutUrl) throws UnsupportedEncodingException {
+        return SIMULATION_PAGES_PATH + "/" + encode(aboutUrl, "utf-8");
+    }
     private String findByUrlExpression(String url) {
         return "find{it.url == '" + url + "'}";
     }
