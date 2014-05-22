@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 
 import static fr.fierdecoder.ajaxcrawlsimulator.web.application.CrawlerStub.*;
 import static java.net.URLEncoder.encode;
+import static net.codestory.http.constants.HttpStatus.OK;
 import static org.hamcrest.Matchers.*;
 
 public class SimulationResourceTest extends AbstractWebServiceTest {
@@ -17,7 +18,7 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
         createSimulation();
 
         restClient().get(SIMULATION_PATH).then()
-                .statusCode(200)
+                .statusCode(OK)
                 .body("name", is(SIMULATION_NAME))
                 .body("entryUrl", is(URL))
                 .body("urlPrefix", is(URL));
@@ -28,10 +29,10 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
         createSimulation();
 
         restClient().delete(SIMULATION_PATH).then()
-                .statusCode(200);
+                .statusCode(OK);
 
         restClient().get(SIMULATIONS_PATH).then()
-                .statusCode(200)
+                .statusCode(OK)
                 .body("size()", is(0));
     }
 
@@ -40,7 +41,7 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
         createSimulation();
 
         restClient().get(SIMULATION_PAGES_PATH).then()
-                .statusCode(200)
+                .statusCode(OK)
                 .body("size()", is(3))
                 .body("url", containsInAnyOrder(ABOUT_URL, CONTACT_URL, HOME_URL))
                 .body(findByUrlExpression(ABOUT_URL) + ".type", is("HTML"))
@@ -57,7 +58,7 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
 
         String aboutPagePath = computePagePath(ABOUT_URL);
         restClient().get(aboutPagePath).then()
-                .statusCode(200)
+                .statusCode(OK)
                 .body("url", is(ABOUT_URL))
                 .body("title", is(PAGE_TITLE))
                 .body("body", is(PAGE_BODY))
@@ -71,7 +72,7 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
 
         String aboutPagePath = computePagePath(HOME_URL);
         restClient().get(aboutPagePath).then()
-                .statusCode(200)
+                .statusCode(OK)
                 .body("url", is(HOME_URL))
                 .body("targetUrl", is(CONTACT_URL))
                 .body("httpStatus", is(301))

@@ -5,8 +5,12 @@ import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.CrawlSimulator;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
 import net.codestory.http.annotations.Get;
 import net.codestory.http.annotations.Post;
+import net.codestory.http.payload.Payload;
 
 import java.util.Collection;
+
+import static net.codestory.http.constants.HttpStatus.CONFLICT;
+import static net.codestory.http.constants.HttpStatus.CREATED;
 
 public class SimulationsResource {
     private final CrawlSimulator crawlSimulator;
@@ -22,9 +26,15 @@ public class SimulationsResource {
     }
 
     @Post("/simulations")
-    public SimulationDescriptor createSimulation(SimulationDescriptor simulationDescriptor) {
-        // TODO should not accept to parse a simulation that already exists
+    public Payload createSimulation(SimulationDescriptor simulationDescriptor) {
+        if (simulationAlreadyExists(simulationDescriptor)) {
+            return new Payload(CONFLICT);
+        }
         crawlSimulator.start(simulationDescriptor);
-        return simulationDescriptor;
+        return new Payload(simulationDescriptor).withCode(CREATED);
+    }
+
+    private boolean simulationAlreadyExists(SimulationDescriptor simulationDescriptor) {
+        return crawlSimulator.getSimulationDescriptorByName(simulationDescriptor.getName()).isPresent();
     }
 }
