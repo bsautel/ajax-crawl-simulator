@@ -13,7 +13,7 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
     private static final String SIMULATION_PAGES_PATH = SIMULATION_PATH + "/pages";
 
     @Test
-    public void shouldRetrieveAnExistingSimulation() throws IOException {
+    public void shouldRetrieveAnExistingSimulationWhenASimulationExists() throws IOException {
         createSimulation();
 
         restClient().get(SIMULATION_PATH).then()
@@ -24,7 +24,7 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
     }
 
     @Test
-    public void shouldDeleteAnExistingSimulation() throws IOException {
+    public void shouldNotExistAnySimulationWhenTheExistingOneIsDeleted() throws IOException {
         createSimulation();
 
         restClient().delete(SIMULATION_PATH).then()
@@ -36,7 +36,7 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
     }
 
     @Test
-    public void shouldReturnSimulationPages() throws IOException {
+    public void shouldReturnSimulationPagesWhenASimulationExists() throws IOException {
         createSimulation();
 
         restClient().get(SIMULATION_PAGES_PATH).then()
@@ -52,7 +52,7 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
     }
 
     @Test
-    public void shouldReturnHtmlPage() throws IOException {
+    public void shouldReturnHtmlPageWhenAskingTheAboutPage() throws IOException {
         createSimulation();
 
         String aboutPagePath = computePagePath(ABOUT_URL);
@@ -66,7 +66,7 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
     }
 
     @Test
-    public void shouldReturnRedirectionPage() throws IOException {
+    public void shouldReturnRedirectionPageWhenAskingTheHomePage() throws IOException {
         createSimulation();
 
         String aboutPagePath = computePagePath(HOME_URL);

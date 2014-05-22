@@ -8,14 +8,14 @@ import static org.hamcrest.Matchers.*;
 
 public class SimulationsResourceTest extends AbstractWebServiceTest {
     @Test
-    public void shouldReturnNoSimulation() {
+    public void shouldReturnNoSimulationWhenStartingFromScratch() {
         restClient().get(SIMULATIONS_PATH).then()
                 .statusCode(200)
                 .body("size()", is(0));
     }
 
     @Test
-    public void shouldCreateASimulation() throws IOException {
+    public void shouldReturnTheSimulationWhenCreatingASimulation() throws IOException {
         createSimulation().then()
                 .statusCode(200)
                 .body("name", is(SIMULATION_NAME))
@@ -24,7 +24,7 @@ public class SimulationsResourceTest extends AbstractWebServiceTest {
     }
 
     @Test
-    public void shouldReturnASimulation() throws IOException {
+    public void shouldReturnASimulationWhenASimulationWasCreated() throws IOException {
         createSimulation();
 
         restClient().get(SIMULATIONS_PATH).then()
