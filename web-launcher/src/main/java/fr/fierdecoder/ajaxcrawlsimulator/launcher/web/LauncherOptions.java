@@ -8,7 +8,7 @@ public class LauncherOptions {
     public static final String DEFAULT_DATABASE_NAME = "ajax-crawl-simulator";
 
     @Parameter(names = {"-h", "--help"}, help = true)
-    private boolean help;
+    private boolean help = false;
 
     @Parameter(names = "--mongo", description = "Use MongoDB as storage engine (default is in-memory)")
     private boolean mongoDb = false;
