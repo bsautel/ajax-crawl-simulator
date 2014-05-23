@@ -1,23 +1,27 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.application;
 
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import static fr.fierdecoder.ajaxcrawlsimulator.web.application.CrawlerStub.*;
+import static fr.fierdecoder.ajaxcrawlsimulator.web.application.WebServiceTestRule.*;
 import static java.net.URLEncoder.encode;
 import static net.codestory.http.constants.HttpStatus.OK;
 import static org.hamcrest.Matchers.*;
 
-public class SimulationResourceTest extends AbstractWebServiceTest {
+public class SimulationResourceTest {
     private static final String SIMULATION_PAGES_PATH = SIMULATION_PATH + "/pages";
+    @Rule
+    public WebServiceTestRule webServiceRule = new WebServiceTestRule();
 
     @Test
     public void shouldRetrieveAnExistingSimulationWhenASimulationExists() throws IOException {
-        createSimulation();
+        webServiceRule.createSimulation();
 
-        restClient().get(SIMULATION_PATH).then()
+        webServiceRule.restClient().get(SIMULATION_PATH).then()
                 .statusCode(OK)
                 .body("name", is(SIMULATION_NAME))
                 .body("entryUrl", is(URL))
@@ -26,21 +30,21 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
 
     @Test
     public void shouldNotExistAnySimulationWhenTheExistingOneIsDeleted() throws IOException {
-        createSimulation();
+        webServiceRule.createSimulation();
 
-        restClient().delete(SIMULATION_PATH).then()
+        webServiceRule.restClient().delete(SIMULATION_PATH).then()
                 .statusCode(OK);
 
-        restClient().get(SIMULATIONS_PATH).then()
+        webServiceRule.restClient().get(SIMULATIONS_PATH).then()
                 .statusCode(OK)
                 .body("size()", is(0));
     }
 
     @Test
     public void shouldReturnSimulationPagesWhenASimulationExists() throws IOException {
-        createSimulation();
+        webServiceRule.createSimulation();
 
-        restClient().get(SIMULATION_PAGES_PATH).then()
+        webServiceRule.restClient().get(SIMULATION_PAGES_PATH).then()
                 .statusCode(OK)
                 .body("size()", is(3))
                 .body("url", containsInAnyOrder(ABOUT_URL, CONTACT_URL, HOME_URL))
@@ -54,10 +58,10 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
 
     @Test
     public void shouldReturnHtmlPageWhenAskingTheAboutPage() throws IOException {
-        createSimulation();
+        webServiceRule.createSimulation();
 
         String aboutPagePath = computePagePath(ABOUT_URL);
-        restClient().get(aboutPagePath).then()
+        webServiceRule.restClient().get(aboutPagePath).then()
                 .statusCode(OK)
                 .body("url", is(ABOUT_URL))
                 .body("title", is(PAGE_TITLE))
@@ -68,10 +72,10 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
 
     @Test
     public void shouldReturnRedirectionPageWhenAskingTheHomePage() throws IOException {
-        createSimulation();
+        webServiceRule.createSimulation();
 
         String aboutPagePath = computePagePath(HOME_URL);
-        restClient().get(aboutPagePath).then()
+        webServiceRule.restClient().get(aboutPagePath).then()
                 .statusCode(OK)
                 .body("url", is(HOME_URL))
                 .body("targetUrl", is(CONTACT_URL))
@@ -82,6 +86,7 @@ public class SimulationResourceTest extends AbstractWebServiceTest {
     private String computePagePath(String aboutUrl) throws UnsupportedEncodingException {
         return SIMULATION_PAGES_PATH + "/" + encode(aboutUrl, "utf-8");
     }
+
     private String findByUrlExpression(String url) {
         return "find{it.url == '" + url + "'}";
     }
