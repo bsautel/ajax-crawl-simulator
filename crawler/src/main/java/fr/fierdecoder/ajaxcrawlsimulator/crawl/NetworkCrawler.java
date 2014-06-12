@@ -9,9 +9,12 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
 import org.slf4j.Logger;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class NetworkCrawler implements Crawler {
@@ -28,30 +31,37 @@ public class NetworkCrawler implements Crawler {
         Queue<String> urlQueue = new LinkedList<>();
         urlQueue.add(crawlPerimeter.getEntryUrl());
         while (!urlQueue.isEmpty()) {
-            crawlNextUrl(urlQueue, registry, crawlPerimeter);
+            String url = urlQueue.poll();
+            Collection<String> newUrls = crawlUrlIfNeeded(url, registry, crawlPerimeter);
+            urlQueue.addAll(newUrls);
         }
     }
 
-    private void crawlNextUrl(Queue<String> urlQueue, WebPagesRegistry registry, CrawlPerimeter crawlPerimeter) {
-        String url = urlQueue.poll();
+    private Collection<String> crawlUrlIfNeeded(String url, WebPagesRegistry registry, CrawlPerimeter crawlPerimeter) {
         LOGGER.info("Crawling {}", url);
         if (mustBeCrawled(url, registry, crawlPerimeter)) {
-            WebPage page = pageReader.readPage(url);
-            if (page.isHtml()) {
-                HtmlWebPage htmlPage = page.asHtml();
-                urlQueue.addAll(htmlPage.getLinks());
-                LOGGER.info("Url {} returned a HTML page with title {}", url, htmlPage.getTitle());
-            } else if (page.isRedirection()) {
-                RedirectionWebPage redirection = page.asRedirection();
-                urlQueue.add(redirection.getTargetUrl());
-                LOGGER.info("Url {} returned a redirection to {}", url, redirection.getTargetUrl());
-            } else if (page.isUnreachable()) {
-                LOGGER.info("Url {} is unreachable", url);
-            }
-            registry.register(page);
-        } else {
-            LOGGER.info("Url {} ignored since it is not in the crawl perimeter", url);
+            return crawlUrl(url, registry);
         }
+        LOGGER.info("Url {} ignored since it is not in the crawl perimeter", url);
+        return emptyList();
+    }
+
+    private Collection<String> crawlUrl(String url, WebPagesRegistry registry) {
+        WebPage page = pageReader.readPage(url);
+        registry.register(page);
+        if (page.isHtml()) {
+            HtmlWebPage htmlPage = page.asHtml();
+            LOGGER.info("Url {} returned a HTML page with title {}", url, htmlPage.getTitle());
+            return htmlPage.getLinks();
+        } else if (page.isRedirection()) {
+            RedirectionWebPage redirection = page.asRedirection();
+            LOGGER.info("Url {} returned a redirection to {}", url, redirection.getTargetUrl());
+            return asList(redirection.getTargetUrl());
+        } else if (page.isUnreachable()) {
+            LOGGER.info("Url {} is unreachable", url);
+            return emptyList();
+        }
+        throw new IllegalStateException("Unknown page type");
     }
 
     private boolean mustBeCrawled(String url, WebPagesRegistry registry, CrawlPerimeter crawlPerimeter) {
