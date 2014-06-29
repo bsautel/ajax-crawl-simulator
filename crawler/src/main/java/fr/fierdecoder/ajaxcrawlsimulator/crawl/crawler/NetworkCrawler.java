@@ -1,25 +1,26 @@
-package fr.fierdecoder.ajaxcrawlsimulator.crawl;
+package fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler;
 
 import com.google.inject.Inject;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.PageReader;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
 import org.slf4j.Logger;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.Executors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class NetworkCrawler implements Crawler {
-    private final PageReader pageReader;
     private static final Logger LOGGER = getLogger(NetworkCrawler.class);
+    private final PageReader pageReader;
 
     @Inject
     public NetworkCrawler(PageReader pageReader) {
@@ -27,13 +28,18 @@ public class NetworkCrawler implements Crawler {
     }
 
     @Override
-    public void crawl(CrawlPerimeter crawlPerimeter, WebPagesRepository repository) {
-        Queue<String> urlQueue = new LinkedList<>();
-        urlQueue.add(crawlPerimeter.getEntryUrl());
-        while (!urlQueue.isEmpty()) {
-            String url = urlQueue.poll();
+    public void crawl(CrawlPerimeter crawlPerimeter, WebPagesRepository repository, CrawlState state) {
+        state.addUrl(crawlPerimeter.getEntryUrl());
+        newSingleThreadExecutor().submit(() -> launchCrawl(crawlPerimeter, repository, state));
+        LOGGER.info("Crawl terminated");
+        state.maskAsFinished();
+    }
+
+    private void launchCrawl(CrawlPerimeter crawlPerimeter, WebPagesRepository repository, CrawlState state) {
+        while (state.hasUrlToCrawl()) {
+            String url = state.getUrlToCrawl();
             Collection<String> newUrls = crawlUrlIfNeeded(url, repository, crawlPerimeter);
-            urlQueue.addAll(newUrls);
+            state.addUrls(newUrls);
         }
     }
 

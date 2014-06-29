@@ -39,7 +39,8 @@ public class MongoSimulationRepository implements SimulationRepository {
     }
 
     private Simulation createSimulation(SimulationDescriptor descriptor) {
-        return new Simulation(descriptor, webPagesRepositoryFactory.create(descriptor.getName()));
+//        return new Simulation(descriptor, webPagesRepositoryFactory.create(descriptor.getName()), null);
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override

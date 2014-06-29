@@ -1,11 +1,12 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.application;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.Crawler;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler.Crawler;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
 
 import static com.google.common.collect.Sets.newHashSet;
 
@@ -19,7 +20,7 @@ public class CrawlerStub implements Crawler {
     public static final String PAGE_BODY = "Page body";
 
     @Override
-    public void crawl(CrawlPerimeter crawlPerimeter, WebPagesRepository repository) {
+    public void crawl(CrawlPerimeter crawlPerimeter, WebPagesRepository repository, CrawlState state) {
         WebPageFactory webPageFactory = new WebPageFactory();
         HtmlWebPage htmlWebPage = webPageFactory.buildHtmlWebPage(ABOUT_URL, 200, PAGE_TITLE, PAGE_BODY,
                 newHashSet(CONTACT_URL));

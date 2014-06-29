@@ -3,8 +3,8 @@ package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagePreviewConverter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagePreviewConverter;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 

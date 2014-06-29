@@ -1,8 +1,8 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
 import com.google.inject.Inject;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepositoryFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.mongodb.JongoConnectionFactory;
 import org.jongo.Jongo;
 

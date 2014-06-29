@@ -2,9 +2,9 @@ package fr.fierdecoder.ajaxcrawlsimulator.web.application;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.Crawler;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.MemoryWebPagesRepositoryFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler.Crawler;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.MemoryWebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepositoryFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.MemorySimulationsRepository;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.SimulationRepository;
 

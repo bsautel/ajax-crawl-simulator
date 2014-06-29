@@ -2,11 +2,13 @@ package fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.Crawler;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler.Crawler;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.SimpleCrawlPerimeter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlStateFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.SimulationRepository;
 
 import java.util.Optional;
@@ -17,14 +19,17 @@ public class CrawlSimulator {
     private final Crawler crawler;
     private final SimulationRepository simulationRepository;
     private final WebPagesRepositoryFactory webPagesRepositoryFactory;
+    private final CrawlStateFactory crawlStateFactory;
 
 
     @Inject
     public CrawlSimulator(Crawler crawler, SimulationRepository simulationRepository,
-                          WebPagesRepositoryFactory webPagesRepositoryFactory) {
+                          WebPagesRepositoryFactory webPagesRepositoryFactory,
+                          CrawlStateFactory crawlStateFactory) {
         this.crawler = crawler;
         this.simulationRepository = simulationRepository;
         this.webPagesRepositoryFactory = webPagesRepositoryFactory;
+        this.crawlStateFactory = crawlStateFactory;
     }
 
     public void start(SimulationDescriptor simulationDescriptor) {
@@ -35,8 +40,9 @@ public class CrawlSimulator {
     private Simulation launchCrawl(SimulationDescriptor simulationDescriptor) {
         CrawlPerimeter perimeter = new SimpleCrawlPerimeter(simulationDescriptor.getEntryUrl(), simulationDescriptor.getUrlPrefix());
         WebPagesRepository webPagesRepository = webPagesRepositoryFactory.create(simulationDescriptor.getName());
-        crawler.crawl(perimeter, webPagesRepository);
-        return new Simulation(simulationDescriptor, webPagesRepository);
+        CrawlState state = crawlStateFactory.create(simulationDescriptor.getName());
+        crawler.crawl(perimeter, webPagesRepository, state);
+        return new Simulation(simulationDescriptor, webPagesRepository, state);
     }
 
     public Optional<SimulationDescriptor> getSimulationDescriptorByName(String name) {

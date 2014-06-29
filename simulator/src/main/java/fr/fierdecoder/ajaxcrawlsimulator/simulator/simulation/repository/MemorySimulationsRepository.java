@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 
 public class MemorySimulationsRepository implements SimulationRepository {
@@ -22,10 +23,7 @@ public class MemorySimulationsRepository implements SimulationRepository {
 
     @Override
     public Optional<Simulation> get(String name) {
-        if (simulations.containsKey(name)) {
-            return of(simulations.get(name));
-        }
-        return empty();
+        return ofNullable(simulations.get(name));
     }
 
     @Override

@@ -1,13 +1,16 @@
 package fr.fierdecoder.ajaxcrawlsimulator.crawl;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.PageReader;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler.NetworkCrawler;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.MemoryWebPagesRepository;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.MemoryWebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.MemoryCrawlState;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.google.common.collect.Sets.newHashSet;
+import static com.jayway.awaitility.Awaitility.await;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -49,7 +54,7 @@ public class NetworkCrawlerTest {
         HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
-        crawler.crawl(crawlPerimeter, repository);
+        startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(1, repository.getPagesCount());
         assertThat(repository.getByUrl(INDEX_URL).get(), is(indexPage));
@@ -75,11 +80,17 @@ public class NetworkCrawlerTest {
         HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
-        crawler.crawl(crawlPerimeter, repository);
+        startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(2, repository.getPagesCount());
         assertThat(repository.getByUrl(INDEX_URL).get(), is(indexPage));
         assertThat(repository.getByUrl(CONTACT_URL).get(), is(contactPage));
+    }
+
+    private void startCrawlAndWaitForItToEnd(NetworkCrawler crawler) {
+        CrawlState state = new MemoryCrawlState();
+        crawler.crawl(crawlPerimeter, repository, state);
+        await().atMost(1, SECONDS).until(() -> !state.isRunning());
     }
 
     @Test
@@ -88,7 +99,7 @@ public class NetworkCrawlerTest {
         HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL, INDEX_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
-        crawler.crawl(crawlPerimeter, repository);
+        startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(2, repository.getPagesCount());
         assertThat(repository.getByUrl(INDEX_URL).get(), is(indexPage));
@@ -101,7 +112,7 @@ public class NetworkCrawlerTest {
         when(crawlPerimeter.contains(CONTACT_URL)).thenReturn(false);
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
-        crawler.crawl(crawlPerimeter, repository);
+        startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(1, repository.getPagesCount());
         assertThat(repository.getByUrl(INDEX_URL).get(), is(indexPage));
@@ -113,7 +124,7 @@ public class NetworkCrawlerTest {
         HtmlWebPage homePage = registerWebPage(buildHtmlWebPage(HOME_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
-        crawler.crawl(crawlPerimeter, repository);
+        startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(2, repository.getPagesCount());
         assertThat(repository.getByUrl(INDEX_URL).get(), is(indexPage));

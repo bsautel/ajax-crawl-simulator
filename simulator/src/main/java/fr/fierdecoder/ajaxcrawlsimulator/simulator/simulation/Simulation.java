@@ -1,14 +1,17 @@
 package fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
 
 public class Simulation {
     private final SimulationDescriptor simulationDescriptor;
     private final WebPagesRepository webPagesRepository;
+    private final CrawlState state;
 
-    public Simulation(SimulationDescriptor simulationDescriptor, WebPagesRepository webPagesRepository) {
+    public Simulation(SimulationDescriptor simulationDescriptor, WebPagesRepository webPagesRepository, CrawlState state) {
         this.simulationDescriptor = simulationDescriptor;
         this.webPagesRepository = webPagesRepository;
+        this.state = state;
     }
 
     public String getName() {
@@ -21,5 +24,9 @@ public class Simulation {
 
     public WebPagesRepository getWebPagesRepository() {
         return webPagesRepository;
+    }
+
+    public CrawlState getState() {
+        return state;
     }
 }

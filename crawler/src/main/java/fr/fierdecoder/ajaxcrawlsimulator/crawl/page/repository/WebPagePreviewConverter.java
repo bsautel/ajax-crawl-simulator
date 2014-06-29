@@ -1,4 +1,4 @@
-package fr.fierdecoder.ajaxcrawlsimulator.crawl.repository;
+package fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;

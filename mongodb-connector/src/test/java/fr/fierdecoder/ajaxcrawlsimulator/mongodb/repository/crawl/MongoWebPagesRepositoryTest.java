@@ -10,7 +10,7 @@ import org.junit.Test;
 import java.util.Optional;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagePreviewConverter.createWebPagePreview;
+import static fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagePreviewConverter.createWebPagePreview;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 

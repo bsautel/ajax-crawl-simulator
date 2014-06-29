@@ -3,7 +3,7 @@ package fr.fierdecoder.ajaxcrawlsimulator.web.resource;
 import com.google.inject.Inject;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.CrawlSimulator;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
 import fr.fierdecoder.ajaxcrawlsimulator.web.value.JsonPage;

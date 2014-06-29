@@ -3,8 +3,11 @@ package fr.fierdecoder.ajaxcrawlsimulator.launcher.web;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.guice.CrawlModule;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.MemoryWebPagesRepositoryFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.MemoryWebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlStateFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.MemoryCrawlStateFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.mongodb.MongoDbConfiguration;
 import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl.MongoDbWebPagesRepositoryFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.simulator.MongoSimulationRepository;
@@ -24,9 +27,11 @@ public class LauncherModule extends AbstractModule {
             bindJongoFactory();
             bind(SimulationRepository.class).to(MongoSimulationRepository.class).in(Singleton.class);
             bind(WebPagesRepositoryFactory.class).to(MongoDbWebPagesRepositoryFactory.class).in(Singleton.class);
+            throw new UnsupportedOperationException("Not configured");
         } else {
             bind(SimulationRepository.class).to(MemorySimulationsRepository.class).in(Singleton.class);
             bind(WebPagesRepositoryFactory.class).to(MemoryWebPagesRepositoryFactory.class).in(Singleton.class);
+            bind(CrawlStateFactory.class).to(MemoryCrawlStateFactory.class);
         }
         install(new CrawlModule());
     }
