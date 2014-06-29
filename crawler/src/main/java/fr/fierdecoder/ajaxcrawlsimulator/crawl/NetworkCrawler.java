@@ -61,6 +61,14 @@ public class NetworkCrawler implements Crawler {
             LOGGER.info("Url {} is unreachable", url);
             return emptyList();
         }
+        else if (page.isBinary()) {
+            LOGGER.info("Url {} returned a binary file");
+            return emptyList();
+        }
+        else if (page.isText()) {
+            LOGGER.info("Url {} returned a text file");
+            return emptyList();
+        }
         throw new IllegalStateException("Unknown page type");
     }
 
