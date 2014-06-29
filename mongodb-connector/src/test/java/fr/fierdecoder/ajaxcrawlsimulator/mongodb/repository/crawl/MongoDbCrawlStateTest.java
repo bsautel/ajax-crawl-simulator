@@ -2,7 +2,7 @@ package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.DB;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.*;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.*;
 import org.jongo.Jongo;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,19 +10,19 @@ import org.junit.Test;
 import java.util.Optional;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagePreviewConverter.createWebPagePreview;
+import static fr.fierdecoder.ajaxcrawlsimulator.crawl.state.WebPagePreviewConverter.createWebPagePreview;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 
-public class MongoWebPagesRepositoryTest {
+public class MongoDbCrawlStateTest {
     public static final String AN_URL = "http://mydomain/";
     private static final String ANOTHER_URL = AN_URL + "about";
     private static final String ANOTHER_URL_2 = AN_URL + "contact";
     private static final String ANOTHER_URL_3 = AN_URL + "home";
     public static final String PAGE_TITLE = "title";
     public static final String PAGE_CONTENTS = "contents";
-    private MongoWebPagesRepository mongoRepository, anotherMongoRepository;
+    private MongoDbCrawlState mongoRepository, anotherMongoRepository;
     private HtmlWebPage aHtmlWebPage;
     private RedirectionWebPage aRedirectionWebPage;
     private WebPage anUnreachableWebPage;
@@ -33,8 +33,8 @@ public class MongoWebPagesRepositoryTest {
         WebPageFactory webPageFactory = new WebPageFactory();
         DB db = new Fongo("Test").getDB("Test");
         Jongo jongo = new Jongo(db);
-        mongoRepository = new MongoWebPagesRepository("Default", jongo);
-        anotherMongoRepository = new MongoWebPagesRepository("Another", jongo);
+        mongoRepository = new MongoDbCrawlState("Default", jongo);
+        anotherMongoRepository = new MongoDbCrawlState("Another", jongo);
         aHtmlWebPage = webPageFactory.buildHtmlWebPage(AN_URL, 200, PAGE_TITLE, PAGE_CONTENTS, newHashSet());
         aRedirectionWebPage = webPageFactory.buildRedirectionWebPage(ANOTHER_URL, 301, ANOTHER_URL_2, "");
         anUnreachableWebPage = webPageFactory.buildUnreachableWebPage(ANOTHER_URL_3, 404, "Not Found");

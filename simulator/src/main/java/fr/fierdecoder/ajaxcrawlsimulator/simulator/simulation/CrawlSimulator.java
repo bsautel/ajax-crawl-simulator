@@ -5,8 +5,6 @@ import com.google.inject.Singleton;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler.Crawler;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.SimpleCrawlPerimeter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepositoryFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlStateFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.SimulationRepository;
@@ -18,17 +16,14 @@ import java.util.Set;
 public class CrawlSimulator {
     private final Crawler crawler;
     private final SimulationRepository simulationRepository;
-    private final WebPagesRepositoryFactory webPagesRepositoryFactory;
     private final CrawlStateFactory crawlStateFactory;
 
 
     @Inject
     public CrawlSimulator(Crawler crawler, SimulationRepository simulationRepository,
-                          WebPagesRepositoryFactory webPagesRepositoryFactory,
                           CrawlStateFactory crawlStateFactory) {
         this.crawler = crawler;
         this.simulationRepository = simulationRepository;
-        this.webPagesRepositoryFactory = webPagesRepositoryFactory;
         this.crawlStateFactory = crawlStateFactory;
     }
 
@@ -39,10 +34,9 @@ public class CrawlSimulator {
 
     private Simulation launchCrawl(SimulationDescriptor simulationDescriptor) {
         CrawlPerimeter perimeter = new SimpleCrawlPerimeter(simulationDescriptor.getEntryUrl(), simulationDescriptor.getUrlPrefix());
-        WebPagesRepository webPagesRepository = webPagesRepositoryFactory.create(simulationDescriptor.getName());
         CrawlState state = crawlStateFactory.create(simulationDescriptor.getName());
-        crawler.crawl(perimeter, webPagesRepository, state);
-        return new Simulation(simulationDescriptor, webPagesRepository, state);
+        crawler.crawl(perimeter, state);
+        return new Simulation(simulationDescriptor, state);
     }
 
     public Optional<SimulationDescriptor> getSimulationDescriptorByName(String name) {
@@ -54,9 +48,9 @@ public class CrawlSimulator {
         return simulationRepository.get(name);
     }
 
-    public Optional<WebPagesRepository> getSimulationWebPagesRepositoryByName(String name) {
+    public Optional<CrawlState> getSimulationStateByName(String name) {
         return getSimulationByName(name)
-                .map(Simulation::getWebPagesRepository);
+                .map(Simulation::getState);
     }
 
     public Set<SimulationDescriptor> getSimulations() {

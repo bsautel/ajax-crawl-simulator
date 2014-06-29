@@ -1,14 +1,12 @@
-package fr.fierdecoder.ajaxcrawlsimulator.crawl.page;
+package fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page;
 
 import java.util.Objects;
-
-import static fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType.REDIRECTION;
 
 public final class RedirectionWebPage extends WebPage {
     private final String targetUrl;
 
     public RedirectionWebPage(String url, int httpStatus, String body, String targetUrl) {
-        super(REDIRECTION, url, httpStatus, body);
+        super(WebPageType.REDIRECTION, url, httpStatus, body);
         this.targetUrl = targetUrl;
     }
 

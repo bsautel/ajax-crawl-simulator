@@ -1,10 +1,10 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagePreviewConverter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.WebPagePreviewConverter;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPagePreview;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 
@@ -16,14 +16,14 @@ import java.util.Set;
 import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toSet;
 
-public class MongoWebPagesRepository implements WebPagesRepository {
+public class MongoDbCrawlState implements CrawlState {
     public static final String NAME_AND_URL_FILTER = "{'url': '#', 'simulationName': '#'}";
     public static final String SIMULATION_NAME_FILTER = "{'simulationName': '#'}";
     private final MongoWebPageConverter mongoWebPageConverter = new MongoWebPageConverter(new WebPageFactory());
     private final MongoCollection collection;
     private final String simulationName;
 
-    public MongoWebPagesRepository(String simulationName, Jongo jongo) {
+    public MongoDbCrawlState(String simulationName, Jongo jongo) {
         this.simulationName = simulationName;
         collection = jongo.getCollection("webPages");
         ensureIndexOnField("simulationName");
@@ -34,6 +34,36 @@ public class MongoWebPagesRepository implements WebPagesRepository {
         collection.ensureIndex("{" + field + ": 1}", "{unique: false}");
     }
 
+
+    @Override
+    public void addUrl(String url) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public void addUrls(Collection<String> urls) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public boolean hasUrlToCrawl() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public String getUrlToCrawl() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public void maskAsFinished() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public boolean isRunning() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 
     @Override
     public void add(WebPage page) {

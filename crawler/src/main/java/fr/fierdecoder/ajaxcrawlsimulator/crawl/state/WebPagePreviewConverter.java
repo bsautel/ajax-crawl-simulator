@@ -1,7 +1,7 @@
-package fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository;
+package fr.fierdecoder.ajaxcrawlsimulator.crawl.state;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPagePreview;
 
 import java.util.Optional;
 

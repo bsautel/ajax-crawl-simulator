@@ -1,10 +1,10 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.HtmlWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.RedirectionWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 
 @Singleton
 public class MongoWebPageConverter {

@@ -2,16 +2,14 @@ package fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler;
 
 import com.google.inject.Inject;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.PageReader;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.repository.WebPagesRepository;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.HtmlWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.RedirectionWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
 import org.slf4j.Logger;
 
 import java.util.Collection;
-import java.util.concurrent.Executors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -28,33 +26,33 @@ public class NetworkCrawler implements Crawler {
     }
 
     @Override
-    public void crawl(CrawlPerimeter crawlPerimeter, WebPagesRepository repository, CrawlState state) {
+    public void crawl(CrawlPerimeter crawlPerimeter, CrawlState state) {
         state.addUrl(crawlPerimeter.getEntryUrl());
-        newSingleThreadExecutor().submit(() -> launchCrawl(crawlPerimeter, repository, state));
+        newSingleThreadExecutor().submit(() -> launchCrawl(crawlPerimeter, state));
+    }
+
+    private void launchCrawl(CrawlPerimeter crawlPerimeter, CrawlState state) {
+        while (state.hasUrlToCrawl()) {
+            String url = state.getUrlToCrawl();
+            Collection<String> newUrls = crawlUrlIfNeeded(url, state, crawlPerimeter);
+            state.addUrls(newUrls);
+        }
         LOGGER.info("Crawl terminated");
         state.maskAsFinished();
     }
 
-    private void launchCrawl(CrawlPerimeter crawlPerimeter, WebPagesRepository repository, CrawlState state) {
-        while (state.hasUrlToCrawl()) {
-            String url = state.getUrlToCrawl();
-            Collection<String> newUrls = crawlUrlIfNeeded(url, repository, crawlPerimeter);
-            state.addUrls(newUrls);
-        }
-    }
-
-    private Collection<String> crawlUrlIfNeeded(String url, WebPagesRepository repository, CrawlPerimeter crawlPerimeter) {
+    private Collection<String> crawlUrlIfNeeded(String url, CrawlState state, CrawlPerimeter crawlPerimeter) {
         LOGGER.info("Crawling {}", url);
-        if (mustBeCrawled(url, repository, crawlPerimeter)) {
-            return crawlUrl(url, repository);
+        if (mustBeCrawled(url, state, crawlPerimeter)) {
+            return crawlUrl(url, state);
         }
         LOGGER.info("Url {} ignored since it is not in the crawl perimeter", url);
         return emptyList();
     }
 
-    private Collection<String> crawlUrl(String url, WebPagesRepository repository) {
+    private Collection<String> crawlUrl(String url, CrawlState state) {
         WebPage page = pageReader.readPage(url);
-        repository.add(page);
+        state.add(page);
         if (page.isHtml()) {
             HtmlWebPage htmlPage = page.asHtml();
             LOGGER.info("Url {} returned a HTML page with title {}", url, htmlPage.getTitle());
@@ -78,7 +76,7 @@ public class NetworkCrawler implements Crawler {
         throw new IllegalStateException("Unknown page type");
     }
 
-    private boolean mustBeCrawled(String url, WebPagesRepository repository, CrawlPerimeter crawlPerimeter) {
+    private boolean mustBeCrawled(String url, CrawlState repository, CrawlPerimeter crawlPerimeter) {
         return !repository.containsUrl(url) && crawlPerimeter.contains(url);
     }
 }

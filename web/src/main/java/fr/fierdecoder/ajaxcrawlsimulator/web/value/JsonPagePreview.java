@@ -1,7 +1,7 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.value;
 
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageType;
 
 public class JsonPagePreview {
     private final WebPageType type;

@@ -3,8 +3,8 @@ package fr.fierdecoder.ajaxcrawlsimulator.crawl.connector;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -33,20 +33,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Singleton
 public class NetworkPageReader implements PageReader {
-    private static enum ResolveFragmentStrategy {
-        RESOLVE(true), DO_NOT_RESOLVE(false);
-
-        private boolean canResolveFragment;
-
-        private ResolveFragmentStrategy(boolean canResolveFragment) {
-            this.canResolveFragment = canResolveFragment;
-        }
-
-        public boolean canResolveFragment() {
-            return canResolveFragment;
-        }
-    }
-
     public static final String ESCAPED_FRAGMENT = "_escaped_fragment_";
     private final Logger LOGGER = getLogger(NetworkPageReader.class);
     private final DocumentReader documentReader;
@@ -173,5 +159,19 @@ public class NetworkPageReader implements PageReader {
     private boolean supportsFragment(Document document) {
         Elements fragmentMeta = document.select("meta[name=fragment]");
         return fragmentMeta.size() == 1;
+    }
+
+    private static enum ResolveFragmentStrategy {
+        RESOLVE(true), DO_NOT_RESOLVE(false);
+
+        private boolean canResolveFragment;
+
+        private ResolveFragmentStrategy(boolean canResolveFragment) {
+            this.canResolveFragment = canResolveFragment;
+        }
+
+        public boolean canResolveFragment() {
+            return canResolveFragment;
+        }
     }
 }

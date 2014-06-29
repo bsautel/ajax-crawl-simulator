@@ -1,6 +1,6 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageType;
 
 import java.util.Set;
 

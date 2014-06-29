@@ -3,8 +3,8 @@ package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.simulator;
 import com.github.fakemongo.Fongo;
 import com.mongodb.DB;
 import fr.fierdecoder.ajaxcrawlsimulator.mongodb.JongoConnectionFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl.MongoDbWebPagesRepositoryFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl.MongoWebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl.MongoDbCrawlState;
+import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl.MongoDbCrawlStateFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.Simulation;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
 import org.jongo.Jongo;
@@ -25,13 +25,13 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MongoSimulationRepositoryTest {
-    private static final String A_URL = "http://localhost/";
     public static final String NAME = "name";
+    private static final String A_URL = "http://localhost/";
     @Mock
-    private MongoDbWebPagesRepositoryFactory webPagesRepositoryFactory;
+    private MongoDbCrawlStateFactory crawlStateFactory;
     @Mock
     private JongoConnectionFactory jongoConnectionFactory;
-    private Map<String, MongoWebPagesRepository> mongoWebPagesRepositories;
+    private Map<String, MongoDbCrawlState> crawlStateMap;
     private MongoSimulationRepository mongoSimulationRepository;
 
     @Before
@@ -39,13 +39,13 @@ public class MongoSimulationRepositoryTest {
         DB db = new Fongo("Test").getDB("Test");
         Jongo jongo = new Jongo(db);
         when(jongoConnectionFactory.create()).thenReturn(jongo);
-        mongoSimulationRepository = new MongoSimulationRepository(jongoConnectionFactory, webPagesRepositoryFactory);
-        mongoWebPagesRepositories = new HashMap<>();
+        mongoSimulationRepository = new MongoSimulationRepository(jongoConnectionFactory, crawlStateFactory);
+        crawlStateMap = new HashMap<>();
         // Ensure each simulation returns the same web page repository
-        when(webPagesRepositoryFactory.create(anyString()))
+        when(crawlStateFactory.create(anyString()))
                 .thenAnswer(args -> {
                     String name = (String) args.getArguments()[0];
-                    return mongoWebPagesRepositories.computeIfAbsent(name, n -> mock(MongoWebPagesRepository.class));
+                    return crawlStateMap.computeIfAbsent(name, n -> mock(MongoDbCrawlState.class));
                 });
     }
 
@@ -63,7 +63,7 @@ public class MongoSimulationRepositoryTest {
 
     private Simulation createSimulation(SimulationDescriptor descriptor) {
         throw new UnsupportedOperationException("Not yet implemented");
-//        return new Simulation(descriptor, webPagesRepositoryFactory.create(descriptor.getName()), null);
+//        return new Simulation(descriptor, crawlStateFactory.create(descriptor.getName()), null);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class MongoSimulationRepositoryTest {
         mongoSimulationRepository.deleteByName(NAME);
 
         assertThat(mongoSimulationRepository.get(NAME).isPresent(), is(false));
-        MongoWebPagesRepository webPagesRepository = (MongoWebPagesRepository) simulation.getWebPagesRepository();
-        verify(webPagesRepository).drop();
+        MongoDbCrawlState state = (MongoDbCrawlState) simulation.getState();
+        verify(state).drop();
     }
 }
