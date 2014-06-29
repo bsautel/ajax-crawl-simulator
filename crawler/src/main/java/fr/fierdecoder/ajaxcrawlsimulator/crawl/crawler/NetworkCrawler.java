@@ -27,7 +27,7 @@ public class NetworkCrawler implements Crawler {
 
     @Override
     public void crawl(CrawlPerimeter crawlPerimeter, CrawlState state) {
-        state.addUrl(crawlPerimeter.getEntryUrl());
+        state.addUrlToCrawl(crawlPerimeter.getEntryUrl());
         newSingleThreadExecutor().submit(() -> launchCrawl(crawlPerimeter, state));
     }
 
@@ -35,24 +35,23 @@ public class NetworkCrawler implements Crawler {
         while (state.hasUrlToCrawl()) {
             String url = state.getUrlToCrawl();
             Collection<String> newUrls = crawlUrlIfNeeded(url, state, crawlPerimeter);
-            state.addUrls(newUrls);
+            state.addUrlsToCrawl(newUrls);
         }
         LOGGER.info("Crawl terminated");
         state.maskAsFinished();
     }
 
     private Collection<String> crawlUrlIfNeeded(String url, CrawlState state, CrawlPerimeter crawlPerimeter) {
-        LOGGER.info("Crawling {}", url);
         if (mustBeCrawled(url, state, crawlPerimeter)) {
+            LOGGER.info("Crawling {}", url);
             return crawlUrl(url, state);
         }
-        LOGGER.info("Url {} ignored since it is not in the crawl perimeter", url);
         return emptyList();
     }
 
     private Collection<String> crawlUrl(String url, CrawlState state) {
         WebPage page = pageReader.readPage(url);
-        state.add(page);
+        state.addPage(page);
         if (page.isHtml()) {
             HtmlWebPage htmlPage = page.asHtml();
             LOGGER.info("Url {} returned a HTML page with title {}", url, htmlPage.getTitle());
@@ -64,12 +63,10 @@ public class NetworkCrawler implements Crawler {
         } else if (page.isUnreachable()) {
             LOGGER.info("Url {} is unreachable", url);
             return emptyList();
-        }
-        else if (page.isBinary()) {
+        } else if (page.isBinary()) {
             LOGGER.info("Url {} returned a binary file");
             return emptyList();
-        }
-        else if (page.isText()) {
+        } else if (page.isText()) {
             LOGGER.info("Url {} returned a text file");
             return emptyList();
         }
@@ -77,6 +74,6 @@ public class NetworkCrawler implements Crawler {
     }
 
     private boolean mustBeCrawled(String url, CrawlState repository, CrawlPerimeter crawlPerimeter) {
-        return !repository.containsUrl(url) && crawlPerimeter.contains(url);
+        return crawlPerimeter.contains(url) && !repository.containsPage(url);
     }
 }

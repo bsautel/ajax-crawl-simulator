@@ -23,9 +23,9 @@ public class CrawlerStub implements Crawler {
         WebPageFactory webPageFactory = new WebPageFactory();
         HtmlWebPage htmlWebPage = webPageFactory.buildHtmlWebPage(ABOUT_URL, 200, PAGE_TITLE, PAGE_BODY,
                 newHashSet(CONTACT_URL));
-        state.add(htmlWebPage);
+        state.addPage(htmlWebPage);
         RedirectionWebPage redirectionWebPage = webPageFactory.buildRedirectionWebPage(HOME_URL, 301, "", CONTACT_URL);
-        state.add(redirectionWebPage);
-        state.add(webPageFactory.buildUnreachableWebPage(CONTACT_URL, 404, ""));
+        state.addPage(redirectionWebPage);
+        state.addPage(webPageFactory.buildUnreachableWebPage(CONTACT_URL, 404, ""));
     }
 }

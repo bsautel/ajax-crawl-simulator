@@ -20,12 +20,12 @@ public class MemoryCrawlState implements CrawlState {
     private AtomicBoolean running = new AtomicBoolean(true);
 
     @Override
-    public void addUrl(String url) {
+    public void addUrlToCrawl(String url) {
         urlQueue.add(url);
     }
 
     @Override
-    public void addUrls(Collection<String> urls) {
+    public void addUrlsToCrawl(Collection<String> urls) {
         urlQueue.addAll(urls);
     }
 
@@ -50,17 +50,17 @@ public class MemoryCrawlState implements CrawlState {
     }
 
     @Override
-    public void add(WebPage page) {
+    public void addPage(WebPage page) {
         pagesByUrl.put(page.getUrl(), page);
     }
 
     @Override
-    public boolean containsUrl(String url) {
+    public boolean containsPage(String url) {
         return pagesByUrl.containsKey(url);
     }
 
     @Override
-    public Optional<WebPage> getByUrl(String url) {
+    public Optional<WebPage> getPageByUrl(String url) {
         return of(pagesByUrl.get(url));
     }
 
@@ -74,5 +74,11 @@ public class MemoryCrawlState implements CrawlState {
         return pagesByUrl.values().stream()
                 .map(WebPagePreviewConverter::createWebPagePreview)
                 .collect(toSet());
+    }
+
+    @Override
+    public void drop() {
+        pagesByUrl.clear();
+        urlQueue.clear();
     }
 }

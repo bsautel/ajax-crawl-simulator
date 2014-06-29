@@ -7,15 +7,15 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 
 @Singleton
-public class MongoWebPageConverter {
+public class MongoDbWebPageConverter {
     private final WebPageFactory webPageFactory;
 
-    public MongoWebPageConverter(WebPageFactory webPageFactory) {
+    public MongoDbWebPageConverter(WebPageFactory webPageFactory) {
         this.webPageFactory = webPageFactory;
     }
 
-    public MongoWebPage convertToMongo(WebPage webPage, String simulationName) {
-        MongoWebPage result = new MongoWebPage(simulationName, webPage.getType(),
+    public MongoDbWebPage convertToMongo(WebPage webPage, String simulationName) {
+        MongoDbWebPage result = new MongoDbWebPage(simulationName, webPage.getType(),
                 webPage.getUrl(), webPage.getHttpStatus(), webPage.getBody());
         if (webPage.isHtml()) {
             HtmlWebPage htmlWebPage = webPage.asHtml();
@@ -28,7 +28,7 @@ public class MongoWebPageConverter {
         return result;
     }
 
-    public WebPage convertFromMongo(MongoWebPage mongoPage) {
+    public WebPage convertFromMongo(MongoDbWebPage mongoPage) {
         switch (mongoPage.getType()) {
             case HTML:
                 return webPageFactory.buildHtmlWebPage(mongoPage.getUrl(), mongoPage.getHttpStatus(),

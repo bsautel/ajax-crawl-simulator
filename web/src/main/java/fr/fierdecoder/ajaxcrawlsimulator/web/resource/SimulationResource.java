@@ -59,7 +59,7 @@ public class SimulationResource {
     public Optional<JsonPage> getSimulationPage(String name, String url) throws UnsupportedEncodingException {
         String decodedUrl = URLDecoder.decode(url, "UTF-8");
         Optional<CrawlState> optionalCrawlState = crawlSimulator.getSimulationStateByName(name);
-        Optional<WebPage> optionalPage = optionalCrawlState.flatMap(repository -> repository.getByUrl(decodedUrl));
+        Optional<WebPage> optionalPage = optionalCrawlState.flatMap(repository -> repository.getPageByUrl(decodedUrl));
         return optionalPage.map(jsonPageConverter::createJsonPage);
     }
 }

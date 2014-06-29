@@ -8,8 +8,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 
@@ -35,6 +33,10 @@ public class MemorySimulationsRepository implements SimulationRepository {
 
     @Override
     public void deleteByName(String name) {
+        Optional<Simulation> simulation = get(name);
+        if (simulation.isPresent()) {
+            simulation.get().getState().drop();
+        }
         simulations.remove(name);
     }
 }

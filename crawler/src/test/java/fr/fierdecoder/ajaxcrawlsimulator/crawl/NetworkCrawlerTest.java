@@ -55,7 +55,7 @@ public class NetworkCrawlerTest {
         startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(1, state.getPagesCount());
-        assertThat(state.getByUrl(INDEX_URL).get(), is(indexPage));
+        assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
     }
 
     private HtmlWebPage buildHtmlWebPage(String url, String... links) {
@@ -81,8 +81,8 @@ public class NetworkCrawlerTest {
         startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(2, state.getPagesCount());
-        assertThat(state.getByUrl(INDEX_URL).get(), is(indexPage));
-        assertThat(state.getByUrl(CONTACT_URL).get(), is(contactPage));
+        assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
+        assertThat(state.getPageByUrl(CONTACT_URL).get(), is(contactPage));
     }
 
     private void startCrawlAndWaitForItToEnd(NetworkCrawler crawler) {
@@ -99,8 +99,8 @@ public class NetworkCrawlerTest {
         startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(2, state.getPagesCount());
-        assertThat(state.getByUrl(INDEX_URL).get(), is(indexPage));
-        assertThat(state.getByUrl(CONTACT_URL).get(), is(contactPage));
+        assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
+        assertThat(state.getPageByUrl(CONTACT_URL).get(), is(contactPage));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class NetworkCrawlerTest {
         startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(1, state.getPagesCount());
-        assertThat(state.getByUrl(INDEX_URL).get(), is(indexPage));
+        assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class NetworkCrawlerTest {
         startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(2, state.getPagesCount());
-        assertThat(state.getByUrl(INDEX_URL).get(), is(indexPage));
-        assertThat(state.getByUrl(HOME_URL).get(), is(homePage));
+        assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
+        assertThat(state.getPageByUrl(HOME_URL).get(), is(homePage));
     }
 }

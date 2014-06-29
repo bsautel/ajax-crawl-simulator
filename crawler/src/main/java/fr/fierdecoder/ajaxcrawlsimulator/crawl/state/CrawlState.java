@@ -7,9 +7,9 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface CrawlState {
-    void addUrl(String url);
+    void addUrlToCrawl(String url);
 
-    void addUrls(Collection<String> urls);
+    void addUrlsToCrawl(Collection<String> urls);
 
     boolean hasUrlToCrawl();
 
@@ -19,13 +19,15 @@ public interface CrawlState {
 
     boolean isRunning();
 
-    void add(WebPage page);
+    void addPage(WebPage page);
 
-    boolean containsUrl(String url);
+    boolean containsPage(String url);
 
-    Optional<WebPage> getByUrl(String url);
+    Optional<WebPage> getPageByUrl(String url);
 
     long getPagesCount();
 
     Collection<WebPagePreview> getWebPagesPreviews();
+
+    void drop();
 }
