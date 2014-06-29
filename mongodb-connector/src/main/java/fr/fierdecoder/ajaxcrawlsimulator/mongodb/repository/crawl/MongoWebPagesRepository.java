@@ -1,10 +1,10 @@
-package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl;
+package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagePreviewConverter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagePreviewConverter;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 
@@ -16,14 +16,14 @@ import java.util.Set;
 import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toSet;
 
-public class MongoWebPagesRegistry implements WebPagesRegistry {
+public class MongoWebPagesRepository implements WebPagesRepository {
     public static final String NAME_AND_URL_FILTER = "{'url': '#', 'simulationName': '#'}";
     public static final String SIMULATION_NAME_FILTER = "{'simulationName': '#'}";
     private final MongoWebPageConverter mongoWebPageConverter = new MongoWebPageConverter(new WebPageFactory());
     private final MongoCollection collection;
     private final String simulationName;
 
-    public MongoWebPagesRegistry(String simulationName, Jongo jongo) {
+    public MongoWebPagesRepository(String simulationName, Jongo jongo) {
         this.simulationName = simulationName;
         collection = jongo.getCollection("webPages");
         ensureIndexOnField("simulationName");
@@ -36,7 +36,7 @@ public class MongoWebPagesRegistry implements WebPagesRegistry {
 
 
     @Override
-    public void register(WebPage page) {
+    public void add(WebPage page) {
         MongoWebPage mongoPage = mongoWebPageConverter.convertToMongo(page, simulationName);
         collection.insert(mongoPage);
     }

@@ -1,4 +1,4 @@
-package fr.fierdecoder.ajaxcrawlsimulator.crawl.registry;
+package fr.fierdecoder.ajaxcrawlsimulator.crawl.repository;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
@@ -11,11 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
 
-public class MemoryWebPagesRegistry implements WebPagesRegistry {
+public class MemoryWebPagesRepository implements WebPagesRepository {
     private final Map<String, WebPage> pagesByUrl = new ConcurrentHashMap<>();
 
     @Override
-    public void register(WebPage page) {
+    public void add(WebPage page) {
         pagesByUrl.put(page.getUrl(), page);
     }
 

@@ -1,4 +1,4 @@
-package fr.fierdecoder.ajaxcrawlsimulator.crawl.registry;
+package fr.fierdecoder.ajaxcrawlsimulator.crawl.repository;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
@@ -6,8 +6,8 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
 import java.util.Collection;
 import java.util.Optional;
 
-public interface WebPagesRegistry {
-    void register(WebPage page);
+public interface WebPagesRepository {
+    void add(WebPage page);
 
     boolean containsUrl(String url);
 

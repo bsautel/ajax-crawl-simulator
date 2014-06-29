@@ -1,9 +1,8 @@
-package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl;
+package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.DB;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.*;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagePreviewConverter;
 import org.jongo.Jongo;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,20 +10,19 @@ import org.junit.Test;
 import java.util.Optional;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagePreviewConverter.createWebPagePreview;
+import static fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagePreviewConverter.createWebPagePreview;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 
-public class MongoWebPagesRegistryTest {
+public class MongoWebPagesRepositoryTest {
     public static final String AN_URL = "http://mydomain/";
     private static final String ANOTHER_URL = AN_URL + "about";
     private static final String ANOTHER_URL_2 = AN_URL + "contact";
     private static final String ANOTHER_URL_3 = AN_URL + "home";
     public static final String PAGE_TITLE = "title";
     public static final String PAGE_CONTENTS = "contents";
-    private WebPageFactory webPageFactory;
-    private MongoWebPagesRegistry mongoRegistry, anotherRegistry;
+    private MongoWebPagesRepository mongoRepository, anotherMongoRepository;
     private HtmlWebPage aHtmlWebPage;
     private RedirectionWebPage aRedirectionWebPage;
     private WebPage anUnreachableWebPage;
@@ -32,11 +30,11 @@ public class MongoWebPagesRegistryTest {
 
     @Before
     public void setUp() throws Exception {
-        webPageFactory = new WebPageFactory();
+        WebPageFactory webPageFactory = new WebPageFactory();
         DB db = new Fongo("Test").getDB("Test");
         Jongo jongo = new Jongo(db);
-        mongoRegistry = new MongoWebPagesRegistry("Default", jongo);
-        anotherRegistry = new MongoWebPagesRegistry("Another", jongo);
+        mongoRepository = new MongoWebPagesRepository("Default", jongo);
+        anotherMongoRepository = new MongoWebPagesRepository("Another", jongo);
         aHtmlWebPage = webPageFactory.buildHtmlWebPage(AN_URL, 200, PAGE_TITLE, PAGE_CONTENTS, newHashSet());
         aRedirectionWebPage = webPageFactory.buildRedirectionWebPage(ANOTHER_URL, 301, ANOTHER_URL_2, "");
         anUnreachableWebPage = webPageFactory.buildUnreachableWebPage(ANOTHER_URL_3, 404, "Not Found");
@@ -47,16 +45,16 @@ public class MongoWebPagesRegistryTest {
 
     @Test
     public void shouldNotRegisteredUrlNotExist() {
-        assertFalse(mongoRegistry.containsUrl("https://www.google.com"));
+        assertFalse(mongoRepository.containsUrl("https://www.google.com"));
     }
 
     @Test
     public void shouldInsertAnHtmlWebPage() {
-        mongoRegistry.register(aHtmlWebPage);
+        mongoRepository.add(aHtmlWebPage);
 
-        assertTrue(mongoRegistry.containsUrl(AN_URL));
-        assertFalse(anotherRegistry.containsUrl(AN_URL));
-        Optional<WebPage> result = mongoRegistry.getByUrl(AN_URL);
+        assertTrue(mongoRepository.containsUrl(AN_URL));
+        assertFalse(anotherMongoRepository.containsUrl(AN_URL));
+        Optional<WebPage> result = mongoRepository.getByUrl(AN_URL);
         assertThat(result.isPresent(), is(true));
         WebPage webPage = result.get();
         assertThat(webPage, instanceOf(HtmlWebPage.class));
@@ -66,26 +64,26 @@ public class MongoWebPagesRegistryTest {
 
     @Test
     public void shouldReturnAllPagesPreviews() {
-        mongoRegistry.register(aHtmlWebPage);
-        mongoRegistry.register(aRedirectionWebPage);
-        mongoRegistry.register(anUnreachableWebPage);
+        mongoRepository.add(aHtmlWebPage);
+        mongoRepository.add(aRedirectionWebPage);
+        mongoRepository.add(anUnreachableWebPage);
 
-        assertThat(mongoRegistry.getPagesCount(), is(3l));
-        assertThat(mongoRegistry.getWebPagesPreviews(),
+        assertThat(mongoRepository.getPagesCount(), is(3l));
+        assertThat(mongoRepository.getWebPagesPreviews(),
                 containsInAnyOrder(aHtmlWebPagePreview, aRedirectionPagePreview, anUnreachablePagePreview));
-        assertThat(anotherRegistry.getPagesCount(), is(0l));
-        assertThat(anotherRegistry.getWebPagesPreviews().size(), is(0));
+        assertThat(anotherMongoRepository.getPagesCount(), is(0l));
+        assertThat(anotherMongoRepository.getWebPagesPreviews().size(), is(0));
     }
 
     @Test
     public void shouldDropAllPages() {
-        mongoRegistry.register(aHtmlWebPage);
-        anotherRegistry.register(aRedirectionWebPage);
-        mongoRegistry.register(anUnreachableWebPage);
+        mongoRepository.add(aHtmlWebPage);
+        anotherMongoRepository.add(aRedirectionWebPage);
+        mongoRepository.add(anUnreachableWebPage);
 
-        mongoRegistry.drop();
+        mongoRepository.drop();
 
-        assertThat(mongoRegistry.getPagesCount(), is(0l));
-        assertThat(anotherRegistry.getPagesCount(), is(1l));
+        assertThat(mongoRepository.getPagesCount(), is(0l));
+        assertThat(anotherMongoRepository.getPagesCount(), is(1l));
     }
 }

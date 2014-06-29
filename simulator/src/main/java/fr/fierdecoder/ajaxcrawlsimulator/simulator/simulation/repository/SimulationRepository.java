@@ -1,4 +1,4 @@
-package fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.registry;
+package fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository;
 
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.Simulation;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
@@ -6,8 +6,8 @@ import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescript
 import java.util.Optional;
 import java.util.Set;
 
-public interface SimulationRegistry {
-    void register(Simulation simulation);
+public interface SimulationRepository {
+    void add(Simulation simulation);
 
     Optional<Simulation> get(String name);
 

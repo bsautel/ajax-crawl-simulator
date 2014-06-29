@@ -6,8 +6,8 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.MemoryWebPagesRegistry;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.MemoryWebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,12 +34,12 @@ public class NetworkCrawlerTest {
     @Mock
     private CrawlPerimeter crawlPerimeter;
     private WebPageFactory webPageFactory;
-    private WebPagesRegistry registry;
+    private WebPagesRepository repository;
 
     @Before
     public void setUp() {
         webPageFactory = new WebPageFactory();
-        registry = new MemoryWebPagesRegistry();
+        repository = new MemoryWebPagesRepository();
         when(crawlPerimeter.getEntryUrl()).thenReturn(INDEX_URL);
         when(crawlPerimeter.contains(anyString())).thenReturn(true);
     }
@@ -49,10 +49,10 @@ public class NetworkCrawlerTest {
         HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
-        crawler.crawl(crawlPerimeter, registry);
+        crawler.crawl(crawlPerimeter, repository);
 
-        assertEquals(1, registry.getPagesCount());
-        assertThat(registry.getByUrl(INDEX_URL).get(), is(indexPage));
+        assertEquals(1, repository.getPagesCount());
+        assertThat(repository.getByUrl(INDEX_URL).get(), is(indexPage));
     }
 
     private HtmlWebPage buildHtmlWebPage(String url, String... links) {
@@ -75,11 +75,11 @@ public class NetworkCrawlerTest {
         HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
-        crawler.crawl(crawlPerimeter, registry);
+        crawler.crawl(crawlPerimeter, repository);
 
-        assertEquals(2, registry.getPagesCount());
-        assertThat(registry.getByUrl(INDEX_URL).get(), is(indexPage));
-        assertThat(registry.getByUrl(CONTACT_URL).get(), is(contactPage));
+        assertEquals(2, repository.getPagesCount());
+        assertThat(repository.getByUrl(INDEX_URL).get(), is(indexPage));
+        assertThat(repository.getByUrl(CONTACT_URL).get(), is(contactPage));
     }
 
     @Test
@@ -88,11 +88,11 @@ public class NetworkCrawlerTest {
         HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL, INDEX_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
-        crawler.crawl(crawlPerimeter, registry);
+        crawler.crawl(crawlPerimeter, repository);
 
-        assertEquals(2, registry.getPagesCount());
-        assertThat(registry.getByUrl(INDEX_URL).get(), is(indexPage));
-        assertThat(registry.getByUrl(CONTACT_URL).get(), is(contactPage));
+        assertEquals(2, repository.getPagesCount());
+        assertThat(repository.getByUrl(INDEX_URL).get(), is(indexPage));
+        assertThat(repository.getByUrl(CONTACT_URL).get(), is(contactPage));
     }
 
     @Test
@@ -101,10 +101,10 @@ public class NetworkCrawlerTest {
         when(crawlPerimeter.contains(CONTACT_URL)).thenReturn(false);
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
-        crawler.crawl(crawlPerimeter, registry);
+        crawler.crawl(crawlPerimeter, repository);
 
-        assertEquals(1, registry.getPagesCount());
-        assertThat(registry.getByUrl(INDEX_URL).get(), is(indexPage));
+        assertEquals(1, repository.getPagesCount());
+        assertThat(repository.getByUrl(INDEX_URL).get(), is(indexPage));
     }
 
     @Test
@@ -113,10 +113,10 @@ public class NetworkCrawlerTest {
         HtmlWebPage homePage = registerWebPage(buildHtmlWebPage(HOME_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
-        crawler.crawl(crawlPerimeter, registry);
+        crawler.crawl(crawlPerimeter, repository);
 
-        assertEquals(2, registry.getPagesCount());
-        assertThat(registry.getByUrl(INDEX_URL).get(), is(indexPage));
-        assertThat(registry.getByUrl(HOME_URL).get(), is(homePage));
+        assertEquals(2, repository.getPagesCount());
+        assertThat(repository.getByUrl(INDEX_URL).get(), is(indexPage));
+        assertThat(repository.getByUrl(HOME_URL).get(), is(homePage));
     }
 }

@@ -5,9 +5,9 @@ import com.google.inject.Singleton;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.Crawler;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.SimpleCrawlPerimeter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistryFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.registry.SimulationRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.SimulationRepository;
 
 import java.util.Optional;
 import java.util.Set;
@@ -15,28 +15,28 @@ import java.util.Set;
 @Singleton
 public class CrawlSimulator {
     private final Crawler crawler;
-    private final SimulationRegistry simulationRegistry;
-    private final WebPagesRegistryFactory webPagesRegistryFactory;
+    private final SimulationRepository simulationRepository;
+    private final WebPagesRepositoryFactory webPagesRepositoryFactory;
 
 
     @Inject
-    public CrawlSimulator(Crawler crawler, SimulationRegistry simulationRegistry,
-                          WebPagesRegistryFactory webPagesRegistryFactory) {
+    public CrawlSimulator(Crawler crawler, SimulationRepository simulationRepository,
+                          WebPagesRepositoryFactory webPagesRepositoryFactory) {
         this.crawler = crawler;
-        this.simulationRegistry = simulationRegistry;
-        this.webPagesRegistryFactory = webPagesRegistryFactory;
+        this.simulationRepository = simulationRepository;
+        this.webPagesRepositoryFactory = webPagesRepositoryFactory;
     }
 
     public void start(SimulationDescriptor simulationDescriptor) {
         Simulation result = launchCrawl(simulationDescriptor);
-        simulationRegistry.register(result);
+        simulationRepository.add(result);
     }
 
     private Simulation launchCrawl(SimulationDescriptor simulationDescriptor) {
         CrawlPerimeter perimeter = new SimpleCrawlPerimeter(simulationDescriptor.getEntryUrl(), simulationDescriptor.getUrlPrefix());
-        WebPagesRegistry webPagesRegistry = webPagesRegistryFactory.create(simulationDescriptor.getName());
-        crawler.crawl(perimeter, webPagesRegistry);
-        return new Simulation(simulationDescriptor, webPagesRegistry);
+        WebPagesRepository webPagesRepository = webPagesRepositoryFactory.create(simulationDescriptor.getName());
+        crawler.crawl(perimeter, webPagesRepository);
+        return new Simulation(simulationDescriptor, webPagesRepository);
     }
 
     public Optional<SimulationDescriptor> getSimulationDescriptorByName(String name) {
@@ -45,19 +45,19 @@ public class CrawlSimulator {
     }
 
     private Optional<Simulation> getSimulationByName(String name) {
-        return simulationRegistry.get(name);
+        return simulationRepository.get(name);
     }
 
-    public Optional<WebPagesRegistry> getSimulationWebPagesRegistryByName(String name) {
+    public Optional<WebPagesRepository> getSimulationWebPagesRepositoryByName(String name) {
         return getSimulationByName(name)
-                .map(Simulation::getWebPagesRegistry);
+                .map(Simulation::getWebPagesRepository);
     }
 
     public Set<SimulationDescriptor> getSimulations() {
-        return simulationRegistry.getDescriptors();
+        return simulationRepository.getDescriptors();
     }
 
     public void deleteByName(String name) {
-        simulationRegistry.deleteByName(name);
+        simulationRepository.deleteByName(name);
     }
 }

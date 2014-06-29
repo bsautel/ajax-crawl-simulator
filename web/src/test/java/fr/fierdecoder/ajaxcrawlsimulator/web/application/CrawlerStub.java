@@ -5,7 +5,7 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
 
 import static com.google.common.collect.Sets.newHashSet;
 
@@ -19,13 +19,13 @@ public class CrawlerStub implements Crawler {
     public static final String PAGE_BODY = "Page body";
 
     @Override
-    public void crawl(CrawlPerimeter crawlPerimeter, WebPagesRegistry registry) {
+    public void crawl(CrawlPerimeter crawlPerimeter, WebPagesRepository repository) {
         WebPageFactory webPageFactory = new WebPageFactory();
         HtmlWebPage htmlWebPage = webPageFactory.buildHtmlWebPage(ABOUT_URL, 200, PAGE_TITLE, PAGE_BODY,
                 newHashSet(CONTACT_URL));
-        registry.register(htmlWebPage);
+        repository.add(htmlWebPage);
         RedirectionWebPage redirectionWebPage = webPageFactory.buildRedirectionWebPage(HOME_URL, 301, "", CONTACT_URL);
-        registry.register(redirectionWebPage);
-        registry.register(webPageFactory.buildUnreachableWebPage(CONTACT_URL, 404, ""));
+        repository.add(redirectionWebPage);
+        repository.add(webPageFactory.buildUnreachableWebPage(CONTACT_URL, 404, ""));
     }
 }

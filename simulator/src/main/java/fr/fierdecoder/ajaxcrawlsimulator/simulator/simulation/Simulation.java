@@ -1,14 +1,14 @@
 package fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
 
 public class Simulation {
     private final SimulationDescriptor simulationDescriptor;
-    private final WebPagesRegistry webPagesRegistry;
+    private final WebPagesRepository webPagesRepository;
 
-    public Simulation(SimulationDescriptor simulationDescriptor, WebPagesRegistry webPagesRegistry) {
+    public Simulation(SimulationDescriptor simulationDescriptor, WebPagesRepository webPagesRepository) {
         this.simulationDescriptor = simulationDescriptor;
-        this.webPagesRegistry = webPagesRegistry;
+        this.webPagesRepository = webPagesRepository;
     }
 
     public String getName() {
@@ -19,7 +19,7 @@ public class Simulation {
         return simulationDescriptor;
     }
 
-    public WebPagesRegistry getWebPagesRegistry() {
-        return webPagesRegistry;
+    public WebPagesRepository getWebPagesRepository() {
+        return webPagesRepository;
     }
 }

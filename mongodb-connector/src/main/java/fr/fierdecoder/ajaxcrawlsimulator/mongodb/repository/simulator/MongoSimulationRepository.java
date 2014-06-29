@@ -1,13 +1,13 @@
-package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.simulator;
+package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.simulator;
 
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import fr.fierdecoder.ajaxcrawlsimulator.mongodb.JongoConnectionFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl.MongoDbWebPagesRegistryFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl.MongoWebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl.MongoDbWebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl.MongoWebPagesRepository;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.Simulation;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
-import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.registry.SimulationRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.SimulationRepository;
 import org.jongo.MongoCollection;
 
 import java.util.Optional;
@@ -15,20 +15,20 @@ import java.util.Set;
 
 import static java.util.Optional.ofNullable;
 
-public class MongoSimulationRegistry implements SimulationRegistry {
+public class MongoSimulationRepository implements SimulationRepository {
     public static final String NAME_FILTER = "{'name': '#'}";
     private final MongoCollection collection;
-    private final MongoDbWebPagesRegistryFactory webPagesRegistryFactory;
+    private final MongoDbWebPagesRepositoryFactory webPagesRepositoryFactory;
 
     @Inject
-    public MongoSimulationRegistry(JongoConnectionFactory jongoConnectionFactory,
-                                   MongoDbWebPagesRegistryFactory webPagesRegistryFactory) {
+    public MongoSimulationRepository(JongoConnectionFactory jongoConnectionFactory,
+                                     MongoDbWebPagesRepositoryFactory webPagesRepositoryFactory) {
         collection = jongoConnectionFactory.create().getCollection("simulations");
-        this.webPagesRegistryFactory = webPagesRegistryFactory;
+        this.webPagesRepositoryFactory = webPagesRepositoryFactory;
     }
 
     @Override
-    public void register(Simulation simulation) {
+    public void add(Simulation simulation) {
         collection.insert(simulation.getDescriptor());
     }
 
@@ -39,7 +39,7 @@ public class MongoSimulationRegistry implements SimulationRegistry {
     }
 
     private Simulation createSimulation(SimulationDescriptor descriptor) {
-        return new Simulation(descriptor, webPagesRegistryFactory.create(descriptor.getName()));
+        return new Simulation(descriptor, webPagesRepositoryFactory.create(descriptor.getName()));
     }
 
     @Override
@@ -53,8 +53,8 @@ public class MongoSimulationRegistry implements SimulationRegistry {
         Optional<Simulation> simulation = get(name);
         if (simulation.isPresent()) {
             collection.remove(NAME_FILTER, name);
-            MongoWebPagesRegistry mongoWebPagesRegistry = (MongoWebPagesRegistry) simulation.get().getWebPagesRegistry();
-            mongoWebPagesRegistry.drop();
+            MongoWebPagesRepository mongoWebPagesRepository = (MongoWebPagesRepository) simulation.get().getWebPagesRepository();
+            mongoWebPagesRepository.drop();
         }
     }
 }

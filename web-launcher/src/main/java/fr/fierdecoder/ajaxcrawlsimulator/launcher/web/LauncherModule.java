@@ -3,13 +3,13 @@ package fr.fierdecoder.ajaxcrawlsimulator.launcher.web;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.guice.CrawlModule;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.MemoryWebPagesRegistryFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.MemoryWebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepositoryFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.mongodb.MongoDbConfiguration;
-import fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl.MongoDbWebPagesRegistryFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.simulator.MongoSimulationRegistry;
-import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.registry.MemorySimulationsRegistry;
-import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.registry.SimulationRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl.MongoDbWebPagesRepositoryFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.simulator.MongoSimulationRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.MemorySimulationsRepository;
+import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.SimulationRepository;
 
 public class LauncherModule extends AbstractModule {
     private final LauncherOptions options;
@@ -22,11 +22,11 @@ public class LauncherModule extends AbstractModule {
     protected void configure() {
         if (options.isMongoDb()) {
             bindJongoFactory();
-            bind(SimulationRegistry.class).to(MongoSimulationRegistry.class).in(Singleton.class);
-            bind(WebPagesRegistryFactory.class).to(MongoDbWebPagesRegistryFactory.class).in(Singleton.class);
+            bind(SimulationRepository.class).to(MongoSimulationRepository.class).in(Singleton.class);
+            bind(WebPagesRepositoryFactory.class).to(MongoDbWebPagesRepositoryFactory.class).in(Singleton.class);
         } else {
-            bind(SimulationRegistry.class).to(MemorySimulationsRegistry.class).in(Singleton.class);
-            bind(WebPagesRegistryFactory.class).to(MemoryWebPagesRegistryFactory.class).in(Singleton.class);
+            bind(SimulationRepository.class).to(MemorySimulationsRepository.class).in(Singleton.class);
+            bind(WebPagesRepositoryFactory.class).to(MemoryWebPagesRepositoryFactory.class).in(Singleton.class);
         }
         install(new CrawlModule());
     }

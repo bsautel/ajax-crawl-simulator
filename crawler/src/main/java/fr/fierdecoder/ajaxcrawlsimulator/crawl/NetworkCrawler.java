@@ -6,7 +6,7 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.registry.WebPagesRegistry;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
 import org.slf4j.Logger;
 
 import java.util.Collection;
@@ -27,28 +27,28 @@ public class NetworkCrawler implements Crawler {
     }
 
     @Override
-    public void crawl(CrawlPerimeter crawlPerimeter, WebPagesRegistry registry) {
+    public void crawl(CrawlPerimeter crawlPerimeter, WebPagesRepository repository) {
         Queue<String> urlQueue = new LinkedList<>();
         urlQueue.add(crawlPerimeter.getEntryUrl());
         while (!urlQueue.isEmpty()) {
             String url = urlQueue.poll();
-            Collection<String> newUrls = crawlUrlIfNeeded(url, registry, crawlPerimeter);
+            Collection<String> newUrls = crawlUrlIfNeeded(url, repository, crawlPerimeter);
             urlQueue.addAll(newUrls);
         }
     }
 
-    private Collection<String> crawlUrlIfNeeded(String url, WebPagesRegistry registry, CrawlPerimeter crawlPerimeter) {
+    private Collection<String> crawlUrlIfNeeded(String url, WebPagesRepository repository, CrawlPerimeter crawlPerimeter) {
         LOGGER.info("Crawling {}", url);
-        if (mustBeCrawled(url, registry, crawlPerimeter)) {
-            return crawlUrl(url, registry);
+        if (mustBeCrawled(url, repository, crawlPerimeter)) {
+            return crawlUrl(url, repository);
         }
         LOGGER.info("Url {} ignored since it is not in the crawl perimeter", url);
         return emptyList();
     }
 
-    private Collection<String> crawlUrl(String url, WebPagesRegistry registry) {
+    private Collection<String> crawlUrl(String url, WebPagesRepository repository) {
         WebPage page = pageReader.readPage(url);
-        registry.register(page);
+        repository.add(page);
         if (page.isHtml()) {
             HtmlWebPage htmlPage = page.asHtml();
             LOGGER.info("Url {} returned a HTML page with title {}", url, htmlPage.getTitle());
@@ -64,7 +64,7 @@ public class NetworkCrawler implements Crawler {
         throw new IllegalStateException("Unknown page type");
     }
 
-    private boolean mustBeCrawled(String url, WebPagesRegistry registry, CrawlPerimeter crawlPerimeter) {
-        return !registry.containsUrl(url) && crawlPerimeter.contains(url);
+    private boolean mustBeCrawled(String url, WebPagesRepository repository, CrawlPerimeter crawlPerimeter) {
+        return !repository.containsUrl(url) && crawlPerimeter.contains(url);
     }
 }

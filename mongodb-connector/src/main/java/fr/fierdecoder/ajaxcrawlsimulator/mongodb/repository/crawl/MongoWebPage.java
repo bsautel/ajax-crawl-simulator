@@ -1,4 +1,4 @@
-package fr.fierdecoder.ajaxcrawlsimulator.mongodb.registry.crawl;
+package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType;
 

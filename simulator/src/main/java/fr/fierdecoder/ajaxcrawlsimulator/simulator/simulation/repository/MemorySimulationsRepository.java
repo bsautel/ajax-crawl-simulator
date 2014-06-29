@@ -1,4 +1,4 @@
-package fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.registry;
+package fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository;
 
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.Simulation;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
@@ -12,11 +12,11 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
 
-public class MemorySimulationsRegistry implements SimulationRegistry {
+public class MemorySimulationsRepository implements SimulationRepository {
     private final Map<String, Simulation> simulations = new ConcurrentHashMap<>();
 
     @Override
-    public void register(Simulation simulation) {
+    public void add(Simulation simulation) {
         simulations.put(simulation.getName(), simulation);
     }
 
