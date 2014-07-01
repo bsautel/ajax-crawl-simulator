@@ -29,7 +29,7 @@ function SimulationsContoller($scope, $http) {
     };
 
     $scope.addNewSimulation = function () {
-        $http.post('/simulations', $scope.newSimulation).success(function (simulation) {
+        $http.post('/simulations', $scope.newSimulation).success(function () {
             $scope.cancelSimulationCreation();
             $scope.refresh();
         });
@@ -41,6 +41,7 @@ function SimulationsContoller($scope, $http) {
         }
         return false;
     }
+
     $scope.isNewSimulationNameValid = function () {
         return validateNewSimulation(function (simulation) {
             return simulation.name.trim().length > 0;
@@ -68,9 +69,18 @@ function SimulationsContoller($scope, $http) {
     }
 }
 
-function SimulationController($routeParams, $scope, $http, $location) {
+function SimulationController($routeParams, $scope, $http, $location, $filter) {
     var name = $routeParams.name;
     var simulationUrl = '/simulations/' + encodeURIComponent(name);
+
+    $scope.filter = {
+        url: '',
+        html: true,
+        text: true,
+        binary: true,
+        redirection: true,
+        unreachable: true
+    };
 
     $http.get(simulationUrl).success(function (simulation) {
         $scope.simulation = simulation;
@@ -97,6 +107,33 @@ function SimulationController($routeParams, $scope, $http, $location) {
 
     $scope.generatePageLink = function (page) {
         return generatePageLink(name, page.url);
+    };
+
+    function isPageTypeDisplayed(page) {
+        var filter = $scope.filter;
+        switch (page.type) {
+            case 'HTML':
+                return filter.html;
+            case 'TEXT':
+                return filter.text;
+            case 'BINARY':
+                return filter.binary;
+            case 'REDIRECTION':
+                return filter.redirection;
+            case 'UNREACHABLE':
+                return filter.unreachable;
+            default:
+                throw 'Unknown page type';
+        }
+    }
+
+    $scope.filterPages = function filterPages() {
+        console.log($scope.filter);
+        var pages = $scope.pages || [];
+        if ($scope.filter.url.length > 0) {
+            pages = $filter('filter')(pages, {url: $scope.filter.url});
+        }
+        return pages.filter(isPageTypeDisplayed);
     };
 }
 

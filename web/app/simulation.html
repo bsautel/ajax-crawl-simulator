@@ -23,13 +23,43 @@
     </div>
 
     <div class="row">
-        <div class="col-md-4 col-md-offset-4">
+        <div class="col-md-2">
+            <p>{{filterPages().length}} Displayed Pages</p>
+        </div>
+        <div class="col-md-4">
             <div class="input-group">
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-search"></span>
                 </span>
-                <input type="search" ng-model="url_search" placeholder="Filter URL" class="form-control"/>
+                <input type="search" ng-model="filter.url" placeholder="Filter URL" class="form-control"/>
             </div>
+        </div>
+        <div class="col-md-5 col-md-offset-1">
+            <label class="checkbox-inline">
+                <span class="glyphicon glyphicon-globe"></span>
+                HTML
+                <input type="checkbox" ng-model="filter.html"/>
+            </label>
+            <label class="checkbox-inline">
+                <span class="glyphicon glyphicon-file"></span>
+                Text
+                <input type="checkbox" ng-model="filter.text"/>
+            </label>
+            <label class="checkbox-inline">
+                <span class="glyphicon glyphicon-picture"></span>
+                Binary
+                <input type="checkbox" ng-model="filter.binary"/>
+            </label>
+            <label class="checkbox-inline">
+                <span class="glyphicon glyphicon-share"></span>
+                Redirection
+                <input type="checkbox" ng-model="filter.redirection"/>
+            </label>
+            <label class="checkbox-inline">
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                Unreachable
+                <input type="checkbox" ng-model="filter.unreachable"/>
+            </label>
         </div>
     </div>
     <div class="row">
@@ -41,7 +71,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="page in (pages | filter:{url: url_search} )"
+            <tr ng-repeat="page in filterPages()"
                 ng-class="{info: page.type == 'REDIRECTION', warning: page.type == 'UNREACHABLE'}">
                 <td>
                     <span class="glyphicon" ng-class="{'glyphicon-globe': page.type == 'HTML',
