@@ -1,25 +1,19 @@
 package fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation;
 
+import com.google.auto.value.AutoValue;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.repository.WebPagesRepository;
 
-public class Simulation {
-    private final SimulationDescriptor simulationDescriptor;
-    private final WebPagesRepository webPagesRepository;
-
-    public Simulation(SimulationDescriptor simulationDescriptor, WebPagesRepository webPagesRepository) {
-        this.simulationDescriptor = simulationDescriptor;
-        this.webPagesRepository = webPagesRepository;
-    }
-
+@AutoValue
+public abstract class Simulation {
     public String getName() {
-        return simulationDescriptor.getName();
+        return getDescriptor().name();
     }
 
-    public SimulationDescriptor getDescriptor() {
-        return simulationDescriptor;
-    }
+    public abstract SimulationDescriptor getDescriptor();
 
-    public WebPagesRepository getWebPagesRepository() {
-        return webPagesRepository;
+    public abstract WebPagesRepository getWebPagesRepository();
+
+    public static Simulation create(SimulationDescriptor descriptor, WebPagesRepository repository) {
+        return new AutoValue_Simulation(descriptor, repository);
     }
 }

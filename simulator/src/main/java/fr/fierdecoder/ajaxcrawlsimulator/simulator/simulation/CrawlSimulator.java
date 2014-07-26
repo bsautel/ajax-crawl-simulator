@@ -33,10 +33,10 @@ public class CrawlSimulator {
     }
 
     private Simulation launchCrawl(SimulationDescriptor simulationDescriptor) {
-        CrawlPerimeter perimeter = new SimpleCrawlPerimeter(simulationDescriptor.getEntryUrl(), simulationDescriptor.getUrlPrefix());
-        WebPagesRepository webPagesRepository = webPagesRepositoryFactory.create(simulationDescriptor.getName());
+        CrawlPerimeter perimeter = new SimpleCrawlPerimeter(simulationDescriptor.entryUrl(), simulationDescriptor.urlPrefix());
+        WebPagesRepository webPagesRepository = webPagesRepositoryFactory.create(simulationDescriptor.name());
         crawler.crawl(perimeter, webPagesRepository);
-        return new Simulation(simulationDescriptor, webPagesRepository);
+        return Simulation.create(simulationDescriptor, webPagesRepository);
     }
 
     public Optional<SimulationDescriptor> getSimulationDescriptorByName(String name) {

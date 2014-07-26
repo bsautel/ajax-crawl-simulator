@@ -1,13 +1,11 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.application;
 
-import com.google.common.io.CharStreams;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
 import org.junit.rules.ExternalResource;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.http.ContentType.JSON;
@@ -25,17 +23,17 @@ public class WebServiceTestRule extends ExternalResource {
     }
 
 
-    public Response createSimulation() throws IOException {
+    public Response createSimulation() throws JsonProcessingException {
         return restClient().body(getSimulationJson()).contentType(JSON).post(SIMULATIONS_PATH);
     }
 
-    public String getSimulationJson() throws IOException {
-        InputStream stream = getClass().getResourceAsStream("simulation.json");
-        return CharStreams.toString(new InputStreamReader(stream, "utf-8"));
+    private String getSimulationJson() throws JsonProcessingException {
+        SimulationDescriptor simulation = SimulationDescriptor.create("simu", "http://abc.d/", "http://abc.d/");
+        return new ObjectMapper().writer().writeValueAsString(simulation);
     }
 
     @Override
-    protected void before() throws Throwable {
+    protected void before() {
         TestModule testModule = new TestModule();
         application = new WebApplication(testModule);
         application.startOnRandomPort();

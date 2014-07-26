@@ -51,23 +51,24 @@ public class MongoSimulationRepositoryTest {
 
     @Test
     public void shouldInsertADescriptor() {
-        SimulationDescriptor descriptor = new SimulationDescriptor(NAME, A_URL, A_URL);
+        SimulationDescriptor descriptor = SimulationDescriptor.create(NAME, A_URL, A_URL);
         Simulation simulation = createSimulation(descriptor);
         mongoSimulationRepository.add(simulation);
 
         Optional<Simulation> registeredSimulation = mongoSimulationRepository.get(NAME);
+
         assertThat(registeredSimulation.isPresent(), is(true));
         SimulationDescriptor result = registeredSimulation.get().getDescriptor();
         assertThat(result, is(descriptor));
     }
 
     private Simulation createSimulation(SimulationDescriptor descriptor) {
-        return new Simulation(descriptor, webPagesRepositoryFactory.create(descriptor.getName()));
+        return Simulation.create(descriptor, webPagesRepositoryFactory.create(descriptor.name()));
     }
 
     @Test
     public void shouldDeleteDescriptor() {
-        SimulationDescriptor descriptor = new SimulationDescriptor(NAME, A_URL, A_URL);
+        SimulationDescriptor descriptor = SimulationDescriptor.create(NAME, A_URL, A_URL);
         Simulation simulation = createSimulation(descriptor);
         mongoSimulationRepository.add(simulation);
 

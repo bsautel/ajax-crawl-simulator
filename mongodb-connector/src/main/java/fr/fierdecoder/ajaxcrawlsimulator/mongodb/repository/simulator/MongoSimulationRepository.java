@@ -16,7 +16,7 @@ import java.util.Set;
 import static java.util.Optional.ofNullable;
 
 public class MongoSimulationRepository implements SimulationRepository {
-    public static final String NAME_FILTER = "{'name': '#'}";
+    public static final String NAME_FILTER = "{name: #}";
     private final MongoCollection collection;
     private final MongoDbWebPagesRepositoryFactory webPagesRepositoryFactory;
 
@@ -39,7 +39,7 @@ public class MongoSimulationRepository implements SimulationRepository {
     }
 
     private Simulation createSimulation(SimulationDescriptor descriptor) {
-        return new Simulation(descriptor, webPagesRepositoryFactory.create(descriptor.getName()));
+        return Simulation.create(descriptor, webPagesRepositoryFactory.create(descriptor.name()));
     }
 
     @Override

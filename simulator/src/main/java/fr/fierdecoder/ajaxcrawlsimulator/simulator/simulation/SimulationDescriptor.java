@@ -1,56 +1,21 @@
 package fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation;
 
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.auto.value.AutoValue;
 
-public class SimulationDescriptor {
-    private String name;
-    private String entryUrl;
-    private String urlPrefix;
+@AutoValue
+public abstract class SimulationDescriptor {
+    public abstract String name();
 
-    public SimulationDescriptor() {
-    }
+    public abstract String entryUrl();
 
-    public SimulationDescriptor(String name, String entryUrl, String urlPrefix) {
-        this.name = name;
-        this.entryUrl = entryUrl;
-        this.urlPrefix = urlPrefix;
-    }
+    public abstract String urlPrefix();
 
-    public String getName() {
-        return name;
-    }
-
-    public String getEntryUrl() {
-        return entryUrl;
-    }
-
-    public String getUrlPrefix() {
-        return urlPrefix;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SimulationDescriptor that = (SimulationDescriptor) o;
-
-        return Objects.equals(name, that.name)
-                && Objects.equals(entryUrl, that.entryUrl)
-                && Objects.equals(urlPrefix, that.urlPrefix);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, entryUrl, urlPrefix);
-    }
-
-    @Override
-    public String toString() {
-        return "SimulationDescriptor{" +
-                "name='" + name + '\'' +
-                ", entryUrl='" + entryUrl + '\'' +
-                ", urlPrefix='" + urlPrefix + '\'' +
-                '}';
+    @JsonCreator
+    public static SimulationDescriptor create(@JsonProperty("name") String name,
+                                              @JsonProperty("entryUrl") String entryUrl,
+                                              @JsonProperty("urlPrefix") String urlPrefix) {
+        return new AutoValue_SimulationDescriptor(name, entryUrl, urlPrefix);
     }
 }

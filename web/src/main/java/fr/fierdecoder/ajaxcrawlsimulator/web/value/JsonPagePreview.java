@@ -1,31 +1,20 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.value;
 
 
+import com.google.auto.value.AutoValue;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType;
 
-public class JsonPagePreview {
-    private final WebPageType type;
-    private final String url;
-    private String title;
+import java.util.Optional;
 
-    public JsonPagePreview(WebPageType type, String url) {
-        this.type = type;
-        this.url = url;
-    }
+@AutoValue
+public abstract class JsonPagePreview {
+    public abstract String getUrl();
 
-    public String getUrl() {
-        return url;
-    }
+    public abstract WebPageType getType();
 
-    public String getTitle() {
-        return title;
-    }
+    public abstract String getTitle();
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public WebPageType getType() {
-        return type;
+    public static JsonPagePreview create(String url, WebPageType type, Optional<String> title) {
+        return new AutoValue_JsonPagePreview(url, type, title.orElse(""));
     }
 }

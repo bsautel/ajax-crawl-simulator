@@ -1,7 +1,10 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.value;
 
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.*;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPagePreview;
 
 @Singleton
 public class JsonPageConverter {
@@ -20,10 +23,6 @@ public class JsonPageConverter {
     }
 
     public JsonPagePreview createJsonPagePreview(WebPagePreview webPage) {
-        JsonPagePreview jsonPage = new JsonPagePreview(webPage.getType(), webPage.getUrl());
-        if (webPage.getTitle().isPresent()) {
-            jsonPage.setTitle(webPage.getTitle().get());
-        }
-        return jsonPage;
+        return JsonPagePreview.create(webPage.getUrl(), webPage.getType(), webPage.getTitle());
     }
 }
