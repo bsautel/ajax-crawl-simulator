@@ -19,7 +19,7 @@ public class LauncherOptions {
     @Parameter(names = "--mongo-port", description = "Port of the MongoDB database (default is " + DEFAULT_PORT + ")")
     private int mongoDbPort = DEFAULT_PORT;
 
-    @Parameter(names = "--mongo-db-name", description = "Name of the MongoDB database (default is " + DEFAULT_DATABASE_NAME + ")")
+    @Parameter(names = "--mongo-db-getName", description = "Name of the MongoDB database (default is " + DEFAULT_DATABASE_NAME + ")")
     private String databaseName = DEFAULT_DATABASE_NAME;
 
     public boolean isHelp() {

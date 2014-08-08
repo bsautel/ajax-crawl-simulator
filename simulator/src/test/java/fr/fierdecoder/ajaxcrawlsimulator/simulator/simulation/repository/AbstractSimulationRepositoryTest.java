@@ -46,7 +46,7 @@ public abstract class AbstractSimulationRepositoryTest {
     }
 
     private Simulation createSimulation(SimulationDescriptor descriptor) {
-        return Simulation.create(descriptor, crawlStateFactory.create(descriptor.name()));
+        return Simulation.create(descriptor, crawlStateFactory.create(descriptor.getName()));
     }
 
     @Test

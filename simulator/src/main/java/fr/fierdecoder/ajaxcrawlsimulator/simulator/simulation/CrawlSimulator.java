@@ -33,8 +33,8 @@ public class CrawlSimulator {
     }
 
     private Simulation launchCrawl(SimulationDescriptor simulationDescriptor) {
-        CrawlPerimeter perimeter = new SimpleCrawlPerimeter(simulationDescriptor.entryUrl(), simulationDescriptor.urlPrefix());
-        CrawlState state = crawlStateFactory.create(simulationDescriptor.name());
+        CrawlPerimeter perimeter = new SimpleCrawlPerimeter(simulationDescriptor.getEntryUrl(), simulationDescriptor.getUrlPrefix());
+        CrawlState state = crawlStateFactory.create(simulationDescriptor.getName());
         crawler.crawl(perimeter, state);
         return Simulation.create(simulationDescriptor, state);
     }

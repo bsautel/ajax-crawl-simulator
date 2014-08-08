@@ -6,11 +6,11 @@ import com.google.auto.value.AutoValue;
 
 @AutoValue
 public abstract class SimulationDescriptor {
-    public abstract String name();
+    public abstract String getName();
 
-    public abstract String entryUrl();
+    public abstract String getEntryUrl();
 
-    public abstract String urlPrefix();
+    public abstract String getUrlPrefix();
 
     @JsonCreator
     public static SimulationDescriptor create(@JsonProperty("name") String name,

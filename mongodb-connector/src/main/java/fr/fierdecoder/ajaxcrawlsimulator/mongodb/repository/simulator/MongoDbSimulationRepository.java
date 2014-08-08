@@ -14,6 +14,7 @@ import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toSet;
 
 public class MongoDbSimulationRepository implements SimulationRepository {
     public static final String NAME_FILTER = "{name: #}";
@@ -29,23 +30,25 @@ public class MongoDbSimulationRepository implements SimulationRepository {
 
     @Override
     public void add(Simulation simulation) {
-        collection.insert(simulation.getDescriptor());
+        MongoSimulationDescriptor descriptor = new MongoSimulationDescriptor(simulation.getDescriptor());
+        collection.insert(descriptor);
     }
 
     @Override
     public Optional<Simulation> get(String name) {
-        SimulationDescriptor simulation = collection.findOne(NAME_FILTER, name).as(SimulationDescriptor.class);
+        MongoSimulationDescriptor simulation = collection.findOne(NAME_FILTER, name).as(MongoSimulationDescriptor.class);
         return ofNullable(simulation).map(this::createSimulation);
     }
 
-    private Simulation createSimulation(SimulationDescriptor descriptor) {
-        return Simulation.create(descriptor, crawlStateFactory.create(descriptor.name()));
+    private Simulation createSimulation(MongoSimulationDescriptor descriptor) {
+        SimulationDescriptor simulationDescriptor = descriptor.toSimulationDescriptor();
+        return Simulation.create(simulationDescriptor, crawlStateFactory.create(descriptor.getName()));
     }
 
     @Override
     public Set<SimulationDescriptor> getDescriptors() {
-        Iterable<SimulationDescriptor> descriptors = collection.find().as(SimulationDescriptor.class);
-        return newHashSet(descriptors);
+        Iterable<MongoSimulationDescriptor> descriptors = collection.find().as(MongoSimulationDescriptor.class);
+        return newHashSet(descriptors).stream().map(MongoSimulationDescriptor::toSimulationDescriptor).collect(toSet());
     }
 
     @Override

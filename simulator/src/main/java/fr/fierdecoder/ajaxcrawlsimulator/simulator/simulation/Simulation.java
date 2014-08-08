@@ -6,7 +6,7 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
 @AutoValue
 public abstract class Simulation {
     public String getName() {
-        return getDescriptor().name();
+        return getDescriptor().getName();
     }
 
     public abstract SimulationDescriptor getDescriptor();

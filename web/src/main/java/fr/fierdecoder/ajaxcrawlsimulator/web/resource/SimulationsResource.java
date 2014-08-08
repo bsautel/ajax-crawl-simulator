@@ -35,6 +35,6 @@ public class SimulationsResource {
     }
 
     private boolean simulationAlreadyExists(SimulationDescriptor simulationDescriptor) {
-        return crawlSimulator.getSimulationDescriptorByName(simulationDescriptor.name()).isPresent();
+        return crawlSimulator.getSimulationDescriptorByName(simulationDescriptor.getName()).isPresent();
     }
 }

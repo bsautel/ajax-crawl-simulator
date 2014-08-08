@@ -32,17 +32,17 @@ public class SimulationResource {
         this.jsonPageConverter = jsonPageConverter;
     }
 
-    @Get("/simulations/:name")
+    @Get("/simulations/:getName")
     public Optional<SimulationDescriptor> getSimulation(String name) {
         return crawlSimulator.getSimulationDescriptorByName(name);
     }
 
-    @Delete("/simulations/:name")
+    @Delete("/simulations/:getName")
     public void deleteSimulation(String name) {
         crawlSimulator.deleteByName(name);
     }
 
-    @Get("/simulations/:name/pages")
+    @Get("/simulations/:getName/pages")
     public Optional<Collection<JsonPagePreview>> getSimulationPages(String name) {
         Optional<CrawlState> optionalCrawlState = crawlSimulator.getSimulationStateByName(name);
         if (optionalCrawlState.isPresent()) {
@@ -55,7 +55,7 @@ public class SimulationResource {
         return empty();
     }
 
-    @Get("/simulations/:name/pages/:url")
+    @Get("/simulations/:getName/pages/:url")
     public Optional<JsonPage> getSimulationPage(String name, String url) throws UnsupportedEncodingException {
         String decodedUrl = URLDecoder.decode(url, "UTF-8");
         Optional<CrawlState> optionalCrawlState = crawlSimulator.getSimulationStateByName(name);
