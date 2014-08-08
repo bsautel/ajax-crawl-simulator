@@ -3,8 +3,8 @@ package fr.fierdecoder.ajaxcrawlsimulator.crawl.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.Crawler;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.NetworkCrawler;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler.Crawler;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler.NetworkCrawler;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.NetworkPageReader;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.PageReader;
 

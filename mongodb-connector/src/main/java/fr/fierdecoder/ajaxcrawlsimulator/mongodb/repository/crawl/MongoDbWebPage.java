@@ -1,10 +1,10 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageType;
 
 import java.util.Set;
 
-public class MongoWebPage {
+public class MongoDbWebPage {
     private String simulationName;
     private WebPageType type;
     private String url;
@@ -14,7 +14,7 @@ public class MongoWebPage {
     private String title;
     private Set<String> links;
 
-    public MongoWebPage(String simulationName, WebPageType type, String url, int httpStatus, String body) {
+    public MongoDbWebPage(String simulationName, WebPageType type, String url, int httpStatus, String body) {
         this.simulationName = simulationName;
         this.type = type;
         this.url = url;
@@ -22,7 +22,7 @@ public class MongoWebPage {
         this.body = body;
     }
 
-    public MongoWebPage() {
+    public MongoDbWebPage() {
     }
 
     public String getUrl() {

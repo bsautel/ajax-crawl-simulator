@@ -1,6 +1,6 @@
 package fr.fierdecoder.ajaxcrawlsimulator.crawl.connector;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
 
 
 public interface PageReader {

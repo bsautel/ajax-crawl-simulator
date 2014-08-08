@@ -1,7 +1,10 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.value;
 
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.*;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.HtmlWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.RedirectionWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPagePreview;
 
 @Singleton
 public class JsonPageConverter {

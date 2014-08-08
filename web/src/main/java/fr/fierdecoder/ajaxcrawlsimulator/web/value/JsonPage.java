@@ -1,6 +1,6 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.value;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageType;
 
 import java.util.Set;
 
@@ -28,32 +28,32 @@ public class JsonPage {
         return type;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getBody() {
         return body;
     }
 
-    public void setLinks(Set<String> links) {
-        this.links = links;
-    }
-
     public Set<String> getLinks() {
         return links;
     }
 
-    public void setTargetUrl(String targetUrl) {
-        this.targetUrl = targetUrl;
+    public void setLinks(Set<String> links) {
+        this.links = links;
     }
 
     public String getTargetUrl() {
         return targetUrl;
+    }
+
+    public void setTargetUrl(String targetUrl) {
+        this.targetUrl = targetUrl;
     }
 
     public int getHttpStatus() {

@@ -3,10 +3,10 @@ package fr.fierdecoder.ajaxcrawlsimulator.crawl.connector;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.io.CharStreams;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.HtmlWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.RedirectionWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,16 +25,15 @@ import static org.hamcrest.Matchers.is;
 public class NetworkPageReaderTest {
     public static final int PORT = 18089;
     public static final String HTTP_DOMAIN = "http://localhost:" + PORT;
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(PORT);
     public static final String HOME_PATH = "/home";
+    public static final String ANCHOR = "#anchor";
     private static final String ABOUT_PAGE = "/about";
     private static final String A_PAGE = "/a/b";
     private static final String CONTACT_URL = "http://mydomain.com/contact";
     private static final String GOOGLE_URL = "https://www.google.com/";
-    public static final String ANCHOR = "#anchor";
-
     private NetworkPageReader networkPageReader;
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(PORT);
     private String simpleHtmlDocument, fragmentHtmlDocument, anotherFragmentHtmlDocument;
 
     @Before

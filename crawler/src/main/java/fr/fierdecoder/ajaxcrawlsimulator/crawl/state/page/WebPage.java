@@ -1,8 +1,6 @@
-package fr.fierdecoder.ajaxcrawlsimulator.crawl.page;
+package fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page;
 
 import java.util.Objects;
-
-import static fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType.*;
 
 public class WebPage {
     private final WebPageType type;
@@ -30,7 +28,7 @@ public class WebPage {
     }
 
     public boolean isHtml() {
-        return type == HTML;
+        return type == WebPageType.HTML;
     }
 
     public HtmlWebPage asHtml() {
@@ -38,7 +36,7 @@ public class WebPage {
     }
 
     public boolean isRedirection() {
-        return type == REDIRECTION;
+        return type == WebPageType.REDIRECTION;
     }
 
     public RedirectionWebPage asRedirection() {
@@ -46,15 +44,15 @@ public class WebPage {
     }
 
     public boolean isUnreachable() {
-        return type == UNREACHABLE;
+        return type == WebPageType.UNREACHABLE;
     }
 
     public boolean isText() {
-        return type == TEXT;
+        return type == WebPageType.TEXT;
     }
 
     public boolean isBinary() {
-        return type == BINARY;
+        return type == WebPageType.BINARY;
     }
 
     public WebPageType getType() {
