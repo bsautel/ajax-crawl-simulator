@@ -3,8 +3,7 @@ package fr.fierdecoder.ajaxcrawlsimulator.web.application;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler.Crawler;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.HtmlWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.RedirectionWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -21,10 +20,10 @@ public class CrawlerStub implements Crawler {
     @Override
     public void crawl(CrawlPerimeter crawlPerimeter, CrawlState state) {
         WebPageFactory webPageFactory = new WebPageFactory();
-        HtmlWebPage htmlWebPage = webPageFactory.buildHtmlWebPage(ABOUT_URL, 200, PAGE_TITLE, PAGE_BODY,
+        WebPage htmlWebPage = webPageFactory.buildHtmlWebPage(ABOUT_URL, 200, PAGE_TITLE, PAGE_BODY,
                 newHashSet(CONTACT_URL));
         state.addPage(htmlWebPage);
-        RedirectionWebPage redirectionWebPage = webPageFactory.buildRedirectionWebPage(HOME_URL, 301, "", CONTACT_URL);
+        WebPage redirectionWebPage = webPageFactory.buildRedirectionWebPage(HOME_URL, 301, "", CONTACT_URL);
         state.addPage(redirectionWebPage);
         state.addPage(webPageFactory.buildUnreachableWebPage(CONTACT_URL, 404, ""));
     }

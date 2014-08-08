@@ -5,8 +5,6 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.crawler.NetworkCrawler;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.MemoryCrawlState;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.HtmlWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 import org.junit.Before;
@@ -49,7 +47,7 @@ public class NetworkCrawlerTest {
 
     @Test
     public void singlePageCrawl() {
-        HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL));
+        WebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
         startCrawlAndWaitForItToEnd(crawler);
@@ -58,15 +56,15 @@ public class NetworkCrawlerTest {
         assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
     }
 
-    private HtmlWebPage buildHtmlWebPage(String url, String... links) {
+    private WebPage buildHtmlWebPage(String url, String... links) {
         return webPageFactory.buildHtmlWebPage(url, 200, PAGE_TITLE, HTML_CONTENTS, newHashSet(links));
     }
 
-    private RedirectionWebPage buildRedirectionWebPage(String url, String targetUrl) {
+    private WebPage buildRedirectionWebPage(String url, String targetUrl) {
         return webPageFactory.buildRedirectionWebPage(url, 301, "", targetUrl);
     }
 
-    private <PageType extends WebPage> PageType registerWebPage(PageType webPage) {
+    private WebPage registerWebPage(WebPage webPage) {
         String url = webPage.getUrl();
         when(pageReader.readPage(url)).thenReturn(webPage);
         return webPage;
@@ -74,8 +72,8 @@ public class NetworkCrawlerTest {
 
     @Test
     public void twoPagesCrawl() {
-        HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
-        HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL));
+        WebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
+        WebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
         startCrawlAndWaitForItToEnd(crawler);
@@ -92,8 +90,8 @@ public class NetworkCrawlerTest {
 
     @Test
     public void twoCyclingPagesCrawl() {
-        HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
-        HtmlWebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL, INDEX_URL));
+        WebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
+        WebPage contactPage = registerWebPage(buildHtmlWebPage(CONTACT_URL, INDEX_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
         startCrawlAndWaitForItToEnd(crawler);
@@ -105,7 +103,7 @@ public class NetworkCrawlerTest {
 
     @Test
     public void twoPagesIncludingOneIgnored() {
-        HtmlWebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
+        WebPage indexPage = registerWebPage(buildHtmlWebPage(INDEX_URL, CONTACT_URL));
         when(crawlPerimeter.contains(CONTACT_URL)).thenReturn(false);
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
@@ -117,8 +115,8 @@ public class NetworkCrawlerTest {
 
     @Test
     public void redirectionPage() {
-        RedirectionWebPage indexPage = registerWebPage(buildRedirectionWebPage(INDEX_URL, HOME_URL));
-        HtmlWebPage homePage = registerWebPage(buildHtmlWebPage(HOME_URL));
+        WebPage indexPage = registerWebPage(buildRedirectionWebPage(INDEX_URL, HOME_URL));
+        WebPage homePage = registerWebPage(buildHtmlWebPage(HOME_URL));
         NetworkCrawler crawler = new NetworkCrawler(pageReader);
 
         startCrawlAndWaitForItToEnd(crawler);

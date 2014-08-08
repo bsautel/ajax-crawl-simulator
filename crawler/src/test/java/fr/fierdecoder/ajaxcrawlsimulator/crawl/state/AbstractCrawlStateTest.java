@@ -1,6 +1,8 @@
 package fr.fierdecoder.ajaxcrawlsimulator.crawl.state;
 
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.*;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPagePreview;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,7 +11,8 @@ import java.util.Optional;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static fr.fierdecoder.ajaxcrawlsimulator.crawl.state.WebPagePreviewConverter.createWebPagePreview;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 
@@ -21,8 +24,8 @@ public abstract class AbstractCrawlStateTest {
     public static final String PAGE_TITLE = "title";
     public static final String PAGE_CONTENTS = "contents";
     private CrawlState aState, anotherState;
-    private HtmlWebPage aHtmlWebPage;
-    private RedirectionWebPage aRedirectionWebPage;
+    private WebPage aHtmlWebPage;
+    private WebPage aRedirectionWebPage;
     private WebPage anUnreachableWebPage;
     private WebPagePreview aHtmlWebPagePreview, aRedirectionPagePreview, anUnreachablePagePreview;
 
@@ -55,9 +58,7 @@ public abstract class AbstractCrawlStateTest {
         Optional<WebPage> result = aState.getPageByUrl(AN_URL);
         assertThat(result.isPresent(), is(true));
         WebPage webPage = result.get();
-        assertThat(webPage, instanceOf(HtmlWebPage.class));
-        HtmlWebPage htmlResult = webPage.asHtml();
-        assertThat(htmlResult, is(aHtmlWebPage));
+        assertThat(webPage, is(aHtmlWebPage));
     }
 
     @Test

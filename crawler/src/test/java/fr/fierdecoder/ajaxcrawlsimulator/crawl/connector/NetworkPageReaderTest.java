@@ -3,8 +3,6 @@ package fr.fierdecoder.ajaxcrawlsimulator.crawl.connector;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.io.CharStreams;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.HtmlWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 import org.junit.Before;
@@ -63,10 +61,9 @@ public class NetworkPageReaderTest {
         assertThat(result.isHtml(), is(true));
         assertThat(result.getHttpStatus(), is(200));
         assertThat(result.getBody(), is(responseBody));
-        HtmlWebPage htmlWebPage = result.asHtml();
-        assertThat(htmlWebPage.getTitle(), is("My page"));
-        assertThat(htmlWebPage.getLinks(),
-                containsInAnyOrder(HTTP_DOMAIN + ABOUT_PAGE, CONTACT_URL, GOOGLE_URL));
+        assertThat(result.getTitle().isPresent(), is(true));
+        assertThat(result.getTitle().get(), is("My page"));
+        assertThat(result.getLinks(), containsInAnyOrder(HTTP_DOMAIN + ABOUT_PAGE, CONTACT_URL, GOOGLE_URL));
     }
 
     @Test
@@ -87,8 +84,8 @@ public class NetworkPageReaderTest {
 
         assertThat(result.isRedirection(), is(true));
         assertThat(result.getBody(), is(""));
-        RedirectionWebPage redirection = result.asRedirection();
-        assertThat(redirection.getTargetUrl(), is(GOOGLE_URL));
+        assertThat(result.getTargetUrl().isPresent(), is(true));
+        assertThat(result.getTargetUrl().get(), is(GOOGLE_URL));
     }
 
     @Test
@@ -103,8 +100,8 @@ public class NetworkPageReaderTest {
         assertThat(result.isRedirection(), is(true));
         assertThat(result.getBody(), is(""));
         assertThat(result.getHttpStatus(), is(301));
-        RedirectionWebPage redirection = result.asRedirection();
-        assertThat(redirection.getTargetUrl(), is(HTTP_DOMAIN + A_PAGE));
+        assertThat(result.getTargetUrl().isPresent(), is(true));
+        assertThat(result.getTargetUrl().get(), is(HTTP_DOMAIN + A_PAGE));
     }
 
     @Test
@@ -157,7 +154,8 @@ public class NetworkPageReaderTest {
         assertThat(result.getBody(), is(""));
         assertThat(result.getHttpStatus(), is(200));
         assertThat(result.getUrl(), is(HTTP_DOMAIN + HOME_PATH + ANCHOR));
-        assertThat(result.asRedirection().getTargetUrl(), is(HTTP_DOMAIN + HOME_PATH));
+        assertThat(result.getTargetUrl().isPresent(), is(true));
+        assertThat(result.getTargetUrl().get(), is(HTTP_DOMAIN + HOME_PATH));
     }
 
     @Test
@@ -172,7 +170,8 @@ public class NetworkPageReaderTest {
         assertThat(result.getBody(), is(""));
         assertThat(result.getHttpStatus(), is(200));
         assertThat(result.getUrl(), is(HTTP_DOMAIN + HOME_PATH + "#"));
-        assertThat(result.asRedirection().getTargetUrl(), is(HTTP_DOMAIN + HOME_PATH));
+        assertThat(result.getTargetUrl().isPresent(), is(true));
+        assertThat(result.getTargetUrl().get(), is(HTTP_DOMAIN + HOME_PATH));
     }
 
     @Test

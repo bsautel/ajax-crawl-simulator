@@ -4,14 +4,12 @@ import com.google.inject.Inject;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.PageReader;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.perimeter.CrawlPerimeter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.HtmlWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
 import org.slf4j.Logger;
 
 import java.util.Collection;
 
-import static java.util.Arrays.asList;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -53,13 +51,11 @@ public class NetworkCrawler implements Crawler {
         WebPage page = pageReader.readPage(url);
         state.addPage(page);
         if (page.isHtml()) {
-            HtmlWebPage htmlPage = page.asHtml();
-            LOGGER.info("Url {} returned a HTML page with title {}", url, htmlPage.getTitle());
-            return htmlPage.getLinks();
+            LOGGER.info("Url {} returned a HTML page with title {}", url, page.getTitle().get());
+            return page.getLinks();
         } else if (page.isRedirection()) {
-            RedirectionWebPage redirection = page.asRedirection();
-            LOGGER.info("Url {} returned a redirection to {}", url, redirection.getTargetUrl());
-            return asList(redirection.getTargetUrl());
+            LOGGER.info("Url {} returned a redirection to {}", url, page.getTargetUrl().get());
+            return newArrayList(page.getTargetUrl().get());
         } else if (page.isUnreachable()) {
             LOGGER.info("Url {} is unreachable", url);
             return emptyList();

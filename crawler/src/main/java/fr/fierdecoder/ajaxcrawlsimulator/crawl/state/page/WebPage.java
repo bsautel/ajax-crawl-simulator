@@ -1,90 +1,48 @@
 package fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page;
 
-import java.util.Objects;
+import com.google.auto.value.AutoValue;
 
-public class WebPage {
-    private final WebPageType type;
-    private final String url;
-    private final int httpStatus;
-    private final String body;
+import java.util.Optional;
+import java.util.Set;
 
-    public WebPage(WebPageType type, String url, int httpStatus, String body) {
-        this.type = type;
-        this.url = url;
-        this.httpStatus = httpStatus;
-        this.body = body;
-    }
+@AutoValue
+public abstract class WebPage {
+    public abstract String getUrl();
 
-    public String getUrl() {
-        return url;
-    }
+    public abstract int getHttpStatus();
 
-    public int getHttpStatus() {
-        return httpStatus;
-    }
+    public abstract String getBody();
 
-    public String getBody() {
-        return body;
-    }
+    public abstract WebPageType getType();
+
+    public abstract Optional<String> getTitle();
+
+    public abstract Set<String> getLinks();
+
+    public abstract Optional<String> getTargetUrl();
 
     public boolean isHtml() {
-        return type == WebPageType.HTML;
-    }
-
-    public HtmlWebPage asHtml() {
-        return (HtmlWebPage) this;
+        return getType() == WebPageType.HTML;
     }
 
     public boolean isRedirection() {
-        return type == WebPageType.REDIRECTION;
-    }
-
-    public RedirectionWebPage asRedirection() {
-        return (RedirectionWebPage) this;
+        return getType() == WebPageType.REDIRECTION;
     }
 
     public boolean isUnreachable() {
-        return type == WebPageType.UNREACHABLE;
+        return getType() == WebPageType.UNREACHABLE;
     }
 
     public boolean isText() {
-        return type == WebPageType.TEXT;
+        return getType() == WebPageType.TEXT;
     }
 
     public boolean isBinary() {
-        return type == WebPageType.BINARY;
+        return getType() == WebPageType.BINARY;
     }
 
-    public WebPageType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        WebPage webPage = (WebPage) o;
-
-        return Objects.equals(type, webPage.type)
-                && Objects.equals(httpStatus, webPage.httpStatus)
-                && Objects.equals(body, webPage.body)
-                && Objects.equals(type, webPage.type)
-                && Objects.equals(url, webPage.url);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, url, httpStatus, body);
-    }
-
-    @Override
-    public String toString() {
-        return "WebPage{" +
-                "type=" + type +
-                ", url='" + url + '\'' +
-                ", httpStatus=" + httpStatus +
-                ", body='" + body + '\'' +
-                '}';
+    public static WebPage create(String url, int httpStatus, String body, WebPageType type, Optional<String> title,
+                                 Set<String> links, Optional<String> targetUrl) {
+        return new AutoValue_WebPage(url, httpStatus, body, type, title, links, targetUrl);
     }
 }

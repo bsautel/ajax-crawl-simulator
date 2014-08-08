@@ -1,8 +1,6 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.value;
 
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.HtmlWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.RedirectionWebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPagePreview;
 
@@ -10,14 +8,12 @@ import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPagePreview;
 public class JsonPageConverter {
     public JsonPage createJsonPage(WebPage webPage) {
         JsonPage jsonPage = new JsonPage(webPage.getType(), webPage.getUrl(),
-                webPage.getHttpStatus(), webPage.getBody());
-        if (webPage.isHtml()) {
-            HtmlWebPage htmlPage = webPage.asHtml();
-            jsonPage.setTitle(htmlPage.getTitle());
-            jsonPage.setLinks(htmlPage.getLinks());
-        } else if (webPage.isRedirection()) {
-            RedirectionWebPage redirectionPage = webPage.asRedirection();
-            jsonPage.setTargetUrl(redirectionPage.getTargetUrl());
+                webPage.getHttpStatus(), webPage.getBody(), webPage.getLinks());
+        if (webPage.getTitle().isPresent()) {
+            jsonPage.setTitle(webPage.getTitle().get());
+        }
+        if (webPage.getTargetUrl().isPresent()) {
+            jsonPage.setTargetUrl(webPage.getTargetUrl().get());
         }
         return jsonPage;
     }

@@ -1,28 +1,34 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageType;
 
 import java.util.Set;
 
 public class MongoDbWebPage {
-    private String simulationName;
-    private WebPageType type;
-    private String url;
-    private int httpStatus;
-    private String body;
-    private String targetUrl;
-    private String title;
-    private Set<String> links;
+    private final String simulationName;
+    private final WebPageType type;
+    private final String url;
+    private final int httpStatus;
+    private final String body;
+    private final String targetUrl;
+    private final String title;
+    private final Set<String> links;
 
-    public MongoDbWebPage(String simulationName, WebPageType type, String url, int httpStatus, String body) {
+    @JsonCreator
+    public MongoDbWebPage(@JsonProperty("simulationName") String simulationName, @JsonProperty("type") WebPageType type,
+                          @JsonProperty("url") String url, @JsonProperty("httpStatus") int httpStatus,
+                          @JsonProperty("body") String body, @JsonProperty("links") Set<String> links,
+                          @JsonProperty("title") String title, @JsonProperty("targetUrl") String targetUrl) {
         this.simulationName = simulationName;
         this.type = type;
         this.url = url;
         this.httpStatus = httpStatus;
         this.body = body;
-    }
-
-    public MongoDbWebPage() {
+        this.links = links;
+        this.title = title;
+        this.targetUrl = targetUrl;
     }
 
     public String getUrl() {
@@ -41,10 +47,6 @@ public class MongoDbWebPage {
         return targetUrl;
     }
 
-    public void setTargetUrl(String targetUrl) {
-        this.targetUrl = targetUrl;
-    }
-
     public Integer getHttpStatus() {
         return httpStatus;
     }
@@ -53,19 +55,11 @@ public class MongoDbWebPage {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getBody() {
         return body;
     }
 
     public Set<String> getLinks() {
         return links;
-    }
-
-    public void setLinks(Set<String> links) {
-        this.links = links;
     }
 }

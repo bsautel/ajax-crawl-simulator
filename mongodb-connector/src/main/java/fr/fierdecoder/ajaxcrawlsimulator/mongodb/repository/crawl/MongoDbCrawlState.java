@@ -1,7 +1,6 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.WebPagePreviewConverter;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPagePreview;
@@ -14,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toSet;
 
 public class MongoDbCrawlState implements CrawlState {
     public static final String NAME_AND_URL_FILTER = "{'url': '#', 'simulationName': '#'}";
@@ -129,11 +127,9 @@ public class MongoDbCrawlState implements CrawlState {
                 .find(SIMULATION_NAME_FILTER, simulationName)
                 .projection("{body: 0, links: 0, targetUrl: 0}")
                 .as(MongoDbWebPage.class);
-        Set<WebPage> result = new HashSet<>();
-        mongoWebPages.forEach(mongoWebPage -> result.add(mongoWebPageConverter.convertFromMongo(mongoWebPage)));
-        return result.stream()
-                .map(WebPagePreviewConverter::createWebPagePreview)
-                .collect(toSet());
+        Set<WebPagePreview> result = new HashSet<>();
+        mongoWebPages.forEach(mongoWebPage -> result.add(mongoWebPageConverter.convertToPreview(mongoWebPage)));
+        return result;
     }
 
     @Override
