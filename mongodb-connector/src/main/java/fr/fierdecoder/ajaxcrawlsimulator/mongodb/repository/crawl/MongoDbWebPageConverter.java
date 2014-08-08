@@ -1,21 +1,21 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.HtmlWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.RedirectionWebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.HtmlWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.RedirectionWebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 
 @Singleton
-public class MongoWebPageConverter {
+public class MongoDbWebPageConverter {
     private final WebPageFactory webPageFactory;
 
-    public MongoWebPageConverter(WebPageFactory webPageFactory) {
+    public MongoDbWebPageConverter(WebPageFactory webPageFactory) {
         this.webPageFactory = webPageFactory;
     }
 
-    public MongoWebPage convertToMongo(WebPage webPage, String simulationName) {
-        MongoWebPage result = new MongoWebPage(simulationName, webPage.getType(),
+    public MongoDbWebPage convertToMongo(WebPage webPage, String simulationName) {
+        MongoDbWebPage result = new MongoDbWebPage(simulationName, webPage.getType(),
                 webPage.getUrl(), webPage.getHttpStatus(), webPage.getBody());
         if (webPage.isHtml()) {
             HtmlWebPage htmlWebPage = webPage.asHtml();
@@ -28,7 +28,7 @@ public class MongoWebPageConverter {
         return result;
     }
 
-    public WebPage convertFromMongo(MongoWebPage mongoPage) {
+    public WebPage convertFromMongo(MongoDbWebPage mongoPage) {
         switch (mongoPage.getType()) {
             case HTML:
                 return webPageFactory.buildHtmlWebPage(mongoPage.getUrl(), mongoPage.getHttpStatus(),

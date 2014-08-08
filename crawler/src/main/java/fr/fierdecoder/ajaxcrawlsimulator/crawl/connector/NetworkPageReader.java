@@ -3,8 +3,8 @@ package fr.fierdecoder.ajaxcrawlsimulator.crawl.connector;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPage;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageFactory;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -33,20 +33,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Singleton
 public class NetworkPageReader implements PageReader {
-    private static enum ResolveFragmentStrategy {
-        RESOLVE(true), DO_NOT_RESOLVE(false);
-
-        private boolean canResolveFragment;
-
-        private ResolveFragmentStrategy(boolean canResolveFragment) {
-            this.canResolveFragment = canResolveFragment;
-        }
-
-        public boolean canResolveFragment() {
-            return canResolveFragment;
-        }
-    }
-
     public static final String ESCAPED_FRAGMENT = "_escaped_fragment_";
     private final Logger LOGGER = getLogger(NetworkPageReader.class);
     private final DocumentReader documentReader;
@@ -79,39 +65,46 @@ public class NetworkPageReader implements PageReader {
         return resolveUrlWithoutFragment(url, urlToDisplay, ResolveFragmentStrategy.RESOLVE);
     }
 
-    private WebPage resolveUrlWithoutFragment(String url, String urlToDisplay, ResolveFragmentStrategy resolveFragmentStrategy)
+    private WebPage resolveUrlWithoutFragment(String url, String urlToDisplay,
+                                              ResolveFragmentStrategy resolveFragmentStrategy)
             throws IOException, URISyntaxException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpClientContext context = HttpClientContext.create();
         LOGGER.info("Fetching {}", url);
         HttpGet request = new HttpGet(url);
         try (CloseableHttpResponse response = httpClient.execute(request, context)) {
-            int status = response.getStatusLine().getStatusCode();
-            HttpEntity entity = response.getEntity();
-            InputStream body = entity.getContent();
-            ContentType contentType = ContentType.getOrDefault(entity);
-            String bodyString = stringify(body, contentType);
-            if (isRedirection(context)) {
-                LOGGER.debug("{} is a redirection", urlToDisplay);
-                URI location = context.getRedirectLocations().get(0);
-                // TODO find a way to get the right first redirection
-                return webPageFactory.buildRedirectionWebPage(urlToDisplay, 301, "", location.toString());
-            }
-            if (isHttpError(status)) {
-                LOGGER.debug("{} is a redirection", urlToDisplay);
-                return webPageFactory.buildUnreachableWebPage(urlToDisplay, status, bodyString);
-            }
-            if (isHtmlPage(contentType)) {
-                LOGGER.debug("{} is a HTML page", urlToDisplay);
-                return processHtmlWebPage(urlToDisplay, status, bodyString, resolveFragmentStrategy);
-            }
-            if (isTextPage(contentType)) {
-                LOGGER.debug("{} is a text page", urlToDisplay);
-                return webPageFactory.buildTextWebPage(urlToDisplay, status, bodyString);
-            }
-            LOGGER.debug("{} is a binary file", urlToDisplay);
-            return webPageFactory.buildBinaryWebPage(urlToDisplay, status);
+            return readResponse(urlToDisplay, resolveFragmentStrategy, context, response);
         }
+    }
+
+    private WebPage readResponse(String urlToDisplay, ResolveFragmentStrategy resolveFragmentStrategy,
+                                 HttpClientContext context, CloseableHttpResponse response)
+            throws IOException, URISyntaxException {
+        int status = response.getStatusLine().getStatusCode();
+        HttpEntity entity = response.getEntity();
+        InputStream body = entity.getContent();
+        ContentType contentType = ContentType.getOrDefault(entity);
+        String bodyString = stringify(body, contentType);
+        if (isRedirection(context)) {
+            LOGGER.debug("{} is a redirection", urlToDisplay);
+            URI location = context.getRedirectLocations().get(0);
+            // TODO find a way to get the right first redirection
+            return webPageFactory.buildRedirectionWebPage(urlToDisplay, 301, "", location.toString());
+        }
+        if (isHttpError(status)) {
+            LOGGER.debug("{} is a redirection", urlToDisplay);
+            return webPageFactory.buildUnreachableWebPage(urlToDisplay, status, bodyString);
+        }
+        if (isHtmlPage(contentType)) {
+            LOGGER.debug("{} is a HTML page", urlToDisplay);
+            return processHtmlWebPage(urlToDisplay, status, bodyString, resolveFragmentStrategy);
+        }
+        if (isTextPage(contentType)) {
+            LOGGER.debug("{} is a text page", urlToDisplay);
+            return webPageFactory.buildTextWebPage(urlToDisplay, status, bodyString);
+        }
+        LOGGER.debug("{} is a binary file", urlToDisplay);
+        return webPageFactory.buildBinaryWebPage(urlToDisplay, status);
     }
 
     private String stringify(InputStream body, ContentType contentType) {
@@ -166,5 +159,19 @@ public class NetworkPageReader implements PageReader {
     private boolean supportsFragment(Document document) {
         Elements fragmentMeta = document.select("meta[name=fragment]");
         return fragmentMeta.size() == 1;
+    }
+
+    private static enum ResolveFragmentStrategy {
+        RESOLVE(true), DO_NOT_RESOLVE(false);
+
+        private boolean canResolveFragment;
+
+        private ResolveFragmentStrategy(boolean canResolveFragment) {
+            this.canResolveFragment = canResolveFragment;
+        }
+
+        public boolean canResolveFragment() {
+            return canResolveFragment;
+        }
     }
 }

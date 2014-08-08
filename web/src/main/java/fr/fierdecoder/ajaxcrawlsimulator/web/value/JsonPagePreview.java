@@ -2,7 +2,7 @@ package fr.fierdecoder.ajaxcrawlsimulator.web.value;
 
 
 import com.google.auto.value.AutoValue;
-import fr.fierdecoder.ajaxcrawlsimulator.crawl.page.WebPageType;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageType;
 
 import java.util.Optional;
 

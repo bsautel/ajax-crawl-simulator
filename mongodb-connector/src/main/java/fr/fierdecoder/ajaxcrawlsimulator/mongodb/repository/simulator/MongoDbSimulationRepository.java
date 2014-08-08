@@ -1,10 +1,9 @@
 package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.simulator;
 
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlStateFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.mongodb.JongoConnectionFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl.MongoDbWebPagesRepositoryFactory;
-import fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl.MongoWebPagesRepository;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.Simulation;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.SimulationDescriptor;
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.SimulationRepository;
@@ -13,18 +12,19 @@ import org.jongo.MongoCollection;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Optional.ofNullable;
 
-public class MongoSimulationRepository implements SimulationRepository {
+public class MongoDbSimulationRepository implements SimulationRepository {
     public static final String NAME_FILTER = "{name: #}";
     private final MongoCollection collection;
-    private final MongoDbWebPagesRepositoryFactory webPagesRepositoryFactory;
+    private final CrawlStateFactory crawlStateFactory;
 
     @Inject
-    public MongoSimulationRepository(JongoConnectionFactory jongoConnectionFactory,
-                                     MongoDbWebPagesRepositoryFactory webPagesRepositoryFactory) {
+    public MongoDbSimulationRepository(JongoConnectionFactory jongoConnectionFactory,
+                                       CrawlStateFactory crawlStateFactory) {
         collection = jongoConnectionFactory.create().getCollection("simulations");
-        this.webPagesRepositoryFactory = webPagesRepositoryFactory;
+        this.crawlStateFactory = crawlStateFactory;
     }
 
     @Override
@@ -39,13 +39,13 @@ public class MongoSimulationRepository implements SimulationRepository {
     }
 
     private Simulation createSimulation(SimulationDescriptor descriptor) {
-        return Simulation.create(descriptor, webPagesRepositoryFactory.create(descriptor.name()));
+        return Simulation.create(descriptor, crawlStateFactory.create(descriptor.name()));
     }
 
     @Override
     public Set<SimulationDescriptor> getDescriptors() {
         Iterable<SimulationDescriptor> descriptors = collection.find().as(SimulationDescriptor.class);
-        return Sets.newHashSet(descriptors);
+        return newHashSet(descriptors);
     }
 
     @Override
@@ -53,8 +53,8 @@ public class MongoSimulationRepository implements SimulationRepository {
         Optional<Simulation> simulation = get(name);
         if (simulation.isPresent()) {
             collection.remove(NAME_FILTER, name);
-            MongoWebPagesRepository mongoWebPagesRepository = (MongoWebPagesRepository) simulation.get().getWebPagesRepository();
-            mongoWebPagesRepository.drop();
+            CrawlState state = simulation.get().getState();
+            state.drop();
         }
     }
 }
