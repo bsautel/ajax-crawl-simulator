@@ -22,6 +22,6 @@ public class Launcher {
     private static void startServer(LauncherOptions options) {
         LauncherModule launcherModule = new LauncherModule(options);
         WebApplication webApplication = new WebApplication(launcherModule);
-        webApplication.start();
+        webApplication.start(options.getHttpPort());
     }
 }

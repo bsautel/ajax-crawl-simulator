@@ -30,8 +30,8 @@ public class WebApplication {
         TypeConvert.overrideMapper(mapper);
     }
 
-    public void start() {
-        webServer.start();
+    public void start(int httpPort) {
+        webServer.start(httpPort);
     }
 
     public void startOnRandomPort() {
