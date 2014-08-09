@@ -26,12 +26,20 @@
         <div class="col-md-2">
             <p>{{filterPages().length}} Displayed Pages</p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
             <div class="input-group">
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-search"></span>
                 </span>
                 <input type="search" ng-model="filter.url" placeholder="Filter URL" class="form-control"/>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-search"></span>
+                </span>
+                <input type="search" ng-model="filter.title" placeholder="Filter Title" class="form-control"/>
             </div>
         </div>
         <div class="col-md-5 col-md-offset-1">

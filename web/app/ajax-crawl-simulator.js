@@ -96,6 +96,7 @@ function SimulationController($routeParams, $scope, $http, $location, $filter) {
 
     $scope.filter = {
         url: '',
+        title: '',
         html: true,
         text: true,
         binary: true,
@@ -148,6 +149,9 @@ function SimulationController($routeParams, $scope, $http, $location, $filter) {
         var pages = $scope.pages || [];
         if ($scope.filter.url.length > 0) {
             pages = $filter('filter')(pages, {url: $scope.filter.url});
+        }
+        if ($scope.filter.title.length > 0) {
+            pages = $filter('filter')(pages, {title: $scope.filter.title});
         }
         return pages.filter(isPageTypeDisplayed);
     };
