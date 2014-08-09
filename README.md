@@ -29,6 +29,12 @@ Use the `-h` option to discover the launcher options.
 
     java -jar web-launcher/target/web-launcher-1.0-SNAPSHOT-jar-with-dependencies.jar -h
 
+Once the tools is launched, open this URL with your browser:
+
+    http://localhost:8080/
+
+This URL changes if the HTTP port is not the default one or if the app does not run in the local system.
+
 # Technologies
 
 Here is a non exhaustive list of the technologies used in this tool.
