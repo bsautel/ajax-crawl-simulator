@@ -8,13 +8,15 @@ import java.util.Optional;
 
 @AutoValue
 public abstract class JsonPagePreview {
+    public abstract String getId();
+
     public abstract String getUrl();
 
     public abstract WebPageType getType();
 
     public abstract String getTitle();
 
-    public static JsonPagePreview create(String url, WebPageType type, Optional<String> title) {
-        return new AutoValue_JsonPagePreview(url, type, title.orElse(""));
+    public static JsonPagePreview create(String id, String url, WebPageType type, Optional<String> title) {
+        return new AutoValue_JsonPagePreview(id, url, type, title.orElse(""));
     }
 }

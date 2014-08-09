@@ -15,7 +15,7 @@ import static java.util.Optional.of;
 import static java.util.stream.Collectors.toSet;
 
 public class MemoryCrawlState implements CrawlState {
-    private final Map<String, WebPage> pagesByUrl = new ConcurrentHashMap<>();
+    private final Map<String, WebPage> pagesById = new ConcurrentHashMap<>();
     private final Queue<String> urlQueue = new ConcurrentLinkedQueue<>();
     private AtomicBoolean running = new AtomicBoolean(true);
 
@@ -51,34 +51,47 @@ public class MemoryCrawlState implements CrawlState {
 
     @Override
     public void addPage(WebPage page) {
-        pagesByUrl.put(page.getUrl(), page);
+        pagesById.put(page.getId(), page);
     }
 
     @Override
-    public boolean containsPage(String url) {
-        return pagesByUrl.containsKey(url);
+    public boolean containsUrl(String url) {
+        return pagesById.values().stream()
+                .anyMatch(page -> page.getUrl().equals(url));
     }
 
     @Override
     public Optional<WebPage> getPageByUrl(String url) {
-        return of(pagesByUrl.get(url));
+        return pagesById.values().stream()
+                .filter(page -> page.getUrl().equals(url))
+                .findFirst();
+    }
+
+    @Override
+    public boolean containsPage(String id) {
+        return pagesById.containsKey(id);
+    }
+
+    @Override
+    public Optional<WebPage> getPageById(String id) {
+        return of(pagesById.get(id));
     }
 
     @Override
     public long getPagesCount() {
-        return pagesByUrl.size();
+        return pagesById.size();
     }
 
     @Override
     public Collection<WebPagePreview> getWebPagesPreviews() {
-        return pagesByUrl.values().stream()
+        return pagesById.values().stream()
                 .map(WebPagePreviewConverter::createWebPagePreview)
                 .collect(toSet());
     }
 
     @Override
     public void drop() {
-        pagesByUrl.clear();
+        pagesById.clear();
         urlQueue.clear();
     }
 }

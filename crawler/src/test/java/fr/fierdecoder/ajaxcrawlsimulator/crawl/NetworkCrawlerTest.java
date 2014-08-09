@@ -20,6 +20,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,7 +54,7 @@ public class NetworkCrawlerTest {
         startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(1, state.getPagesCount());
-        assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
+        assertThat(state.getPageById(indexPage.getId()).get(), is(indexPage));
     }
 
     private WebPage buildHtmlWebPage(String url, String... links) {
@@ -79,8 +80,8 @@ public class NetworkCrawlerTest {
         startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(2, state.getPagesCount());
-        assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
-        assertThat(state.getPageByUrl(CONTACT_URL).get(), is(contactPage));
+        assertThat(state.getPageById(indexPage.getId()).get(), is(indexPage));
+        assertThat(state.getPageById(contactPage.getId()).get(), is(contactPage));
     }
 
     private void startCrawlAndWaitForItToEnd(NetworkCrawler crawler) {
@@ -97,8 +98,8 @@ public class NetworkCrawlerTest {
         startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(2, state.getPagesCount());
-        assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
-        assertThat(state.getPageByUrl(CONTACT_URL).get(), is(contactPage));
+        assertThat(state.getPageById(indexPage.getId()).get(), is(indexPage));
+        assertThat(state.getPageById(contactPage.getId()).get(), is(contactPage));
     }
 
     @Test
@@ -110,7 +111,7 @@ public class NetworkCrawlerTest {
         startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(1, state.getPagesCount());
-        assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
+        assertThat(state.getPageById(indexPage.getId()).get(), is(indexPage));
     }
 
     @Test
@@ -122,7 +123,7 @@ public class NetworkCrawlerTest {
         startCrawlAndWaitForItToEnd(crawler);
 
         assertEquals(2, state.getPagesCount());
-        assertThat(state.getPageByUrl(INDEX_URL).get(), is(indexPage));
-        assertThat(state.getPageByUrl(HOME_URL).get(), is(homePage));
+        assertThat(state.getPageById(indexPage.getId()).get(), is(indexPage));
+        assertThat(state.getPageById(homePage.getId()).get(), is(homePage));
     }
 }

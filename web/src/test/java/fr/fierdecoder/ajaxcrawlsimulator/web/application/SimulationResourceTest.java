@@ -1,14 +1,15 @@
 package fr.fierdecoder.ajaxcrawlsimulator.web.application;
 
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.Simulation;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 
 import static fr.fierdecoder.ajaxcrawlsimulator.web.application.CrawlerStub.*;
 import static fr.fierdecoder.ajaxcrawlsimulator.web.application.WebServiceTestRule.*;
-import static java.net.URLEncoder.encode;
 import static net.codestory.http.constants.HttpStatus.OK;
 import static org.hamcrest.Matchers.*;
 
@@ -19,7 +20,7 @@ public class SimulationResourceTest {
 
     @Test
     public void shouldRetrieveAnExistingSimulationWhenASimulationExists() throws IOException {
-        webServiceRule.createSimulation();
+        webServiceRule.createAndReturnSimulation();
 
         webServiceRule.restClient().get(SIMULATION_PATH).then()
                 .statusCode(OK)
@@ -30,7 +31,7 @@ public class SimulationResourceTest {
 
     @Test
     public void shouldNotExistAnySimulationWhenTheExistingOneIsDeleted() throws IOException {
-        webServiceRule.createSimulation();
+        webServiceRule.createAndReturnSimulation();
 
         webServiceRule.restClient().delete(SIMULATION_PATH).then()
                 .statusCode(OK);
@@ -42,12 +43,14 @@ public class SimulationResourceTest {
 
     @Test
     public void shouldReturnSimulationPagesWhenASimulationExists() throws IOException {
-        webServiceRule.createSimulation();
+        Simulation simulation = webServiceRule.createAndReturnSimulation();
 
         webServiceRule.restClient().get(SIMULATION_PAGES_PATH).then()
                 .statusCode(OK)
+                .log().body()
                 .body("size()", is(3))
                 .body("url", containsInAnyOrder(ABOUT_URL, CONTACT_URL, HOME_URL))
+                .body("id", containsInAnyOrder(computePageId(simulation, ABOUT_URL), computePageId(simulation, CONTACT_URL), computePageId(simulation, HOME_URL)))
                 .body(findByUrlExpression(ABOUT_URL) + ".type", is("HTML"))
                 .body(findByUrlExpression(ABOUT_URL) + ".title", is(PAGE_TITLE))
                 .body(findByUrlExpression(CONTACT_URL) + ".type", is("UNREACHABLE"))
@@ -58,9 +61,9 @@ public class SimulationResourceTest {
 
     @Test
     public void shouldReturnHtmlPageWhenAskingTheAboutPage() throws IOException {
-        webServiceRule.createSimulation();
+        Simulation simulation = webServiceRule.createAndReturnSimulation();
 
-        String aboutPagePath = computePagePath(ABOUT_URL);
+        String aboutPagePath = computePagePath(simulation, ABOUT_URL);
         webServiceRule.restClient().get(aboutPagePath).then()
                 .statusCode(OK)
                 .body("url", is(ABOUT_URL))
@@ -72,9 +75,9 @@ public class SimulationResourceTest {
 
     @Test
     public void shouldReturnRedirectionPageWhenAskingTheHomePage() throws IOException {
-        webServiceRule.createSimulation();
+        Simulation simulation = webServiceRule.createAndReturnSimulation();
 
-        String aboutPagePath = computePagePath(HOME_URL);
+        String aboutPagePath = computePagePath(simulation, HOME_URL);
         webServiceRule.restClient().get(aboutPagePath).then()
                 .statusCode(OK)
                 .body("url", is(HOME_URL))
@@ -83,8 +86,15 @@ public class SimulationResourceTest {
                 .body("type", is("REDIRECTION"));
     }
 
-    private String computePagePath(String aboutUrl) throws UnsupportedEncodingException {
-        return SIMULATION_PAGES_PATH + "/" + encode(aboutUrl, "utf-8");
+    private String computePagePath(Simulation simulation, String url) {
+        String id = computePageId(simulation, url);
+        return SIMULATION_PAGES_PATH + "/" + id;
+    }
+
+    private String computePageId(Simulation simulation, String url) {
+        Optional<WebPage> pageByUrl = simulation.getState().getPageByUrl(url);
+        WebPage webPage = pageByUrl.get();
+        return webPage.getId();
     }
 
     private String findByUrlExpression(String url) {

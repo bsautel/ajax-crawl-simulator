@@ -3,11 +3,15 @@ package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageType;
+import org.jongo.marshall.jackson.oid.Id;
+import org.jongo.marshall.jackson.oid.ObjectId;
 
 import java.util.Set;
 
 public class MongoDbWebPage {
     private final String simulationName;
+    @Id
+    private final String id;
     private final WebPageType type;
     private final String url;
     private final int httpStatus;
@@ -17,11 +21,13 @@ public class MongoDbWebPage {
     private final Set<String> links;
 
     @JsonCreator
-    public MongoDbWebPage(@JsonProperty("simulationName") String simulationName, @JsonProperty("type") WebPageType type,
-                          @JsonProperty("url") String url, @JsonProperty("httpStatus") int httpStatus,
-                          @JsonProperty("body") String body, @JsonProperty("links") Set<String> links,
-                          @JsonProperty("title") String title, @JsonProperty("targetUrl") String targetUrl) {
+    public MongoDbWebPage(@JsonProperty("_id") String id, @JsonProperty("simulationName") String simulationName,
+                          @JsonProperty("type") WebPageType type, @JsonProperty("url") String url,
+                          @JsonProperty("httpStatus") int httpStatus, @JsonProperty("body") String body,
+                          @JsonProperty("links") Set<String> links, @JsonProperty("title") String title,
+                          @JsonProperty("targetUrl") String targetUrl) {
         this.simulationName = simulationName;
+        this.id = id;
         this.type = type;
         this.url = url;
         this.httpStatus = httpStatus;
@@ -31,12 +37,16 @@ public class MongoDbWebPage {
         this.targetUrl = targetUrl;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
     public String getSimulationName() {
         return simulationName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public WebPageType getType() {

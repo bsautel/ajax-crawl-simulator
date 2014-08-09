@@ -25,8 +25,8 @@ function generateSimulationLink(simulationName) {
     return '#' + simulationsRoute + '/' + simulationName;
 }
 
-function generatePageLink(simulationName, pageUrl) {
-    return generateSimulationLink(simulationName) + '/' + encodeURIComponent(encodeURIComponent(pageUrl));
+function generatePageLink(simulationName, page) {
+    return generateSimulationLink(simulationName) + '/' + page.id;
 }
 
 function SimulationsContoller($scope, $http) {
@@ -128,7 +128,7 @@ function SimulationController($routeParams, $scope, $http, $location, $filter) {
     };
 
     $scope.generatePageLink = function (page) {
-        return generatePageLink(name, page.url);
+        return generatePageLink(name, page);
     };
 
     function isPageTypeDisplayed(page) {
@@ -167,8 +167,8 @@ function PageController($routeParams, $scope, $http) {
         $scope.page = page;
     });
 
-    $scope.generatePageLink = function (link) {
-        return generatePageLink(simulationName, link);
+    $scope.generatePageLink = function (page) {
+        return generatePageLink(simulationName, page);
     };
 
     $scope.generateSimulationLink = function () {

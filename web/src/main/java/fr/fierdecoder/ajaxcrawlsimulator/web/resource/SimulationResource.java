@@ -55,11 +55,10 @@ public class SimulationResource {
         return empty();
     }
 
-    @Get("/simulations/:getName/pages/:url")
-    public Optional<JsonPage> getSimulationPage(String name, String url) throws UnsupportedEncodingException {
-        String decodedUrl = URLDecoder.decode(url, "UTF-8");
+    @Get("/simulations/:getName/pages/:id")
+    public Optional<JsonPage> getSimulationPage(String name, String id) throws UnsupportedEncodingException {
         Optional<CrawlState> optionalCrawlState = crawlSimulator.getSimulationStateByName(name);
-        Optional<WebPage> optionalPage = optionalCrawlState.flatMap(repository -> repository.getPageByUrl(decodedUrl));
+        Optional<WebPage> optionalPage = optionalCrawlState.flatMap(repository -> repository.getPageById(id));
         return optionalPage.map(jsonPageConverter::createJsonPage);
     }
 }

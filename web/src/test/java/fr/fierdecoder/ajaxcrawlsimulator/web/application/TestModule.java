@@ -9,10 +9,16 @@ import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.MemoryS
 import fr.fierdecoder.ajaxcrawlsimulator.simulator.simulation.repository.SimulationRepository;
 
 public class TestModule extends AbstractModule {
+    private MemorySimulationsRepository simulationsRepository = new MemorySimulationsRepository();
+
     @Override
     protected void configure() {
-        bind(SimulationRepository.class).to(MemorySimulationsRepository.class).in(Singleton.class);
+        bind(SimulationRepository.class).toInstance(simulationsRepository);
         bind(CrawlStateFactory.class).to(MemoryCrawlStateFactory.class).in(Singleton.class);
         bind(Crawler.class).to(CrawlerStub.class).in(Singleton.class);
+    }
+
+    public MemorySimulationsRepository getSimulationsRepository() {
+        return simulationsRepository;
     }
 }
