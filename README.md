@@ -42,6 +42,7 @@ Here is a non exhaustive list of the technologies used in this tool.
 ## Crawl
 
 * [Apache HTTP Client](http://hc.apache.org/) A powerful HTTP client
+* [jsoup](http://jsoup.org/) A Java library that is able to parse and manipulate real-word HTML documents
 
 ## Storage
 
