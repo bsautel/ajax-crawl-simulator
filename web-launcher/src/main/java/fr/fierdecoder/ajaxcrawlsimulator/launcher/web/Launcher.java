@@ -9,6 +9,7 @@ public class Launcher {
         LauncherOptions options = new LauncherOptions();
         try {
             JCommander jCommander = new JCommander(options, args);
+            jCommander.setProgramName("ajax-crawl-simulator");
             if (options.isHelp()) {
                 jCommander.usage();
             } else {
