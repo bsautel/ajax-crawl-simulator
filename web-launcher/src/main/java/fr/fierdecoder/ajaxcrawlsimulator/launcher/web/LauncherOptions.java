@@ -10,7 +10,7 @@ public class LauncherOptions {
     @Parameter(names = {"-h", "--help"}, help = true)
     private boolean help = false;
 
-    @Parameter(names = "--mongo", description = "Use MongoDB as storage engine (default is in-memory)")
+    @Parameter(names = "--mongo", description = "Use MongoDB as storage engine (default is in-memory without persistence)")
     private boolean mongoDb = false;
 
     @Parameter(names = "--mongo-host", description = "Host of the MongoDB database (default is " + DEFAULT_HOST + ")")
@@ -45,7 +45,8 @@ public class LauncherOptions {
     @Override
     public String toString() {
         return "LauncherOptions{" +
-                "mongoDb=" + mongoDb +
+                "help=" + help +
+                ", mongoDb=" + mongoDb +
                 ", mongoDbHost='" + mongoDbHost + '\'' +
                 ", mongoDbPort=" + mongoDbPort +
                 ", databaseName='" + databaseName + '\'' +
