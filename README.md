@@ -46,8 +46,8 @@ Here is a non exhaustive list of the technologies used in this tool.
 
 ## Storage
 
-* [MongoDB](http://www.mongodb.org/), a NoSQL document-oriented database
-* [Jongo](http://jongo.org/), a high-level MongoDB driver
+* [MongoDB](http://www.mongodb.org/) A NoSQL document-oriented database
+* [Jongo](http://jongo.org/) A high-level MongoDB driver
 
 ## Web Server
 
