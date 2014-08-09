@@ -1,10 +1,6 @@
 <div class="container-fluid">
     <h1>
-        <span class="glyphicon" ng-class="{'glyphicon-globe': page.type == 'HTML',
-        'glyphicon-file': page.type == 'TEXT',
-        'glyphicon-picture': page.type == 'BINARY',
-        'glyphicon-share': page.type == 'REDIRECTION',
-        'glyphicon-warning-sign': page.type == 'UNREACHABLE'}"></span>
+        <webpage-type-icon ng-model="page.type"></webpage-type-icon>
         {{page.url}}
         <a class="btn btn-primary" href="{{page.url}}" target="_blank">
             <span class="glyphicon glyphicon-new-window"></span>

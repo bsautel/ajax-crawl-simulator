@@ -36,27 +36,27 @@
         </div>
         <div class="col-md-5 col-md-offset-1">
             <label class="checkbox-inline">
-                <span class="glyphicon glyphicon-globe"></span>
+                <webpage-type-icon ng-model="htmlType"></webpage-type-icon>
                 HTML
                 <input type="checkbox" ng-model="filter.html"/>
             </label>
             <label class="checkbox-inline">
-                <span class="glyphicon glyphicon-file"></span>
+                <webpage-type-icon ng-model="textType"></webpage-type-icon>
                 Text
                 <input type="checkbox" ng-model="filter.text"/>
             </label>
             <label class="checkbox-inline">
-                <span class="glyphicon glyphicon-picture"></span>
+                <webpage-type-icon ng-model="binaryType"></webpage-type-icon>
                 Binary
                 <input type="checkbox" ng-model="filter.binary"/>
             </label>
             <label class="checkbox-inline">
-                <span class="glyphicon glyphicon-share"></span>
+                <webpage-type-icon ng-model="redirectionType"></webpage-type-icon>
                 Redirection
                 <input type="checkbox" ng-model="filter.redirection"/>
             </label>
             <label class="checkbox-inline">
-                <span class="glyphicon glyphicon-warning-sign"></span>
+                <webpage-type-icon ng-model="unreachableType"></webpage-type-icon>
                 Unreachable
                 <input type="checkbox" ng-model="filter.unreachable"/>
             </label>
@@ -74,12 +74,7 @@
             <tr ng-repeat="page in filterPages()"
                 ng-class="{info: page.type == 'REDIRECTION', warning: page.type == 'UNREACHABLE'}">
                 <td>
-                    <span class="glyphicon" ng-class="{'glyphicon-globe': page.type == 'HTML',
-                                                       'glyphicon-file': page.type == 'TEXT',
-                                                       'glyphicon-picture': page.type == 'BINARY',
-                                                       'glyphicon-share': page.type == 'REDIRECTION',
-                                                       'glyphicon-warning-sign': page.type == 'UNREACHABLE'}">
-                    </span>
+                    <webpage-type-icon ng-model="page.type"></webpage-type-icon>
                     <a ng-href="{{generatePageLink(page)}}">{{page.url}}</a>
                 </td>
                 <td>

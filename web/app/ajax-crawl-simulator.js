@@ -128,13 +128,18 @@ function SimulationController($routeParams, $scope, $http, $location, $filter) {
     }
 
     $scope.filterPages = function filterPages() {
-        console.log($scope.filter);
         var pages = $scope.pages || [];
         if ($scope.filter.url.length > 0) {
             pages = $filter('filter')(pages, {url: $scope.filter.url});
         }
         return pages.filter(isPageTypeDisplayed);
     };
+
+    $scope.htmlType = 'HTML';
+    $scope.textType = 'TEXT';
+    $scope.binaryType = 'BINARY';
+    $scope.redirectionType = 'REDIRECTION';
+    $scope.unreachableType = 'UNREACHABLE';
 }
 
 function PageController($routeParams, $scope, $http) {
@@ -158,7 +163,8 @@ var simulationsRoute = '/simulations';
 var simulationRoute = simulationsRoute + '/:name';
 var pageRoute = simulationRoute + '/:url';
 
-angular.module('ajax-crawl-simulator', ['ngRoute']).config(
+angular.module('ajax-crawl-simulator', ['ngRoute'])
+    .config(
     [
         '$routeProvider',
         function ($routeProvider) {
@@ -168,4 +174,35 @@ angular.module('ajax-crawl-simulator', ['ngRoute']).config(
                 when(pageRoute, {templateUrl: 'page.html', controller: PageController}).
                 otherwise({redirectTo: simulationsRoute});
         }
-    ]);
+    ])
+    .directive('webpageTypeIcon', function () {
+        return {
+            restrict: 'E',
+            scope: {
+                type: '=ngModel'
+            },
+            templateUrl: 'component/webpage-type-icon.html',
+            controller: function ($scope) {
+                function getPageTypeLabel(type) {
+                    switch (type) {
+                        case 'HTML':
+                            return 'HTML';
+                        case 'BINARY':
+                            return 'Binary';
+                        case 'REDIRECTION':
+                            return 'Redirection';
+                        case 'TEXT':
+                            return 'Text';
+                        case 'UNREACHABLE':
+                            return 'Unreachable';
+                        default:
+                            return 'Unknown';
+                    }
+                }
+
+                $scope.label = function label() {
+                    return getPageTypeLabel($scope.type);
+                }
+            }
+        }
+    });
