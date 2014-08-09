@@ -9,6 +9,8 @@ import net.codestory.http.convert.TypeConvert;
 import net.codestory.http.injection.GuiceAdapter;
 import org.zapodot.jackson.java8.JavaOptionalModule;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
 public class WebApplication {
     private final WebServer webServer;
 
@@ -22,7 +24,10 @@ public class WebApplication {
     }
 
     private void configureObjectMapper() {
-        TypeConvert.overrideMapper(new ObjectMapper().registerModule(new JavaOptionalModule()));
+        ObjectMapper mapper = new ObjectMapper()
+                .registerModule(new JavaOptionalModule())
+                .setSerializationInclusion(NON_NULL);
+        TypeConvert.overrideMapper(mapper);
     }
 
     public void start() {
