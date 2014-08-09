@@ -35,31 +35,15 @@
             </div>
         </div>
         <div class="col-md-5 col-md-offset-1">
-            <label class="checkbox-inline">
-                <webpage-type-icon ng-model="htmlType"></webpage-type-icon>
-                HTML
-                <input type="checkbox" ng-model="filter.html"/>
-            </label>
-            <label class="checkbox-inline">
-                <webpage-type-icon ng-model="textType"></webpage-type-icon>
-                Text
-                <input type="checkbox" ng-model="filter.text"/>
-            </label>
-            <label class="checkbox-inline">
-                <webpage-type-icon ng-model="binaryType"></webpage-type-icon>
-                Binary
-                <input type="checkbox" ng-model="filter.binary"/>
-            </label>
-            <label class="checkbox-inline">
-                <webpage-type-icon ng-model="redirectionType"></webpage-type-icon>
-                Redirection
-                <input type="checkbox" ng-model="filter.redirection"/>
-            </label>
-            <label class="checkbox-inline">
-                <webpage-type-icon ng-model="unreachableType"></webpage-type-icon>
-                Unreachable
-                <input type="checkbox" ng-model="filter.unreachable"/>
-            </label>
+            <ul class="list-inline">
+                <li ng-repeat="(typeName, type) in types">
+                    <label class="checkbox-inline">
+                        <webpage-type-icon ng-model="type.code"></webpage-type-icon>
+                        {{type.label}}
+                        <input type="checkbox" ng-model="filter[typeName]"/>
+                    </label>
+                </li>
+            </ul>
         </div>
     </div>
     <div class="row">

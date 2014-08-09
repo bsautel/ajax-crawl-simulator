@@ -1,5 +1,26 @@
 'use strict';
 
+var PAGE_TYPES = {
+    html: {code: 'HTML', label: 'HTML'},
+    text: {code: 'TEXT', label: 'Text'},
+    binary: {code: 'BINARY', label: 'Binary'},
+    redirection: {code: 'REDIRECTION', label: 'Redirection'},
+    unreachable: {code: 'UNREACHABLE', label: 'Unreachable'}
+};
+
+function getPageTypeLabel(type) {
+    for (var typeName in PAGE_TYPES) {
+        if (PAGE_TYPES.hasOwnProperty(typeName)) {
+            var aType = PAGE_TYPES[typeName];
+            if (aType.code == type) {
+                return aType.label;
+            }
+        }
+    }
+    return 'Unknown';
+}
+
+
 function generateSimulationLink(simulationName) {
     return '#' + simulationsRoute + '/' + simulationName;
 }
@@ -111,20 +132,16 @@ function SimulationController($routeParams, $scope, $http, $location, $filter) {
 
     function isPageTypeDisplayed(page) {
         var filter = $scope.filter;
-        switch (page.type) {
-            case 'HTML':
-                return filter.html;
-            case 'TEXT':
-                return filter.text;
-            case 'BINARY':
-                return filter.binary;
-            case 'REDIRECTION':
-                return filter.redirection;
-            case 'UNREACHABLE':
-                return filter.unreachable;
-            default:
-                throw 'Unknown page type';
+        for (var typeName in PAGE_TYPES) {
+            if (PAGE_TYPES.hasOwnProperty(typeName)) {
+                var aType = PAGE_TYPES[typeName];
+                if (aType.code == page.type) {
+                    return filter[typeName];
+                }
+            }
         }
+        console.error('Unknown page type ' + page.type);
+        return true;
     }
 
     $scope.filterPages = function filterPages() {
@@ -135,11 +152,7 @@ function SimulationController($routeParams, $scope, $http, $location, $filter) {
         return pages.filter(isPageTypeDisplayed);
     };
 
-    $scope.htmlType = 'HTML';
-    $scope.textType = 'TEXT';
-    $scope.binaryType = 'BINARY';
-    $scope.redirectionType = 'REDIRECTION';
-    $scope.unreachableType = 'UNREACHABLE';
+    $scope.types = PAGE_TYPES;
 }
 
 function PageController($routeParams, $scope, $http) {
@@ -183,23 +196,6 @@ angular.module('ajax-crawl-simulator', ['ngRoute'])
             },
             templateUrl: 'component/webpage-type-icon.html',
             controller: function ($scope) {
-                function getPageTypeLabel(type) {
-                    switch (type) {
-                        case 'HTML':
-                            return 'HTML';
-                        case 'BINARY':
-                            return 'Binary';
-                        case 'REDIRECTION':
-                            return 'Redirection';
-                        case 'TEXT':
-                            return 'Text';
-                        case 'UNREACHABLE':
-                            return 'Unreachable';
-                        default:
-                            return 'Unknown';
-                    }
-                }
-
                 $scope.label = function label() {
                     return getPageTypeLabel($scope.type);
                 }
