@@ -29,3 +29,37 @@ Use the `-h` option to discover the launcher options.
 
     java -jar web-launcher/target/web-launcher-1.0-SNAPSHOT-jar-with-dependencies.jar -h
 
+# Technologies
+
+Here is a non exhaustive list of the technologies used in this tool.
+
+## Crawl
+
+* [Apache HTTP Client](http://hc.apache.org/) A powerful HTTP client
+
+## Storage
+
+* [MongoDB](http://www.mongodb.org/), a NoSQL document-oriented database
+* [Jongo](http://jongo.org/), a high-level MongoDB driver
+
+## Web Server
+
+* [Fluent HTTP](https://github.com/CodeStory/fluent-http) A simple and yet powerful web server
+* [Guice](https://github.com/google/guice) A dependency injection library
+* [Jackson](https://github.com/FasterXML/jackson) A serialization/deserialization library that supports object mapping
+ and many formats such as JSON
+
+## Web Client
+
+* [AngularJS](https://angularjs.org/) A very powerful Javascript framework
+* [Bootstrap 3](http://getbootstrap.com/) A very famous web presentation framework 
+
+## Testing
+
+* [JUnit](http://junit.org/) A very famous Java testing tool
+* [Hamcrest](http://hamcrest.org/) An library that provides matchers to write concise and readable tests
+* [Mockito](https://github.com/mockito/mockito) A famous Java mock factory
+* [Fongo](https://github.com/fakemongo/fongo) A fake Mongo Java implementation that runs in memory
+* [RestAssured](https://code.google.com/p/rest-assured/) A web service testing tool
+* [Wiremock](http://wiremock.org/) A web service mocking tool
+* [Awaitility](https://github.com/jayway/awaitility) A tool that makes asynchronous testing simple
