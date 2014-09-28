@@ -35,12 +35,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class NetworkPageReader implements PageReader {
     public static final String ESCAPED_FRAGMENT = "_escaped_fragment_";
     private final Logger LOGGER = getLogger(NetworkPageReader.class);
-    private final DocumentReader documentReader;
     private final WebPageFactory webPageFactory;
 
     @Inject
-    public NetworkPageReader(DocumentReader documentReader, WebPageFactory webPageFactory) {
-        this.documentReader = documentReader;
+    public NetworkPageReader(WebPageFactory webPageFactory) {
         this.webPageFactory = webPageFactory;
     }
 
@@ -137,7 +135,8 @@ public class NetworkPageReader implements PageReader {
             throws IOException, URISyntaxException {
         UrlWithOptionalHash urlWithOptionalHash = parse(url);
         Document document = Jsoup.parse(body, url);
-        Optional<String> optionalCanonicalUrl = documentReader.readCanonicalUrl(document);
+        DocumentReader documentReader = new DocumentReader(document);
+        Optional<String> optionalCanonicalUrl = documentReader.readCanonicalUrl();
         if (optionalCanonicalUrl.isPresent()) {
             String canonicalUrl = optionalCanonicalUrl.get();
             if (!canonicalUrl.equals(url)) {
@@ -148,12 +147,12 @@ public class NetworkPageReader implements PageReader {
             String canonicalUrl = urlWithOptionalHash.getUrlWithoutHash();
             return webPageFactory.buildRedirectionWebPage(url, 200, "", canonicalUrl);
         }
-        if (resolveFragmentStrategy.canResolveFragment() && documentReader.supportsFragment(document)) {
+        if (resolveFragmentStrategy.canResolveFragment() && documentReader.supportsFragment()) {
             String resolvedUrl = replaceHashByEscapedFragment(urlWithOptionalHash, "");
             return resolveUrlWithoutFragment(resolvedUrl, url, ResolveFragmentStrategy.DO_NOT_RESOLVE);
         }
-        Set<String> links = documentReader.readLinks(document);
-        String title = documentReader.readTitle(document);
+        Set<String> links = documentReader.readLinks();
+        String title = documentReader.readTitle();
         return webPageFactory.buildHtmlWebPage(url, status, title, body, links);
     }
 

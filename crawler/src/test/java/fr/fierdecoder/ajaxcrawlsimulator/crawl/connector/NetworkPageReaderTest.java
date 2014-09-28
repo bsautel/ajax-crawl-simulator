@@ -40,7 +40,7 @@ public class NetworkPageReaderTest {
         fragmentHtmlDocument = readHtmlDocument("document_with_fragment.html");
         anotherFragmentHtmlDocument = readHtmlDocument("another_document_with_fragment.html");
         canonicalUrlDocument = readHtmlDocument("document_with_canonical_url.html");
-        networkPageReader = new NetworkPageReader(new DocumentReader(), new WebPageFactory());
+        networkPageReader = new NetworkPageReader(new WebPageFactory());
     }
 
     private String readHtmlDocument(String fileName) throws IOException {

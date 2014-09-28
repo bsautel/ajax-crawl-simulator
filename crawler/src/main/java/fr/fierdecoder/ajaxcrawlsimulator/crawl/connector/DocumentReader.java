@@ -12,7 +12,13 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 
 public class DocumentReader {
-    public Set<String> readLinks(Document document) {
+    private final Document document;
+
+    public DocumentReader(Document document) {
+        this.document = document;
+    }
+
+    public Set<String> readLinks() {
         Elements pageLinksElements = document.select("a");
         return pageLinksElements.stream()
                 .map(linkElement -> linkElement.attr("abs:href"))
@@ -20,11 +26,11 @@ public class DocumentReader {
                 .collect(toSet());
     }
 
-    public String readTitle(Document document) {
+    public String readTitle() {
         return document.title();
     }
 
-    public Optional<String> readCanonicalUrl(Document document) {
+    public Optional<String> readCanonicalUrl() {
         Elements canonicalUrlElements = document.select("link[rel=canonical]");
         if (!canonicalUrlElements.isEmpty()) {
             Element canonicalUrlElement = canonicalUrlElements.get(0);
@@ -33,7 +39,7 @@ public class DocumentReader {
         return empty();
     }
 
-    public boolean supportsFragment(Document document) {
+    public boolean supportsFragment() {
         Elements fragmentMeta = document.select("meta[name=fragment]");
         return fragmentMeta.size() == 1;
     }

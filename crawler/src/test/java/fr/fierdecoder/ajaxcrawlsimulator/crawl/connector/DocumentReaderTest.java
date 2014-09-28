@@ -17,16 +17,13 @@ import static org.junit.Assert.assertThat;
 
 public class DocumentReaderTest {
     public static final String ROOT_URL = "http://mydomain.com/";
-    private DocumentReader documentReader;
-    private Document sampleDocument, documentWithCanonicalUrl, documentWithFragment;
+    private DocumentReader sampleDocument, documentWithCanonicalUrl, documentWithFragment;
 
     @Before
     public void setUp() throws Exception {
-        documentReader = new DocumentReader();
-
-        sampleDocument = parseTestDocument("document.html");
-        documentWithCanonicalUrl = parseTestDocument("document_with_canonical_url.html");
-        documentWithFragment = parseTestDocument("document_with_fragment.html");
+        sampleDocument = new DocumentReader(parseTestDocument("document.html"));
+        documentWithCanonicalUrl = new DocumentReader(parseTestDocument("document_with_canonical_url.html"));
+        documentWithFragment = new DocumentReader(parseTestDocument("document_with_fragment.html"));
     }
 
     private Document parseTestDocument(String fileName) throws IOException {
@@ -36,28 +33,28 @@ public class DocumentReaderTest {
 
     @Test
     public void readLinks() throws IOException {
-        Set<String> links = documentReader.readLinks(sampleDocument);
+        Set<String> links = sampleDocument.readLinks();
 
         assertThat(links, containsInAnyOrder(ROOT_URL + "contact", ROOT_URL + "about", "https://www.google.com/"));
     }
 
     @Test
     public void pageTitle() {
-        String title = documentReader.readTitle(sampleDocument);
+        String title = sampleDocument.readTitle();
 
         assertEquals("My page", title);
     }
 
     @Test
     public void shouldNotHaveACanonicalUrl() {
-        Optional<String> optionalCanonicalUrl = documentReader.readCanonicalUrl(sampleDocument);
+        Optional<String> optionalCanonicalUrl = sampleDocument.readCanonicalUrl();
 
         assertThat(optionalCanonicalUrl.isPresent(), is(false));
     }
 
     @Test
     public void shouldHaveACanonicalUrl() {
-        Optional<String> optionalCanonicalUrl = documentReader.readCanonicalUrl(documentWithCanonicalUrl);
+        Optional<String> optionalCanonicalUrl = documentWithCanonicalUrl.readCanonicalUrl();
 
         assertThat(optionalCanonicalUrl.isPresent(), is(true));
         assertThat(optionalCanonicalUrl.get(), is(ROOT_URL + "home"));
@@ -65,14 +62,14 @@ public class DocumentReaderTest {
 
     @Test
     public void shouldNotSupportFragment() {
-        boolean hasFragment = documentReader.supportsFragment(sampleDocument);
+        boolean hasFragment = sampleDocument.supportsFragment();
 
         assertThat(hasFragment, is(false));
     }
 
     @Test
     public void shouldSupportFragment() {
-        boolean hasFragment = documentReader.supportsFragment(documentWithFragment);
+        boolean hasFragment = documentWithFragment.supportsFragment();
 
         assertThat(hasFragment, is(true));
     }
