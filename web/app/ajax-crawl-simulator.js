@@ -29,7 +29,7 @@ function generatePageLink(simulationName, pageUrl) {
     return generateSimulationLink(simulationName) + '/' + encodeURIComponent(encodeURIComponent(pageUrl));
 }
 
-function SimulationsContoller($scope, $http) {
+function SimulationsController($scope, $http) {
     $scope.refresh = function () {
         $http.get('/simulations').success(function (simulations) {
             $scope.simulations = simulations;
@@ -186,7 +186,7 @@ angular.module('ajax-crawl-simulator', ['ngRoute'])
         '$routeProvider',
         function ($routeProvider) {
             $routeProvider.
-                when(simulationsRoute, {templateUrl: 'simulations.html', controller: SimulationsContoller}).
+                when(simulationsRoute, {templateUrl: 'simulations.html', controller: SimulationsController}).
                 when(simulationRoute, {templateUrl: 'simulation.html', controller: SimulationController}).
                 when(pageRoute, {templateUrl: 'page.html', controller: PageController}).
                 otherwise({redirectTo: simulationsRoute});
