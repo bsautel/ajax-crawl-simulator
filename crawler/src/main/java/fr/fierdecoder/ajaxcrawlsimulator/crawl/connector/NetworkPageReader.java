@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.UrlWithOptionalHash.parse;
@@ -137,6 +138,13 @@ public class NetworkPageReader implements PageReader {
             throws IOException, URISyntaxException {
         UrlWithOptionalHash urlWithOptionalHash = parse(url);
         Document document = Jsoup.parse(body, url);
+        Optional<String> optionalCanonicalUrl = documentReader.readCanonicalUrl(document);
+        if (optionalCanonicalUrl.isPresent()) {
+            String canonicalUrl = optionalCanonicalUrl.get();
+            if (!canonicalUrl.equals(url)) {
+                return webPageFactory.buildRedirectionWebPage(url, status, body, canonicalUrl);
+            }
+        }
         if (urlWithOptionalHash.hasHash() && !urlWithOptionalHash.hasFragment()) {
             String canonicalUrl = urlWithOptionalHash.getUrlWithoutHash();
             return webPageFactory.buildRedirectionWebPage(url, 200, "", canonicalUrl);

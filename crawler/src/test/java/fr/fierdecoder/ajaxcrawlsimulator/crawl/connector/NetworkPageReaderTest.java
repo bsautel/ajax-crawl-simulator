@@ -32,13 +32,14 @@ public class NetworkPageReaderTest {
     private static final String CONTACT_URL = "http://mydomain.com/contact";
     private static final String GOOGLE_URL = "https://www.google.com/";
     private NetworkPageReader networkPageReader;
-    private String simpleHtmlDocument, fragmentHtmlDocument, anotherFragmentHtmlDocument;
+    private String simpleHtmlDocument, fragmentHtmlDocument, anotherFragmentHtmlDocument, canonicalUrlDocument;
 
     @Before
     public void setUp() throws Exception {
         simpleHtmlDocument = readHtmlDocument("document.html");
         fragmentHtmlDocument = readHtmlDocument("document_with_fragment.html");
         anotherFragmentHtmlDocument = readHtmlDocument("another_document_with_fragment.html");
+        canonicalUrlDocument = readHtmlDocument("document_with_canonical_url.html");
         networkPageReader = new NetworkPageReader(new DocumentReader(), new WebPageFactory());
     }
 
@@ -225,5 +226,30 @@ public class NetworkPageReaderTest {
         assertThat(result.getUrl(), is(url));
         assertThat(result.getBody(), is(simpleHtmlDocument));
         assertThat(result.getHttpStatus(), is(200));
+    }
+
+    @Test
+    public void shouldConsiderPageWithADifferentCanonicalUrlAsARedirection() {
+        ResponseDefinitionBuilder response = aResponse().withStatus(200)
+                .withHeader("Content-Type", "text/html").withBody(canonicalUrlDocument);
+        stubFor(get(urlEqualTo(ABOUT_PAGE)).willReturn(response));
+
+        WebPage result = networkPageReader.readPage(HTTP_DOMAIN + ABOUT_PAGE);
+
+        assertThat(result.isRedirection(), is(true));
+        assertThat(result.getHttpStatus(), is(200));
+        assertThat(result.getTargetUrl().get(), is(HTTP_DOMAIN + HOME_PATH));
+    }
+
+    @Test
+    public void shouldConsiderPageWithTheSameCanonicalUrlAsANormalWebPage() {
+        ResponseDefinitionBuilder response = aResponse().withStatus(200)
+                .withHeader("Content-Type", "text/html").withBody(canonicalUrlDocument);
+        stubFor(get(urlEqualTo(HOME_PATH)).willReturn(response));
+
+        WebPage result = networkPageReader.readPage(HTTP_DOMAIN + HOME_PATH);
+
+        assertThat(result.isHtml(), is(true));
+        assertThat(result.getLinks().size(), is(1));
     }
 }
