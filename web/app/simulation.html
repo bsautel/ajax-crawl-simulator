@@ -46,9 +46,9 @@
             <ul class="list-inline">
                 <li ng-repeat="(typeName, type) in types">
                     <label class="checkbox-inline">
+                        <input type="checkbox" ng-model="filter[typeName]"/>
                         <webpage-type-icon ng-model="type.code"></webpage-type-icon>
                         {{type.label}}
-                        <input type="checkbox" ng-model="filter[typeName]"/>
                     </label>
                 </li>
             </ul>

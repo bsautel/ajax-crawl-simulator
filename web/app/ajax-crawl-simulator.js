@@ -20,13 +20,16 @@ function getPageTypeLabel(type) {
     return 'Unknown';
 }
 
+function encodeHashPath(path) {
+    return encodeURIComponent(encodeURIComponent(path));
+}
 
 function generateSimulationLink(simulationName) {
-    return '#' + simulationsRoute + '/' + simulationName;
+    return '#' + simulationsRoute + '/' + encodeHashPath(simulationName);
 }
 
 function generatePageLink(simulationName, pageUrl) {
-    return generateSimulationLink(simulationName) + '/' + encodeURIComponent(encodeURIComponent(pageUrl));
+    return generateSimulationLink(simulationName) + '/' + encodeHashPath(pageUrl);
 }
 
 function SimulationsController($scope, $http) {
@@ -161,7 +164,7 @@ function SimulationController($routeParams, $scope, $http, $location, $filter) {
 
 function PageController($routeParams, $scope, $http) {
     var simulationName = $routeParams.name;
-    var pageUrl = $routeParams.url;
+    var pageUrl = decodeURIComponent($routeParams.url);
     var pageWsUrl = '/simulations/' + simulationName + '/pages/' + encodeURIComponent(encodeURIComponent(pageUrl));
     $http.get(pageWsUrl).success(function (page) {
         $scope.page = page;
