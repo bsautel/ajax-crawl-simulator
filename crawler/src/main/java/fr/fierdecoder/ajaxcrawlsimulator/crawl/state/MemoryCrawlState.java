@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 
 public class MemoryCrawlState implements CrawlState {
@@ -74,7 +74,7 @@ public class MemoryCrawlState implements CrawlState {
 
     @Override
     public Optional<WebPage> getPageById(String id) {
-        return of(pagesById.get(id));
+        return ofNullable(pagesById.get(id));
     }
 
     @Override

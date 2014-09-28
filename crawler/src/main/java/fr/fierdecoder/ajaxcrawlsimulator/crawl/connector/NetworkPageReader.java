@@ -15,7 +15,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -25,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static fr.fierdecoder.ajaxcrawlsimulator.crawl.connector.UrlWithOptionalHash.parse;
@@ -35,12 +35,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class NetworkPageReader implements PageReader {
     public static final String ESCAPED_FRAGMENT = "_escaped_fragment_";
     private final Logger LOGGER = getLogger(NetworkPageReader.class);
-    private final DocumentReader documentReader;
     private final WebPageFactory webPageFactory;
 
     @Inject
-    public NetworkPageReader(DocumentReader documentReader, WebPageFactory webPageFactory) {
-        this.documentReader = documentReader;
+    public NetworkPageReader(WebPageFactory webPageFactory) {
         this.webPageFactory = webPageFactory;
     }
 
@@ -137,16 +135,24 @@ public class NetworkPageReader implements PageReader {
             throws IOException, URISyntaxException {
         UrlWithOptionalHash urlWithOptionalHash = parse(url);
         Document document = Jsoup.parse(body, url);
+        DocumentReader documentReader = new DocumentReader(document);
+        Optional<String> optionalCanonicalUrl = documentReader.readCanonicalUrl();
+        if (optionalCanonicalUrl.isPresent()) {
+            String canonicalUrl = optionalCanonicalUrl.get();
+            if (!canonicalUrl.equals(url)) {
+                return webPageFactory.buildRedirectionWebPage(url, status, body, canonicalUrl);
+            }
+        }
         if (urlWithOptionalHash.hasHash() && !urlWithOptionalHash.hasFragment()) {
             String canonicalUrl = urlWithOptionalHash.getUrlWithoutHash();
             return webPageFactory.buildRedirectionWebPage(url, 200, "", canonicalUrl);
         }
-        if (resolveFragmentStrategy.canResolveFragment() && supportsFragment(document)) {
+        if (resolveFragmentStrategy.canResolveFragment() && documentReader.supportsFragment()) {
             String resolvedUrl = replaceHashByEscapedFragment(urlWithOptionalHash, "");
             return resolveUrlWithoutFragment(resolvedUrl, url, ResolveFragmentStrategy.DO_NOT_RESOLVE);
         }
-        Set<String> links = documentReader.readLinks(document);
-        String title = documentReader.readTitle(document);
+        Set<String> links = documentReader.readLinks();
+        String title = documentReader.readTitle();
         return webPageFactory.buildHtmlWebPage(url, status, title, body, links);
     }
 
@@ -154,11 +160,6 @@ public class NetworkPageReader implements PageReader {
         URIBuilder urlBuilder = new URIBuilder(url.getUrlWithoutHash());
         urlBuilder.addParameter(ESCAPED_FRAGMENT, fragment);
         return urlBuilder.toString();
-    }
-
-    private boolean supportsFragment(Document document) {
-        Elements fragmentMeta = document.select("meta[name=fragment]");
-        return fragmentMeta.size() == 1;
     }
 
     private static enum ResolveFragmentStrategy {
