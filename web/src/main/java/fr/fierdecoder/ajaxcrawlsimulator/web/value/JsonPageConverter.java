@@ -19,6 +19,6 @@ public class JsonPageConverter {
     }
 
     public JsonPagePreview createJsonPagePreview(WebPagePreview webPage) {
-        return JsonPagePreview.create(webPage.getId(), webPage.getUrl(), webPage.getType(), webPage.getTitle());
+        return JsonPagePreview.create(webPage.getUrl(), webPage.getType(), webPage.getTitle());
     }
 }

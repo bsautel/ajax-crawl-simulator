@@ -70,6 +70,6 @@ public class NetworkCrawler implements Crawler {
     }
 
     private boolean mustBeCrawled(String url, CrawlState repository, CrawlPerimeter crawlPerimeter) {
-        return crawlPerimeter.contains(url) && !repository.containsUrl(url);
+        return crawlPerimeter.contains(url) && !repository.containsPage(url);
     }
 }

@@ -21,13 +21,9 @@ public interface CrawlState {
 
     void addPage(WebPage page);
 
-    boolean containsUrl(String url);
-
-    boolean containsPage(String id);
+    boolean containsPage(String url);
 
     Optional<WebPage> getPageByUrl(String url);
-
-    Optional<WebPage> getPageById(String id);
 
     long getPagesCount();
 

@@ -53,21 +53,12 @@ public abstract class AbstractCrawlStateTest {
     public void shouldInsertAnHtmlWebPage() {
         aState.addPage(aHtmlWebPage);
 
-        assertTrue(aState.containsPage(aHtmlWebPage.getId()));
-        assertFalse(anotherState.containsPage(aHtmlWebPage.getId()));
-        Optional<WebPage> result = aState.getPageById(aHtmlWebPage.getId());
+        assertTrue(aState.containsPage(AN_URL));
+        assertFalse(anotherState.containsPage(AN_URL));
+        Optional<WebPage> result = aState.getPageByUrl(AN_URL);
         assertThat(result.isPresent(), is(true));
         WebPage webPage = result.get();
         assertThat(webPage, is(aHtmlWebPage));
-    }
-
-    @Test
-    public void shouldInsertAnHtmlWebPageAndRetainItsUrl() {
-        aState.addPage(aHtmlWebPage);
-
-        assertTrue(aState.containsUrl(aHtmlWebPage.getUrl()));
-        assertFalse(anotherState.containsUrl(aHtmlWebPage.getUrl()));
-        assertThat(aState.getPageByUrl(aHtmlWebPage.getUrl()).get(), is(aHtmlWebPage));
     }
 
     @Test

@@ -22,7 +22,7 @@ public class SimulationsResourceTest {
 
     @Test
     public void shouldReturnTheSimulationWhenCreatingASimulation() throws IOException {
-        webServiceRule.createSimulationAndReturnHttpResponse().then()
+        webServiceRule.createSimulation().then()
                 .statusCode(CREATED)
                 .body("name", is(SIMULATION_NAME))
                 .body("entryUrl", is(URL))
@@ -31,7 +31,7 @@ public class SimulationsResourceTest {
 
     @Test
     public void shouldReturnASimulationWhenASimulationWasCreated() throws IOException {
-        webServiceRule.createAndReturnSimulation();
+        webServiceRule.createSimulation();
 
         webServiceRule.restClient().get(SIMULATIONS_PATH).then()
                 .statusCode(OK)
@@ -42,8 +42,9 @@ public class SimulationsResourceTest {
 
     @Test
     public void shouldFailWhenCreatingASimulationThatAlreadyExists() throws IOException {
-        webServiceRule.createAndReturnSimulation();
+        webServiceRule.createSimulation();
 
-        webServiceRule.createSimulationAndReturnHttpResponse().then().statusCode(CONFLICT);
+        webServiceRule.createSimulation().then()
+                .statusCode(CONFLICT);
     }
 }

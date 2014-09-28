@@ -2,6 +2,7 @@ package fr.fierdecoder.ajaxcrawlsimulator.mongodb.repository.crawl;
 
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.CrawlState;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPage;
+import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPageFactory;
 import fr.fierdecoder.ajaxcrawlsimulator.crawl.state.page.WebPagePreview;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
@@ -14,12 +15,11 @@ import java.util.Set;
 import static java.util.Optional.ofNullable;
 
 public class MongoDbCrawlState implements CrawlState {
-    public static final String ID_AND_NAME_FILTER = "{'_id': '#', 'simulationName': '#'}";
-    public static final String URL_AND_NAME_FILTER = "{'url': '#', 'simulationName': '#'}";
+    public static final String NAME_AND_URL_FILTER = "{'url': '#', 'simulationName': '#'}";
     public static final String SIMULATION_NAME_FILTER = "{'simulationName': '#'}";
     public static final String SIMULATION_NAME = "simulationName";
     public static final String URL = "url";
-    private final MongoDbWebPageConverter mongoWebPageConverter = new MongoDbWebPageConverter();
+    private final MongoDbWebPageConverter mongoWebPageConverter = new MongoDbWebPageConverter(new WebPageFactory());
     private final MongoCollection pagesCollection;
     private final String simulationName;
     private final MongoCollection urlsCollection;
@@ -65,8 +65,9 @@ public class MongoDbCrawlState implements CrawlState {
         MongoDbUrl url = urlsCollection
                 .findOne(SIMULATION_NAME_FILTER, simulationName)
                 .as(MongoDbUrl.class);
-        urlsCollection.remove(URL_AND_NAME_FILTER, url.getUrl(), simulationName);
-        return url.getUrl();
+        urlsCollection.remove(NAME_AND_URL_FILTER, url.getUrl(), simulationName);
+        return url
+                .getUrl();
     }
 
     @Override
@@ -102,29 +103,15 @@ public class MongoDbCrawlState implements CrawlState {
     }
 
     @Override
-    public boolean containsUrl(String url) {
-        long count = pagesCollection.count(URL_AND_NAME_FILTER, url, simulationName);
+    public boolean containsPage(String url) {
+        long count = pagesCollection.count(NAME_AND_URL_FILTER, url, simulationName);
         return count != 0;
     }
 
     @Override
     public Optional<WebPage> getPageByUrl(String url) {
         MongoDbWebPage mongoPage = pagesCollection
-                .findOne(URL_AND_NAME_FILTER, url, simulationName)
-                .as(MongoDbWebPage.class);
-        return ofNullable(mongoPage).map(mongoWebPageConverter::convertFromMongo);
-    }
-
-    @Override
-    public boolean containsPage(String id) {
-        long count = pagesCollection.count(ID_AND_NAME_FILTER, id, simulationName);
-        return count != 0;
-    }
-
-    @Override
-    public Optional<WebPage> getPageById(String id) {
-        MongoDbWebPage mongoPage = pagesCollection
-                .findOne(ID_AND_NAME_FILTER, id, simulationName)
+                .findOne(NAME_AND_URL_FILTER, url, simulationName)
                 .as(MongoDbWebPage.class);
         return ofNullable(mongoPage).map(mongoWebPageConverter::convertFromMongo);
     }

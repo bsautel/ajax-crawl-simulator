@@ -7,8 +7,6 @@ import java.util.Set;
 
 @AutoValue
 public abstract class WebPage {
-    public abstract String getId();
-
     public abstract String getUrl();
 
     public abstract int getHttpStatus();
@@ -43,8 +41,8 @@ public abstract class WebPage {
         return getType() == WebPageType.BINARY;
     }
 
-    public static WebPage create(String id, String url, int httpStatus, String body, WebPageType type,
-                                 Optional<String> title, Set<String> links, Optional<String> targetUrl) {
-        return new AutoValue_WebPage(id, url, httpStatus, body, type, title, links, targetUrl);
+    public static WebPage create(String url, int httpStatus, String body, WebPageType type, Optional<String> title,
+                                 Set<String> links, Optional<String> targetUrl) {
+        return new AutoValue_WebPage(url, httpStatus, body, type, title, links, targetUrl);
     }
 }
