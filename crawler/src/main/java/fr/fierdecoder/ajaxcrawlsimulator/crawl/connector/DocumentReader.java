@@ -32,4 +32,9 @@ public class DocumentReader {
         }
         return empty();
     }
+
+    public boolean supportsFragment(Document document) {
+        Elements fragmentMeta = document.select("meta[name=fragment]");
+        return fragmentMeta.size() == 1;
+    }
 }

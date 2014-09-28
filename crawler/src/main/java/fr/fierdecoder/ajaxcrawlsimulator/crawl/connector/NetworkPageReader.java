@@ -15,7 +15,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -149,7 +148,7 @@ public class NetworkPageReader implements PageReader {
             String canonicalUrl = urlWithOptionalHash.getUrlWithoutHash();
             return webPageFactory.buildRedirectionWebPage(url, 200, "", canonicalUrl);
         }
-        if (resolveFragmentStrategy.canResolveFragment() && supportsFragment(document)) {
+        if (resolveFragmentStrategy.canResolveFragment() && documentReader.supportsFragment(document)) {
             String resolvedUrl = replaceHashByEscapedFragment(urlWithOptionalHash, "");
             return resolveUrlWithoutFragment(resolvedUrl, url, ResolveFragmentStrategy.DO_NOT_RESOLVE);
         }
@@ -162,11 +161,6 @@ public class NetworkPageReader implements PageReader {
         URIBuilder urlBuilder = new URIBuilder(url.getUrlWithoutHash());
         urlBuilder.addParameter(ESCAPED_FRAGMENT, fragment);
         return urlBuilder.toString();
-    }
-
-    private boolean supportsFragment(Document document) {
-        Elements fragmentMeta = document.select("meta[name=fragment]");
-        return fragmentMeta.size() == 1;
     }
 
     private static enum ResolveFragmentStrategy {

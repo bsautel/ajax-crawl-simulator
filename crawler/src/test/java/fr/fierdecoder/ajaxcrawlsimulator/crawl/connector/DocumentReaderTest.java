@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 public class DocumentReaderTest {
     public static final String ROOT_URL = "http://mydomain.com/";
     private DocumentReader documentReader;
-    private Document sampleDocument, documentWithCanonicalUrl;
+    private Document sampleDocument, documentWithCanonicalUrl, documentWithFragment;
 
     @Before
     public void setUp() throws Exception {
@@ -26,6 +26,7 @@ public class DocumentReaderTest {
 
         sampleDocument = parseTestDocument("document.html");
         documentWithCanonicalUrl = parseTestDocument("document_with_canonical_url.html");
+        documentWithFragment = parseTestDocument("document_with_fragment.html");
     }
 
     private Document parseTestDocument(String fileName) throws IOException {
@@ -60,5 +61,19 @@ public class DocumentReaderTest {
 
         assertThat(optionalCanonicalUrl.isPresent(), is(true));
         assertThat(optionalCanonicalUrl.get(), is(ROOT_URL + "home"));
+    }
+
+    @Test
+    public void shouldNotSupportFragment() {
+        boolean hasFragment = documentReader.supportsFragment(sampleDocument);
+
+        assertThat(hasFragment, is(false));
+    }
+
+    @Test
+    public void shouldSupportFragment() {
+        boolean hasFragment = documentReader.supportsFragment(documentWithFragment);
+
+        assertThat(hasFragment, is(true));
     }
 }
