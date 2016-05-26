@@ -29,7 +29,7 @@ Use the `-h` option to discover the launcher options.
 
     java -jar web-launcher/target/web-launcher-1.0-SNAPSHOT-jar-with-dependencies.jar -h
 
-Once the tools is launched, open this URL with your browser:
+Once the tool is launched, open this URL with your browser:
 
     http://localhost:8080/
 
